@@ -173,7 +173,7 @@
         <!-- Footer Link -->
         <div class="mt-6 text-center text-sm text-gray-600">
             Already have an account? 
-            <a href="foodbox_login.html" class="font-bold text-brand-teal hover:text-brand-blue transition-colors">Log In</a>
+            <a href="{{ route('login.index') }}" class="font-bold text-brand-teal hover:text-brand-blue transition-colors">Log In</a>
         </div>
     </div>
 

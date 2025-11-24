@@ -68,49 +68,7 @@
 <body class="bg-brand-grey font-sans text-brand-blue antialiased selection:bg-brand-gold selection:text-brand-blue">
 
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 transition-all duration-300" id="navbar">
-        <div class="container mx-auto px-6 py-4">
-            <div class="flex justify-between items-center">
-                <!-- Logo -->
-                <a href="foodbox_landing.html" class="flex items-center gap-2 group">
-                    <div class="w-10 h-10 bg-brand-teal rounded-lg flex items-center justify-center text-white shadow-lg group-hover:rotate-3 transition-transform">
-                        <i class="fas fa-leaf"></i>
-                    </div>
-                    <span class="text-2xl font-bold text-brand-blue tracking-tight">FoodBox<span class="text-brand-teal">NG</span></span>
-                </a>
-
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center gap-8 font-medium text-gray-600">
-                    <a href="foodbox_landing.html" class="hover:text-brand-teal transition-colors">Home</a>
-                    <a href="#" class="text-brand-teal font-bold transition-colors">About Us</a> <!-- Active Page -->
-                    <a href="foodbox_landing.html#packages" class="hover:text-brand-teal transition-colors">Packages</a>
-                    <a href="foodbox_landing.html#testimonials" class="hover:text-brand-teal transition-colors">Reviews</a>
-                </div>
-
-                <!-- CTA Button -->
-                <div class="hidden md:block">
-                    <a href="foodbox_landing.html#packages" class="bg-brand-blue text-white px-6 py-2.5 rounded-full font-semibold hover:bg-brand-teal transition-all shadow-lg shadow-brand-blue/20 hover:shadow-brand-teal/30">
-                        Get Started
-                    </a>
-                </div>
-
-                <!-- Mobile Menu Button -->
-                <button onclick="toggleMenu()" class="md:hidden text-brand-blue text-2xl focus:outline-none">
-                    <i class="fas fa-bars" id="menuIcon"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Mobile Menu -->
-        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full">
-            <div class="flex flex-col p-6 space-y-4 font-medium">
-                <a href="foodbox_landing.html" class="text-gray-600 hover:text-brand-teal" onclick="toggleMenu()">Home</a>
-                <a href="#" class="text-brand-teal font-bold" onclick="toggleMenu()">About Us</a>
-                <a href="foodbox_landing.html#packages" class="text-gray-600 hover:text-brand-teal" onclick="toggleMenu()">Packages</a>
-                <a href="foodbox_landing.html#packages" class="bg-brand-teal text-white text-center py-3 rounded-lg font-bold shadow-md" onclick="toggleMenu()">Get Started</a>
-            </div>
-        </div>
-    </nav>
+    @include('layouts.navbar')
 
     <!-- Header / Hero Section -->
     <section class="relative pt-40 pb-20 bg-brand-blue overflow-hidden">
@@ -143,7 +101,7 @@
                 <div class="lg:w-1/2">
                     <h2 class="text-3xl md:text-4xl font-bold text-brand-blue mb-6">It started in a Traffic Jam...</h2>
                     <p class="text-gray-600 leading-relaxed mb-6">
-                        In 2021, our founder, Tobi, was stuck in Lagos traffic for 4 hours after a stressful trip to Mile 12 market. The tomatoes were crushed, the oil had spilled, and he was exhausted. He thought, <span class="italic text-brand-blue font-semibold">"There has to be a better way."</span>
+                        In 2021, our founder, Pinnacle, was stuck in Lagos traffic for 4 hours after a stressful trip to Mile 12 market. The tomatoes were crushed, the oil had spilled, and he was exhausted. He thought, <span class="italic text-brand-blue font-semibold">"There has to be a better way."</span>
                     </p>
                     <p class="text-gray-600 leading-relaxed mb-8">
                         FoodBox NG was born out of that frustration. We realized that while Nigerians love fresh food, the process of getting it is broken. We built a bridge between local farmers and city households, ensuring farmers get fair pay and you get fresh food without the headache.
@@ -262,7 +220,7 @@
                         <img src="https://images.unsplash.com/photo-1531384441138-2736e62e0919?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Tobi" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
                     <div class="p-6 text-center">
-                        <h4 class="text-xl font-bold text-brand-blue">Tobi Adebayo</h4>
+                        <h4 class="text-xl font-bold text-brand-blue">Pinnacle Emmanuel</h4>
                         <p class="text-brand-teal font-medium text-sm mb-4">Founder & CEO</p>
                         <div class="flex justify-center gap-3">
                             <a href="#" class="text-gray-400 hover:text-brand-blue"><i class="fab fa-linkedin"></i></a>
@@ -320,74 +278,7 @@
     </section>
 
     <!-- Footer (Same as Landing Page) -->
-    <footer class="bg-brand-blue text-white pt-20 pb-10">
-        <div class="container mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-                <!-- Brand -->
-                <div>
-                    <div class="flex items-center gap-2 mb-6">
-                        <div class="w-8 h-8 bg-brand-teal rounded flex items-center justify-center text-white">
-                            <i class="fas fa-leaf text-sm"></i>
-                        </div>
-                        <span class="text-xl font-bold">FoodBox<span class="text-brand-teal">NG</span></span>
-                    </div>
-                    <p class="text-gray-400 text-sm leading-relaxed mb-6">
-                        Simplifying food shopping for Nigerian homes. Quality, Affordability, and Convenience delivered.
-                    </p>
-                    <div class="flex gap-4">
-                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand-teal transition-colors"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand-teal transition-colors"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand-teal transition-colors"><i class="fab fa-facebook-f"></i></a>
-                    </div>
-                </div>
-
-                <!-- Quick Links -->
-                <div>
-                    <h4 class="text-lg font-bold mb-6 text-brand-gold">Company</h4>
-                    <ul class="space-y-4 text-gray-400 text-sm">
-                        <li><a href="#" class="hover:text-white transition-colors">About Us</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Careers</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
-                    </ul>
-                </div>
-
-                <!-- Support -->
-                <div>
-                    <h4 class="text-lg font-bold mb-6 text-brand-gold">Support</h4>
-                    <ul class="space-y-4 text-gray-400 text-sm">
-                        <li><a href="#" class="hover:text-white transition-colors">FAQs</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Shipping Policy</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Returns</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
-                    </ul>
-                </div>
-
-                <!-- Contact -->
-                <div>
-                    <h4 class="text-lg font-bold mb-6 text-brand-gold">Contact Us</h4>
-                    <ul class="space-y-4 text-gray-400 text-sm">
-                        <li class="flex items-start gap-3">
-                            <i class="fas fa-map-marker-alt mt-1 text-brand-teal"></i>
-                            <span>12 Admiralty Way, Lekki Phase 1,<br>Lagos, Nigeria.</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <i class="fas fa-phone text-brand-teal"></i>
-                            <span>+234 800 FOOD BOX</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <i class="fas fa-envelope text-brand-teal"></i>
-                            <span>hello@foodbox.ng</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="border-t border-gray-700 pt-8 text-center text-gray-500 text-sm">
-                <p>&copy; 2023 FoodBox NG. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+    @include('layouts.footer')
 
     <!-- Scripts -->
     <script>

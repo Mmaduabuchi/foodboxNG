@@ -159,7 +159,7 @@
         <!-- Footer Link -->
         <div class="mt-6 text-center text-sm text-gray-600">
             Don't have an account? 
-            <a href="#" class="font-bold text-brand-orange hover:text-brand-red transition-colors">Create Account</a>
+            <a href="{{ route('register.index') }}" class="font-bold text-brand-orange hover:text-brand-red transition-colors">Create Account</a>
         </div>
     </div>
 
