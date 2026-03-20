@@ -121,7 +121,7 @@
                 <!-- Image Content -->
                 <div class="lg:w-1/2 relative">
                     <div class="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-8 border-white transform rotate-2 hover:rotate-0 transition-transform duration-500">
-                        <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Food Box Delivery" class="w-full h-[500px] object-cover">
+                        <img src="{{ asset('assets/images/food_home.avif') }}" alt="Food Box Delivery" class="w-full h-[500px] object-cover">
                         
                         <!-- Floating Card -->
                         <div class="absolute bottom-6 left-6 bg-white/95 backdrop-blur p-4 rounded-xl shadow-lg flex items-center gap-4 max-w-xs">
@@ -239,11 +239,13 @@
                         </ul>
 
                         <div class="mt-auto pt-4 border-t border-gray-100">
-                            <div class="flex justify-between items-center mb-4">
+                            <!-- <div class="flex justify-between items-center mb-4">
                                 <span class="text-gray-400 text-sm">Monthly</span>
                                 <span class="text-2xl font-bold text-brand-blue">₦18,500</span>
-                            </div>
-                            <button class="w-full py-3 rounded-xl border-2 border-brand-blue text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition-colors">Add to Cart</button>
+                            </div> -->
+                            <a href="{{ route('student_packages') }}">
+                                <button class="w-full py-3 rounded-xl border-2 border-brand-blue text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition-colors">Explore Packages</button>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -268,11 +270,13 @@
                         </ul>
 
                         <div class="mt-auto pt-4 border-t border-gray-600">
-                            <div class="flex justify-between items-center mb-4">
+                            <!-- <div class="flex justify-between items-center mb-4">
                                 <span class="text-gray-300 text-sm">Monthly</span>
                                 <span class="text-2xl font-bold text-brand-gold">₦65,000</span>
-                            </div>
-                            <button class="w-full py-3 rounded-xl bg-brand-gold text-brand-blue font-bold hover:bg-white transition-colors shadow-lg">Subscribe Now</button>
+                            </div> -->
+                            <a href="{{ route('family_packages') }}">
+                                <button class="w-full py-3 rounded-xl bg-brand-gold text-brand-blue font-bold hover:bg-white transition-colors shadow-lg">Explore Packages</button>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -294,11 +298,13 @@
                         </ul>
 
                         <div class="mt-auto pt-4 border-t border-gray-100">
-                            <div class="flex justify-between items-center mb-4">
+                            <!-- <div class="flex justify-between items-center mb-4">
                                 <span class="text-gray-400 text-sm">Monthly</span>
                                 <span class="text-2xl font-bold text-brand-blue">₦32,000</span>
-                            </div>
-                            <button class="w-full py-3 rounded-xl border-2 border-brand-blue text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition-colors">Add to Cart</button>
+                            </div> -->
+                            <a href="{{ route('bachelor_packages') }}">
+                                <button class="w-full py-3 rounded-xl border-2 border-brand-blue text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition-colors">Explore Packages</button>
+                            </a>
                         </div>
                     </div>
                 </div>

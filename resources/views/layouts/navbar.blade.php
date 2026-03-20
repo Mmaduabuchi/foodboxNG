@@ -1,16 +1,16 @@
 <!-- Navigation -->
-<nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 transition-all duration-300"
-    id="navbar">
+<nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 transition-all duration-300" id="navbar">
     <div class="container mx-auto px-6 py-4">
         <div class="flex justify-between items-center">
             <!-- Logo -->
-            <a href="#" class="flex items-center gap-2 group">
-                <div
-                    class="w-10 h-10 bg-brand-teal rounded-lg flex items-center justify-center text-white shadow-lg group-hover:rotate-3 transition-transform">
+            <a href="/" class="flex items-center gap-2 group">
+                <div class="w-10 h-10 bg-brand-teal rounded-lg flex items-center justify-center text-white shadow-lg group-hover:rotate-3 transition-transform">
                     <i class="fas fa-leaf"></i>
                 </div>
-                <span class="text-2xl font-bold text-brand-blue tracking-tight">FoodBox<span
-                        class="text-brand-teal">NG</span></span>
+                <span class="text-2xl font-bold text-brand-blue tracking-tight">
+                    FoodBox
+                    <span class="text-brand-teal">NG</span>
+                </span>
             </a>
 
             <!-- Desktop Menu -->
