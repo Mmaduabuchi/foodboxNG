@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
+
 class resetpasswordController extends Controller
 {
     //
@@ -22,13 +23,14 @@ class resetpasswordController extends Controller
     public function store(Request $request){
         $credentials = $request->validate([
             'email' => 'required|email',
+            'token' => 'required',
             'password' => 'required|min:6',
             'password_confirmation' => 'required|same:password',
         ]);
 
-        $record = DB::table('password_reset_tokens')->where('email', $request->email)->first();
+        $record = DB::table('password_reset_tokens')->where('email', $credentials['email'])->first();
 
-        if (!$record || !Hash::check($request->token, $record->token)) {
+        if (!$record || !Hash::check($credentials['token'], $record->token)) {
             return back()->withErrors(['token' => 'Invalid or expired token']);
         }
 
@@ -38,9 +40,13 @@ class resetpasswordController extends Controller
             return back()->withErrors(['email' => 'Email not found']);
         }
 
-        $user->password = bcrypt($credentials['password']);
+        //update the user password
+        $user->password = Hash::make($credentials['password']);
         $user->save();
 
-        return redirect()->route('login')->with('status', 'Password reset successful');
+        //delete the token
+        DB::table('password_reset_tokens')->where('email', $user->email)->delete();
+
+        return redirect()->route('login')->with('success', 'Password reset successful');
     }
 }

@@ -83,7 +83,7 @@
                 <span class="text-3xl font-extrabold text-brand-blue tracking-tight">FoodBox<span class="text-brand-teal">NG</span></span>
             </div>
             <h2 class="text-2xl font-bold text-brand-blue">Reset Password</h2>
-            <p class="text-gray-500 text-sm mt-1">Enter your email and choose a new password.</p>
+            <p class="text-gray-500 text-sm mt-1">Enter a new password.</p>
         </div>
 
         <!-- Alerts -->
@@ -112,18 +112,12 @@
         @endif
 
         <!-- Reset Password Form -->
-        <form action="{{ route('resetpassword', $token) }}" method="POST" class="space-y-4">
+        <form action="{{ route('resetpassword') }}" method="POST" class="space-y-4">
             @csrf
 
-            <!-- Email Input -->
             <div>
-                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                <div class="relative">
-                    <i class="fas fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-teal"></i>
-                    <input type="email" name="email" id="email" placeholder="you@example.com" required
-                        value="{{ old('email') }}"
-                        class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all">
-                </div>
+                <input type="hidden" name="token" value="{{ $token }}">
+                <input type="hidden" name="email" value="{{ $email }}">
             </div>
 
             <!-- New Password Input -->
@@ -131,10 +125,8 @@
                 <label for="password" class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
                 <div class="relative">
                     <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-teal"></i>
-                    <input type="password" name="password" id="password" placeholder="New password" required
-                        class="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all">
-                    <button type="button" onclick="toggleVisibility('password', 'toggleIcon1')"
-                        class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-brand-teal transition-colors focus:outline-none">
+                    <input type="password" name="password" id="password" placeholder="New password" required class="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all">
+                    <button type="button" onclick="toggleVisibility('password', 'toggleIcon1')" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-brand-teal transition-colors focus:outline-none">
                         <i id="toggleIcon1" class="fas fa-eye"></i>
                     </button>
                 </div>
@@ -145,18 +137,15 @@
                 <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
                 <div class="relative">
                     <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-teal"></i>
-                    <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Confirm new password" required
-                        class="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all">
-                    <button type="button" onclick="toggleVisibility('password_confirmation', 'toggleIcon2')"
-                        class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-brand-teal transition-colors focus:outline-none">
+                    <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Confirm new password" required class="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all">
+                    <button type="button" onclick="toggleVisibility('password_confirmation', 'toggleIcon2')" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-brand-teal transition-colors focus:outline-none">
                         <i id="toggleIcon2" class="fas fa-eye"></i>
                     </button>
                 </div>
             </div>
 
             <!-- Submit Button -->
-            <button type="submit" id="resetBtn"
-                class="w-full bg-brand-teal text-white font-bold py-3 rounded-xl hover:bg-brand-blue transition-colors shadow-lg shadow-brand-teal/30 active:translate-y-0.5">
+            <button type="submit" id="resetBtn" class="w-full bg-brand-teal text-white font-bold py-3 rounded-xl hover:bg-brand-blue transition-colors shadow-lg shadow-brand-teal/30 active:translate-y-0.5">
                 Reset Password
             </button>
         </form>

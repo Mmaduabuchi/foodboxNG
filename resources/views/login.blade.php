@@ -140,7 +140,10 @@
                 <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
                 <div class="relative">
                     <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-teal"></i>
-                    <input type="password" name="password" id="password" placeholder="Enter your password" required class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all">
+                    <input type="password" name="password" id="password" placeholder="Enter your password" required class="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all">
+                    <button type="button" onclick="toggleVisibility('password', 'toggleIcon1')" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-brand-teal transition-colors focus:outline-none">
+                        <i id="toggleIcon1" class="fas fa-eye"></i>
+                    </button>
                 </div>
             </div>
 
@@ -167,6 +170,19 @@
     </div>
 
     <script>
+        // Toggle password visibility
+        function toggleVisibility(fieldId, iconId) {
+            const field = document.getElementById(fieldId);
+            const icon = document.getElementById(iconId);
+            if (field.type === 'password') {
+                field.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                field.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+        
         document.querySelector('form').addEventListener('submit', function(e) {
             const btn = document.getElementById('loginBtn');
             btn.innerHTML = `
