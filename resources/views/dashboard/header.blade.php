@@ -63,10 +63,13 @@
 
     <!-- Logout link at the bottom -->
     <div class="absolute bottom-6 left-6 right-6">
-        <a href="#" class="flex items-center gap-4 text-brand-red font-medium p-3 rounded-xl hover:bg-brand-red/10 transition-all">
-            <i class="fas fa-sign-out-alt text-lg w-6 text-center"></i>
-            <span>Log Out</span>
-        </a>
+        <form action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button type="submit" class="flex items-center gap-4 text-brand-red font-medium p-3 rounded-xl hover:bg-brand-red/10 transition-all">
+                <i class="fas fa-sign-out-alt text-lg w-6 text-center"></i>
+                <span>Log Out</span>
+            </button>
+        </form>
     </div>
 </aside>
 
@@ -97,7 +100,12 @@
                 <a href="{{ route('userprofile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-brand-grey rounded-t-xl"><i class="fas fa-user-circle mr-2"></i> View Profile</a>
                 <a href="{{ route('settings') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-brand-grey"><i class="fas fa-cog mr-2"></i> Settings</a>
                 <div class="border-t border-gray-100"></div>
-                <a href="#" class="block px-4 py-2 text-sm text-brand-red hover:bg-brand-red/10 rounded-b-xl"><i class="fas fa-sign-out-alt mr-2"></i> Log Out</a>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-brand-red hover:bg-brand-red/10 rounded-b-xl">
+                        <i class="fas fa-sign-out-alt mr-2"></i> Log Out
+                    </button>
+                </form>
             </div>
         </div>
     </div>

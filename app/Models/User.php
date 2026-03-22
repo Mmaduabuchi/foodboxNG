@@ -21,6 +21,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'token',
+        'phone',
+        'referral_code',
+        'referred_by',
+        'is_suspended',
     ];
 
     /**

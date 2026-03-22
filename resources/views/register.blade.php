@@ -92,10 +92,6 @@
                 <i class="fab fa-google text-lg text-red-500"></i>
                 Sign Up with Google
             </button>
-            <button class="w-full flex items-center justify-center gap-3 bg-brand-blue/5 border border-brand-blue/10 text-brand-blue font-semibold py-3 rounded-xl hover:bg-brand-teal/10 transition-colors">
-                <i class="fab fa-facebook-f text-lg text-blue-600"></i>
-                Sign Up with Facebook
-            </button>
         </div>
 
         <!-- Divider -->
@@ -105,21 +101,46 @@
             <div class="flex-grow border-t border-gray-200"></div>
         </div>
 
+        <?php
+            if($errors->any()){
+                foreach($errors->all() as $error){
+        ?>
+                    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
+                        <strong class="font-bold">Error!</strong>
+                        <span class="block sm:inline">{{ $error }}</span>
+                    </div>
+        <?php
+                }
+            }
+
+            if(session('success')){
+        ?>
+                <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded relative" role="alert">
+                    <strong class="font-bold">Success!</strong>
+                    <span class="block sm:inline">{{ session('success') }}</span>
+                </div>
+        <?php
+            }
+        ?>
+
         <!-- Sign Up Form -->
-        <form class="space-y-4">
-            
+        <form action="{{ route('register.store') }}" method="POST" class="space-y-4">
+            @csrf
             <!-- Name Input -->
             <div>
                 <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
                 <div class="relative">
                     <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-teal"></i>
-                    <input 
-                        type="text" 
-                        id="name" 
-                        placeholder="John Doe"
-                        required 
-                        class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all"
-                    >
+                    <input type="text" name="fullname" id="name" placeholder="John Doe" required class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all">
+                </div>
+            </div>
+
+            <!-- phone number -->
+            <div>
+                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                <div class="relative">
+                    <i class="fas fa-phone absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-teal"></i>
+                    <input type="text" name="phone" id="phone" placeholder="08000000000" required class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all">
                 </div>
             </div>
 
@@ -128,13 +149,7 @@
                 <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
                 <div class="relative">
                     <i class="fas fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-teal"></i>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        placeholder="you@example.com"
-                        required 
-                        class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all"
-                    >
+                    <input type="email" name="email" id="email" placeholder="you@example.com" required class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all">
                 </div>
             </div>
 
@@ -143,13 +158,16 @@
                 <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
                 <div class="relative">
                     <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-teal"></i>
-                    <input 
-                        type="password" 
-                        id="password" 
-                        placeholder="Min. 8 characters"
-                        required 
-                        class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all"
-                    >
+                    <input type="password" name="password" id="password" placeholder="Min. 8 characters" required class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all">
+                </div>
+            </div>
+
+            <!-- confrim password -->
+            <div>
+                <label for="Confrimpassword" class="block text-sm font-medium text-gray-700 mb-1">Confrim password</label>
+                <div class="relative">
+                    <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-teal"></i>
+                    <input type="password" name="password_confirmation" id="confrimpassword" placeholder="Confrim password" required class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all">
                 </div>
             </div>
 
@@ -162,10 +180,7 @@
             </div>
 
             <!-- Submit Button -->
-            <button 
-                type="submit" 
-                class="w-full bg-brand-orange text-white font-bold py-3 rounded-xl hover:bg-brand-red transition-colors shadow-lg shadow-brand-orange/30 active:translate-y-0.5 mt-6"
-            >
+            <button type="submit" class="w-full bg-brand-orange text-white font-bold py-3 rounded-xl hover:bg-brand-red transition-colors shadow-lg shadow-brand-orange/30 active:translate-y-0.5 mt-6">
                 Create My Account
             </button>
         </form>
@@ -173,19 +188,11 @@
         <!-- Footer Link -->
         <div class="mt-6 text-center text-sm text-gray-600">
             Already have an account? 
-            <a href="{{ route('login.index') }}" class="font-bold text-brand-teal hover:text-brand-blue transition-colors">Log In</a>
+            <a href="{{ route('login') }}" class="font-bold text-brand-teal hover:text-brand-blue transition-colors">Log In</a>
         </div>
     </div>
 
-    <!-- Note for Production Environment -->
-    <!-- In a real application, you would handle the form submission and authentication logic here -->
     <script>
-        // Placeholder for form submission handling
-        document.querySelector('form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            // In a real app, you'd send credentials to a server (e.g., Firebase Auth)
-            console.log('Sign Up attempt submitted. Check console for details.');
-        });
     </script>
 </body>
 </html>

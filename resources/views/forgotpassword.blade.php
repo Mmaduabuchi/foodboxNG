@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | FoodBox NG</title>
-    
+    <title>Forgot Password | FoodBox NG</title>
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Tailwind Config -->
     <script>
         tailwind.config = {
@@ -58,7 +58,7 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #264653;
         }
-        
+
         .pattern-grid {
             background-image: radial-gradient(#2A9D8F 1px, transparent 1px);
             background-size: 24px 24px;
@@ -71,9 +71,9 @@
     <!-- Background Pattern -->
     <div class="absolute inset-0 pattern-grid opacity-20"></div>
 
-    <!-- Login Card -->
+    <!-- Card -->
     <div class="w-full max-w-md bg-white rounded-3xl shadow-xl-heavy p-8 md:p-10 relative z-10">
-        
+
         <!-- Header/Logo -->
         <div class="text-center mb-8">
             <div class="flex items-center justify-center gap-2 mb-4">
@@ -82,49 +82,37 @@
                 </div>
                 <span class="text-3xl font-extrabold text-brand-blue tracking-tight">FoodBox<span class="text-brand-teal">NG</span></span>
             </div>
-            <h2 class="text-2xl font-bold text-brand-blue">Welcome Back!</h2>
-            <p class="text-gray-500 text-sm">Sign in to manage your fresh food deliveries.</p>
+            <h2 class="text-2xl font-bold text-brand-blue">Forgot Password?</h2>
+            <p class="text-gray-500 text-sm mt-1">Enter your email and we'll send you a reset link.</p>
         </div>
 
-        <!-- Social Login -->
-        <div class="space-y-3 mb-6">
-            <button class="w-full flex items-center justify-center gap-3 bg-brand-blue/5 border border-brand-blue/10 text-brand-blue font-semibold py-3 rounded-xl hover:bg-brand-teal/10 transition-colors">
-                <i class="fab fa-google text-lg text-red-500"></i>
-                Continue with Google
-            </button>
-        </div>
+        @if ($errors->any())
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-4">
+                <ul class="text-sm">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-        <!-- Divider -->
-        <div class="flex items-center mb-6">
-            <div class="flex-grow border-t border-gray-200"></div>
-            <span class="flex-shrink mx-4 text-gray-400 text-xs uppercase font-medium">Or log in with Email</span>
-            <div class="flex-grow border-t border-gray-200"></div>
-        </div>
+        <!-- Alerts -->
+        @if (session('status'))
+            <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl mb-4" role="alert">
+                <strong class="font-bold">Success!</strong>
+                <span class="block sm:inline">{{ session('status') }}</span>
+            </div>
+        @endif
 
-        <?php
-            if($errors->any()){
-                foreach($errors->all() as $error){
-        ?>
-                    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
-                        <strong class="font-bold">Error!</strong>
-                        <span class="block sm:inline">{{ $error }}</span>
-                    </div>
-        <?php
-                }
-            }
+        @if (session('error'))
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-4" role="alert">
+                <strong class="font-bold">Error!</strong>
+                <span class="block sm:inline">{{ session('error') }}</span>
+            </div>
+        @endif
 
-            if(session('success')){
-        ?>
-                <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded relative" role="alert">
-                    <strong class="font-bold">Success!</strong>
-                    <span class="block sm:inline">{{ session('success') }}</span>
-                </div>
-        <?php
-            }
-        ?>
-
-        <!-- Login Form -->
-        <form action="{{ route('login.store') }}" method="POST" class="space-y-4">
+        <!-- Forgot Password Form -->
+        <form action="{{ route('forgotpassword.store') }}" method="POST" class="space-y-4">
             @csrf
             <!-- Email Input -->
             <div>
@@ -135,46 +123,28 @@
                 </div>
             </div>
 
-            <!-- Password Input -->
-            <div>
-                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                <div class="relative">
-                    <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-teal"></i>
-                    <input type="password" name="password" id="password" placeholder="Enter your password" required class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all">
-                </div>
-            </div>
-
-            <!-- Remember Me / Forgot Password -->
-            <div class="flex justify-between items-center text-sm">
-                <div class="flex items-center">
-                    <input type="checkbox" id="remember" class="h-4 w-4 text-brand-teal border-gray-300 rounded focus:ring-brand-teal">
-                    <label for="remember" class="ml-2 text-gray-600">Remember Me</label>
-                </div>
-                <a href="{{ route('forgotpassword') }}" class="font-medium text-brand-teal hover:text-brand-blue transition-colors">Forgot Password?</a>
-            </div>
-
             <!-- Submit Button -->
-            <button type="submit" id="loginBtn" class="w-full bg-brand-teal text-white font-bold py-3 rounded-xl hover:bg-brand-blue transition-colors shadow-lg shadow-brand-teal/30 active:translate-y-0.5">
-                Log In
+            <button type="submit" id="sendBtn" class="w-full bg-brand-teal text-white font-bold py-3 rounded-xl hover:bg-brand-blue transition-colors shadow-lg shadow-brand-teal/30 active:translate-y-0.5">
+                Send Reset Link
             </button>
         </form>
 
-        <!-- Footer Link -->
+        <!-- Back to Login -->
         <div class="mt-6 text-center text-sm text-gray-600">
-            Don't have an account? 
-            <a href="{{ route('register.index') }}" class="font-bold text-brand-orange hover:text-brand-red transition-colors">Create Account</a>
+            Remembered your password?
+            <a href="{{ route('login') }}" class="font-bold text-brand-orange hover:text-brand-red transition-colors">Back to Login</a>
         </div>
     </div>
 
     <script>
         document.querySelector('form').addEventListener('submit', function(e) {
-            const btn = document.getElementById('loginBtn');
+            const btn = document.getElementById('sendBtn');
             btn.innerHTML = `
                 <span class="flex items-center justify-center gap-2">
                     <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10" stroke="white" stroke-width="4" fill="none"/>
                     </svg>
-                    Loading...
+                    Sending...
                 </span>
             `;
             btn.disabled = true;
