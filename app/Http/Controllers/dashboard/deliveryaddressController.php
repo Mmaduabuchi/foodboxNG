@@ -47,8 +47,16 @@ class deliveryaddressController extends Controller
 
     public function update(Request $request, $id)
     {
-        $address = Address::findOrFail($id);
-        $address->update($request->all());
+        $address = Address::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+        
+        $data = $request->except(['_token', '_method']);
+        $data['is_default'] = $request->has('is_default');
+
+        if ($data['is_default']) {
+            Address::where('user_id', Auth::id())->where('id', '!=', $id)->update(['is_default' => false]);
+        }
+
+        $address->update($data);
         return back()->with('success', 'Address updated successfully!');
     }
 

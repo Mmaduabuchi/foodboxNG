@@ -192,7 +192,7 @@
                             {{ $address->street_address }}, {{ $address->city }}, {{ $address->state }}.
                         </p>
                         <div class="flex space-x-3">
-                            <button onclick="showModal('edit')" class="text-sm text-brand-teal font-medium hover:text-brand-blue transition-colors">
+                            <button onclick="showModal('edit', JSON.parse(this.dataset.address))" data-address="{{ json_encode($address) }}" class="text-sm text-brand-teal font-medium hover:text-brand-blue transition-colors">
                                 <i class="fas fa-edit mr-1"></i> Edit
                             </button>
                             <form action="{{ route('addresses.destroy', $address->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this address?')">
@@ -355,12 +355,32 @@
         function showModal(mode = 'add', addressData = null) {
             if (mode === 'edit' && addressData) {
                 modalTitle.textContent = 'Edit Delivery Address';
-                // In a real app, you would populate the form fields here:
-                // document.getElementById('address_label').value = addressData.label;
-                // etc.
+                document.getElementById('address_label').value = addressData.label || '';
+                document.getElementById('contact_name').value = addressData.recipient_name || '';
+                document.getElementById('phone_number').value = addressData.phone || '';
+                document.getElementById('street_address').value = addressData.street_address || '';
+                document.getElementById('city').value = addressData.city || '';
+                document.getElementById('state').value = addressData.state || '';
+                document.querySelector('input[name="is_default"]').checked = addressData.is_default == 1;
+                
+                addressForm.action = `{{ url('addresses') }}/${addressData.id}`;
+                
+                if (!document.getElementById('method-put')) {
+                    const methodInput = document.createElement('input');
+                    methodInput.type = 'hidden';
+                    methodInput.name = '_method';
+                    methodInput.value = 'PUT';
+                    methodInput.id = 'method-put';
+                    addressForm.appendChild(methodInput);
+                }
             } else {
                 modalTitle.textContent = 'Add New Delivery Address';
                 addressForm.reset(); // Clear form for adding
+                addressForm.action = "{{ route('addresses.store') }}";
+                const putMethod = document.getElementById('method-put');
+                if (putMethod) {
+                    putMethod.remove();
+                }
             }
             modal.classList.remove('hidden');
             modal.classList.add('visible');
