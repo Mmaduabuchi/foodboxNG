@@ -47,16 +47,29 @@ class deliveryaddressController extends Controller
 
     public function update(Request $request, $id)
     {
+        $validated = $request->validate([
+            'label' => 'required|string|max:15',
+            'recipient_name' => 'required|string|max:100',
+            'phone' => ['required', 'regex:/^(?:\+234|0)[0-9]{10}$/'],
+            'street_address' => 'required|string|max:255',
+            'city' => 'required|string|max:100',
+            'state' => 'nullable|string|max:100',
+            'is_default' => 'nullable|boolean',
+        ]);
+
+        //get the address
         $address = Address::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
         
-        $data = $request->except(['_token', '_method']);
-        $data['is_default'] = $request->has('is_default');
+        //handle default address
+        $validated['is_default'] = $request->has('is_default');
 
-        if ($data['is_default']) {
+        if ($validated['is_default']) {
             Address::where('user_id', Auth::id())->where('id', '!=', $id)->update(['is_default' => false]);
         }
 
-        $address->update($data);
+        $address->update($validated);
+
+        //return back with success message
         return back()->with('success', 'Address updated successfully!');
     }
 
