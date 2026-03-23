@@ -28,16 +28,22 @@ class loginController extends Controller
 
             $user = Auth::user();
 
+            // Check email verification
+            if (!$user->email_verified_at) {
+                Auth::logout();
+                return back()->withErrors(['email' => 'Email not verified']);
+            }
+
             // Check suspended
             if ($user->is_suspended) {
                 Auth::logout();
                 return back()->withErrors(['email' => 'Your account has been suspended. Contact support.']);
             }
 
-            // Check email verification
-            if (!$user->email_verified_at) {
+            // Check if account is deactivated
+            if (!$user->is_active) {
                 Auth::logout();
-                return back()->withErrors(['email' => 'Email not verified']);
+                return back()->withErrors(['email' => 'Your account has been deactivated.']);
             }
 
             //2fa

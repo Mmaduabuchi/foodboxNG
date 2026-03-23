@@ -55,4 +55,20 @@ class userprofileController extends Controller
 
         return redirect()->back()->with('password_success', 'Password updated successfully');
     }
+
+    public function deactivate(Request $request) {
+        $user = Auth::user();
+
+        // Mark account as inactive
+        $user->is_active = false;
+        $user->save();
+
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login')->with('success', 'Your account has been deactivated.');
+    }
+            
 }

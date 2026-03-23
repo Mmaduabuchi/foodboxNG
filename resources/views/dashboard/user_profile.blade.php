@@ -151,9 +151,13 @@
                 <div class="bg-white p-6 rounded-3xl shadow-soft">
                     <h3 class="text-lg font-semibold text-brand-blue mb-4 flex items-center gap-2"><i class="fas fa-shield-alt text-brand-teal"></i> Account Status</h3>
                     <p class="text-sm text-gray-600 mb-4">Your account is active and protected. If you wish to leave, you can deactivate your account.</p>
-                    <button class="w-full py-2 border border-brand-red text-brand-red font-semibold rounded-xl hover:bg-brand-red/10 transition-colors">
-                        Deactivate Account
-                    </button>
+                    <form action="{{ route('account.deactivate') }}" method="POST" onsubmit="return confirm('Are you sure you want to deactivate your account?');">
+                        @csrf
+
+                        <button type="submit" class="w-full py-2 border border-brand-red text-brand-red font-semibold rounded-xl hover:bg-brand-red/10 transition-colors">
+                            Deactivate Account
+                        </button>
+                    </form>
                 </div>
             </div>
 

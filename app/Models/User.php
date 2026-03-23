@@ -27,7 +27,13 @@ class User extends Authenticatable
         'referred_by',
         'two_factor_enabled',
         'is_suspended',
+        'is_active',
     ];
+
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.

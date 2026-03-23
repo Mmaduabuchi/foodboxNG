@@ -128,6 +128,24 @@
 
     <!-- Main Content Area -->
     <main class="mt-20 p-4 md:p-8 main-content">
+
+        {{-- Response Messages --}}
+        @if(session('success'))
+            <div class="mb-4 p-4 bg-green-100 text-green-700 rounded-xl">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <!-- get any errr  -->
+        @if ($errors->any())
+            <div class="mb-4 p-4 mt-4 bg-red-100 text-red-700 rounded-lg">
+                <ul class="list-disc pl-5">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         
         <!-- Header Section -->
         <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center">
@@ -141,87 +159,67 @@
         </div>
 
         <!-- Address Cards Grid -->
-        <div id="address-list" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        @if($addresses->count() > 0)
+            <div id="address-list" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                @foreach($addresses as $address)
+                    <div class="bg-white p-6 rounded-3xl shadow-soft {{ $address->is_default ? 'border-2 border-brand-teal relative' : 'border-gray-200' }}">
+                        @if($address->is_default)
+                            <span class="absolute top-0 right-0 -mt-3 -mr-3 px-3 py-1 bg-brand-teal text-white text-xs font-bold rounded-full shadow-md">
+                                DEFAULT
+                            </span>
+                        @endif
+                        <div class="flex items-start mb-4">
+                            @if($address->label == 'Home')
+                                <i class="fas fa-home text-2xl text-brand-gold mr-4 mt-1"></i>
+                            @elseif($address->label == 'Work Office')
+                                <i class="fas fa-briefcase text-2xl text-brand-blue/70 mr-4 mt-1"></i>
+                            @elseif($address->label == 'Friend\'s Place')
+                                <i class="fas fa-user-friends text-2xl text-brand-gold mr-4 mt-1"></i>
+                            @else
+                                <i class="fas fa-map-marker-alt text-2xl text-brand-gold mr-4 mt-1"></i>
+                            @endif
+                            <div>
+                                <h4 class="font-bold text-xl text-brand-blue flex items-center">
+                                    {{ $address->label }} 
+                                    @if($address->is_default)
+                                        <span class="ml-3 text-xs text-brand-teal border border-brand-teal px-2 py-0.5 rounded-full font-medium">Primary</span>
+                                    @endif
+                                </h4>
+                                <p class="text-sm text-gray-600">{{ $address->recipient_name }} ({{ $address->phone }})</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            {{ $address->street_address }}, {{ $address->city }}, {{ $address->state }}.
+                        </p>
+                        <div class="flex space-x-3">
+                            <button onclick="showModal('edit')" class="text-sm text-brand-teal font-medium hover:text-brand-blue transition-colors">
+                                <i class="fas fa-edit mr-1"></i> Edit
+                            </button>
+                            <form action="{{ route('addresses.destroy', $address->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this address?')">
+                                @csrf
+                                @method('DELETE')
 
-            <!-- Address Card 1 (Default/Home) -->
-            <div class="bg-white p-6 rounded-3xl shadow-soft border-2 border-brand-teal relative">
-                <span class="absolute top-0 right-0 -mt-3 -mr-3 px-3 py-1 bg-brand-teal text-white text-xs font-bold rounded-full shadow-md">DEFAULT</span>
-                <div class="flex items-start mb-4">
-                    <i class="fas fa-home text-2xl text-brand-gold mr-4 mt-1"></i>
-                    <div>
-                        <h4 class="font-bold text-xl text-brand-blue flex items-center">Home <span class="ml-3 text-xs text-brand-teal border border-brand-teal px-2 py-0.5 rounded-full font-medium">Primary</span></h4>
-                        <p class="text-sm text-gray-600">Jane Okoro (+234 809 123 4567)</p>
+                                <button type="submit" class="text-sm text-brand-red font-medium hover:text-brand-orange transition-colors">
+                                    <i class="fas fa-trash-alt mr-1"></i> Delete
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                </div>
-                <p class="text-gray-700 leading-relaxed mb-4">
-                    Block 5, Apt 2B, Banana Island Drive, Ikoyi, Lagos, Nigeria.
-                </p>
-                <div class="flex space-x-3">
-                    <button onclick="showModal('edit')" class="text-sm text-brand-teal font-medium hover:text-brand-blue transition-colors">
-                        <i class="fas fa-edit mr-1"></i> Edit
-                    </button>
-                    <button class="text-sm text-brand-red font-medium hover:text-brand-orange transition-colors">
-                        <i class="fas fa-trash-alt mr-1"></i> Delete
-                    </button>
-                </div>
+                @endforeach
+            </div>
+        @else
+
+            <!-- Empty State Placeholder (Optional) -->
+            <div class="text-center py-16 mt-8 bg-white rounded-3xl shadow-soft/50 border border-dashed border-gray-300">
+                <i class="fas fa-map-marked-alt text-6xl text-brand-teal/50 mb-4"></i>
+                <h4 class="text-xl font-semibold text-brand-blue">No Saved Addresses Found</h4>
+                <p class="text-gray-600 mb-6">Click 'Add New Address' to save your first delivery location.</p>
+                <button onclick="showModal()" class="px-6 py-2 bg-brand-teal text-white font-medium rounded-xl hover:bg-brand-teal/90 transition-colors shadow-sm-brand">
+                    <i class="fas fa-plus mr-2"></i> Add Now
+                </button>
             </div>
 
-            <!-- Address Card 2 (Work) -->
-            <div class="bg-white p-6 rounded-3xl shadow-soft border border-gray-200">
-                <div class="flex items-start mb-4">
-                    <i class="fas fa-briefcase text-2xl text-brand-blue/70 mr-4 mt-1"></i>
-                    <div>
-                        <h4 class="font-bold text-xl text-brand-blue">Work Office</h4>
-                        <p class="text-sm text-gray-600">Reception Desk (Extension 42)</p>
-                    </div>
-                </div>
-                <p class="text-gray-700 leading-relaxed mb-4">
-                    Floor 10, Heritage Towers, 145 Akin Adesola St., Victoria Island, Lagos.
-                </p>
-                <div class="flex space-x-3">
-                    <button onclick="showModal('edit')" class="text-sm text-brand-teal font-medium hover:text-brand-blue transition-colors">
-                        <i class="fas fa-edit mr-1"></i> Edit
-                    </button>
-                    <button class="text-sm text-brand-red font-medium hover:text-brand-orange transition-colors">
-                        <i class="fas fa-trash-alt mr-1"></i> Delete
-                    </button>
-                </div>
-            </div>
-
-            <!-- Address Card 3 (Friend's House) -->
-            <div class="bg-white p-6 rounded-3xl shadow-soft border border-gray-200">
-                <div class="flex items-start mb-4">
-                    <i class="fas fa-user-friends text-2xl text-brand-blue/70 mr-4 mt-1"></i>
-                    <div>
-                        <h4 class="font-bold text-xl text-brand-blue">Friend's Place (Bimpe)</h4>
-                        <p class="text-sm text-gray-600">Bimpe Adebayo (+234 810 987 6543)</p>
-                    </div>
-                </div>
-                <p class="text-gray-700 leading-relaxed mb-4">
-                    12 Olubunmi Ojo Street, Phase 3 Estate, Lekki, Lagos.
-                </p>
-                <div class="flex space-x-3">
-                    <button onclick="showModal('edit')" class="text-sm text-brand-teal font-medium hover:text-brand-blue transition-colors">
-                        <i class="fas fa-edit mr-1"></i> Edit
-                    </button>
-                    <button class="text-sm text-brand-red font-medium hover:text-brand-orange transition-colors">
-                        <i class="fas fa-trash-alt mr-1"></i> Delete
-                    </button>
-                </div>
-            </div>
-            
-        </div>
-
-        <!-- Empty State Placeholder (Optional) -->
-        <!-- <div class="text-center py-16 mt-8 bg-white rounded-3xl shadow-soft/50 border border-dashed border-gray-300">
-            <i class="fas fa-map-marked-alt text-6xl text-brand-teal/50 mb-4"></i>
-            <h4 class="text-xl font-semibold text-brand-blue">No Saved Addresses Found</h4>
-            <p class="text-gray-600 mb-6">Click 'Add New Address' to save your first delivery location.</p>
-            <button onclick="showModal()" class="px-6 py-2 bg-brand-teal text-white font-medium rounded-xl hover:bg-brand-teal/90 transition-colors shadow-sm-brand">
-                <i class="fas fa-plus mr-2"></i> Add Now
-            </button>
-        </div> -->
-
+        @endif
 
         <!-- Footer Spacer -->
         <div class="h-12"></div>
@@ -229,7 +227,7 @@
     
     <!-- 3. Add/Edit Address Modal -->
     <div id="address-modal" class="modal fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
-        <div class="modal-content bg-white w-full max-w-lg rounded-3xl shadow-xl-heavy p-6 md:p-8" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-content bg-white w-full max-w-lg rounded-3xl shadow-xl-heavy p-6 md:p-8 max-h-[90vh] overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="modal-title">
             <div class="flex justify-between items-center border-b border-brand-grey/50 pb-4 mb-6">
                 <h3 id="modal-title" class="text-2xl font-bold text-brand-blue">Add New Delivery Address</h3>
                 <button onclick="hideModal()" class="text-gray-500 hover:text-brand-red transition-colors">
@@ -237,47 +235,54 @@
                 </button>
             </div>
 
-            <form id="address-form" class="space-y-4">
-                
+            <form action="{{ route('addresses.store') }}" method="POST" id="address-form" class="space-y-4">
+                @csrf
                 <!-- Address Label -->
                 <div>
-                    <label for="address_label" class="block text-sm font-medium text-gray-700 mb-1">Address Label (e.g., Home, Work, Mum's Place)</label>
-                    <input type="text" id="address_label" class="form-input" placeholder="e.g., Home" required>
+                    <label for="address_label" class="block text-sm font-medium text-gray-700 mb-1">Address Label</label>
+                    <!-- <input type="text" id="address_label" name="label" class="form-input" placeholder="e.g., Home" required> -->
+                     <select name="label" class="form-input" id="address_label">
+                        <option value="">Select Address Label</option>
+                        <option value="Home">Home</option>
+                        <option value="Work Office">Work</option>
+                        <option value="Mum's Place">Mum's Place</option>
+                        <option value="Dad's Place">Dad's Place</option>
+                        <option value="Friend's Place">Friend's Place</option>
+                        <option value="Other">Other</option>
+                     </select>
                 </div>
                 
                 <!-- Contact Name -->
                 <div>
                     <label for="contact_name" class="block text-sm font-medium text-gray-700 mb-1">Recipient Name</label>
-                    <input type="text" id="contact_name" class="form-input" placeholder="Name for package delivery" required>
+                    <input type="text" id="contact_name" name="recipient_name" class="form-input" placeholder="Name for package delivery" required>
                 </div>
 
                 <!-- Phone Number -->
                 <div>
                     <label for="phone_number" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                    <input type="tel" id="phone_number" class="form-input" placeholder="+234 800 000 0000" required>
+                    <input type="tel" id="phone_number" name="phone" class="form-input" placeholder="+234 800 000 0000" required>
                 </div>
 
                 <!-- Street Address / Landmark -->
                 <div>
                     <label for="street_address" class="block text-sm font-medium text-gray-700 mb-1">Street Address / Nearest Landmark</label>
-                    <textarea id="street_address" rows="3" class="form-input resize-none" placeholder="House number, Street Name, or detailed directions" required></textarea>
+                    <textarea id="street_address" name="street_address" rows="3" class="form-input resize-none" placeholder="House number, Street Name, or detailed directions" required></textarea>
                 </div>
 
                 <!-- City / State -->
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label for="city" class="block text-sm font-medium text-gray-700 mb-1">City</label>
-                        <input type="text" id="city" class="form-input" placeholder="e.g., Lagos" required>
+                        <input type="text" id="city" name="city" class="form-input" placeholder="e.g., Lagos" required>
                     </div>
                     <div>
                         <label for="state" class="block text-sm font-medium text-gray-700 mb-1">State</label>
-                        <select id="state" class="form-input">
+                        <select id="state" name="state" class="form-input">
                             <option value="">Select State</option>
-                            <option value="LA">Lagos</option>
-                            <option value="RV">Rivers</option>
-                            <option value="AB">Abuja FCT</option>
-                            <option value="KN">Kano</option>
-                            <!-- Add more states here -->
+                            <!-- <option value="Lagos">Lagos</option> -->
+                            <!-- <option value="Rivers">Rivers</option> -->
+                            <option value="FCT">Abuja FCT</option>
                         </select>
                     </div>
                 </div>
@@ -289,15 +294,24 @@
                         <p class="text-xs text-gray-500">Use this address automatically for future orders.</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" value="" class="sr-only peer">
+                        <input type="checkbox" value="1" name="is_default" class="sr-only peer">
                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-teal/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-teal"></div>
                     </label>
                 </div>
 
                 <!-- Submit Button -->
                 <div class="pt-6">
-                    <button type="submit" class="w-full px-6 py-3 bg-brand-teal text-white font-semibold rounded-xl hover:bg-brand-teal/90 transition-colors shadow-sm-brand">
-                        Save Address
+                    <button id="submitBtn" type="submit" class="w-full px-6 py-3 bg-brand-teal text-white font-semibold rounded-xl hover:bg-brand-teal/90 transition-colors shadow-sm-brand flex items-center justify-center gap-2">
+
+                        <!-- Spinner -->
+                        <svg id="spinner" class="w-5 h-5 animate-spin hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="white" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="white"
+                                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z">
+                            </path>
+                        </svg>
+
+                        <span id="btnText">Save Address</span>
                     </button>
                 </div>
             </form>
@@ -314,8 +328,7 @@
         const modalTitle = document.getElementById('modal-title');
         const addressForm = document.getElementById('address-form');
 
-        // --- Sidebar Toggle Functions ---
-
+        //Sidebar Toggle Functions
         function toggleSidebar() {
             const isOpen = sidebar.classList.toggle('open');
             backdrop.classList.toggle('hidden', !isOpen);
@@ -338,7 +351,6 @@
             });
         });
 
-        // --- Modal Functions ---
 
         function showModal(mode = 'add', addressData = null) {
             if (mode === 'edit' && addressData) {
@@ -370,13 +382,19 @@
                 hideModal();
             }
         });
-        
-        // Prevent form submission for this example
-        addressForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            console.log("Address saved!");
-            // In a real app: Process form data, save to Firestore, then hideModal()
-            hideModal();
+
+
+
+        document.getElementById('address-form').addEventListener('submit', function () {
+            const btn = document.getElementById('submitBtn');
+            const spinner = document.getElementById('spinner');
+            const text = document.getElementById('btnText');
+
+            spinner.classList.remove('hidden');
+            text.innerText = 'Saving...';
+
+            btn.disabled = true;
+            btn.classList.add('opacity-70', 'cursor-not-allowed');
         });
     </script>
 </body>

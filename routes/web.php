@@ -102,17 +102,28 @@ Route::middleware('auth')->group(function () {
     //users dashboard routes
     Route::get('/dashboard', [homeController::class, 'index'])->name('dashboard');
     Route::get('/settings', [settingsController::class, 'index'])->name('settings');
+
+    //user profile
     Route::get('/userprofile', [userprofileController::class, 'index'])->name('userprofile');
     Route::post('/userprofile', [userprofileController::class, 'update'])->name('userprofile.update');
     Route::post('/password/update', [userprofileController::class, 'updatePassword'])->name('password.update');
+
     Route::get('/subscriptions', [subscriptionController::class, 'index'])->name('subscriptions');
+
+    //delivery address
     Route::get('/delivery_address', [deliveryaddressController::class, 'index'])->name('delivery_address');
-    Route::get('/edit_address', [editaddressController::class, 'index'])->name('edit_address');
+    Route::post('/addresses', [deliveryaddressController::class, 'store'])->name('addresses.store');
+    Route::put('/addresses/{id}', [deliveryaddressController::class, 'update'])->name('addresses.update');
+    Route::delete('/addresses/{id}', [deliveryaddressController::class, 'destroy'])->name('addresses.destroy');
+
     Route::get('/myorders', [myordersController::class, 'index'])->name('myorders');
     Route::get('/mypackages', [mypackagesController::class, 'index'])->name('mypackages');
     Route::get('/report', [reportController::class, 'index'])->name('report');
 
     // 2FA routes
     Route::post('/2fa/toggle', [TwoFactorController::class, 'toggle'])->name('2fa.toggle');
+
+    // Account deactivation
+    Route::post('/account/deactivate', [userprofileController::class, 'deactivate'])->name('account.deactivate');
 
 });

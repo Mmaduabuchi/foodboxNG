@@ -141,9 +141,9 @@
             <button class="tab-button text-brand-blue/70 hover:bg-brand-grey" onclick="showTab('privacy')">
                 <i class="fas fa-shield-virus mr-2"></i> Privacy & Data
             </button>
-            <button class="tab-button text-brand-blue/70 hover:bg-brand-grey" onclick="showTab('accessibility')">
+            <!-- <button class="tab-button text-brand-blue/70 hover:bg-brand-grey" onclick="showTab('accessibility')">
                 <i class="fas fa-universal-access mr-2"></i> Accessibility
-            </button>
+            </button> -->
         </div>
 
         <!-- Settings Content -->
