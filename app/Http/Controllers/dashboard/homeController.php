@@ -4,11 +4,13 @@ namespace App\Http\Controllers\dashboard;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class homeController extends Controller
 {
     //
     public function index() {
-        return view('dashboard.home');
+        $user = Auth::user();
+        return view('dashboard.home', compact('user'));
     }
 }

@@ -20,6 +20,8 @@ use App\Http\Controllers\dashboard\mypackagesController;
 use App\Http\Controllers\dashboard\reportController;
 use App\Http\Controllers\auth\forgotpasswordController;
 use App\Http\Controllers\auth\resetpasswordController; 
+use App\Http\Controllers\dashboard\TwoFactorController;
+use App\Http\Controllers\auth\loginOtpController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -82,6 +84,10 @@ Route::middleware('guest')->group(function () {
     //reset password
     Route::get('/resetpassword', [resetpasswordController::class, 'index'])->name("resetpassword");
     Route::post('/resetpassword', [resetpasswordController::class, 'store'])->name("resetpassword.store");
+    //2fa verify
+    Route::get('/otp/verify', [loginOtpController::class, 'show'])->name('otp_verify');
+    Route::post('/otp/verify', [loginOtpController::class, 'verify'])->name('otp_verify');
+    Route::post('/otp/resend', [loginOtpController::class, 'resend'])->name('otp_resend');
 });
 
 
@@ -97,11 +103,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [homeController::class, 'index'])->name('dashboard');
     Route::get('/settings', [settingsController::class, 'index'])->name('settings');
     Route::get('/userprofile', [userprofileController::class, 'index'])->name('userprofile');
+    Route::post('/userprofile', [userprofileController::class, 'update'])->name('userprofile.update');
+    Route::post('/password/update', [userprofileController::class, 'updatePassword'])->name('password.update');
     Route::get('/subscriptions', [subscriptionController::class, 'index'])->name('subscriptions');
     Route::get('/delivery_address', [deliveryaddressController::class, 'index'])->name('delivery_address');
     Route::get('/edit_address', [editaddressController::class, 'index'])->name('edit_address');
     Route::get('/myorders', [myordersController::class, 'index'])->name('myorders');
     Route::get('/mypackages', [mypackagesController::class, 'index'])->name('mypackages');
     Route::get('/report', [reportController::class, 'index'])->name('report');
+
+    // 2FA routes
+    Route::post('/2fa/toggle', [TwoFactorController::class, 'toggle'])->name('2fa.toggle');
 
 });

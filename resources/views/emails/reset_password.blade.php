@@ -15,5 +15,8 @@
     </a>
 
     <p>If you didn’t create this account, ignore this email.</p>
+
+    <p>Thank you,</p>
+    <p>FoodBox NG</p>
 </body>
 </html>

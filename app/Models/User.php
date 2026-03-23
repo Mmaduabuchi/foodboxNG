@@ -25,6 +25,7 @@ class User extends Authenticatable
         'phone',
         'referral_code',
         'referred_by',
+        'two_factor_enabled',
         'is_suspended',
     ];
 

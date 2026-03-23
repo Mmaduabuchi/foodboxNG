@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OtpMail;
+use Illuminate\Support\Facades\Session;
 
 class loginController extends Controller
 {
@@ -37,9 +40,28 @@ class loginController extends Controller
                 return back()->withErrors(['email' => 'Email not verified']);
             }
 
+            //2fa
+            if ($user->two_factor_enabled) {
+                // Generate OTP
+                $otp = rand(100000, 999999);
+
+                session([
+                    '2fa_user_id' => $user->id,
+                    '2fa_otp' => $otp,
+                    '2fa_expires_at' => now()->addMinutes(5)
+                ]);
+
+                // Send OTP email
+                Mail::to($user->email)->send(new OtpMail($otp, $user));
+                Auth::logout();
+
+                return redirect()->route('otp_verify');
+            }   
+
+            //normal login
             $request->session()->regenerate();
 
-            return redirect()->route('dashboard');
+            return redirect()->route('dashboard')->with('success', 'Welcome back, ' . $user->name . '!');
         }
 
         return back()->withErrors(['email' => 'Invalid credentials']);

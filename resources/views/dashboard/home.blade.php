@@ -108,10 +108,24 @@
     
     <!-- Main Content Area -->
     <main class="p-4 mt-20 md:p-8 main-content">
+
+        @if (session('success'))
+            <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl mb-4" role="alert">
+                <strong class="font-bold">Success!</strong>
+                <span class="block sm:inline">{{ session('success') }}</span>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-4" role="alert">
+                <strong class="font-bold">Error!</strong>
+                <span class="block sm:inline">{{ session('error') }}</span>
+            </div>
+        @endif
         
         <!-- Welcome Banner -->
         <div class="bg-white p-6 rounded-2xl shadow-soft mb-8 border-l-4 border-brand-teal">
-            <h2 class="text-2xl font-bold text-brand-blue mb-1">Hello, Jane!</h2>
+            <h2 class="text-2xl font-bold text-brand-blue mb-1">Hello, {{ $user->name }}!</h2>
             <p class="text-gray-600">Here is your quick overview of your FoodBox NG account and latest activities.</p>
         </div>
 

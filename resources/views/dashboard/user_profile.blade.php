@@ -112,6 +112,12 @@
 
     <!-- Main Content Area -->
     <main class="mt-20 p-4 md:p-8 main-content">
+
+        @if(session('success'))
+            <div class="mb-4 p-4 bg-green-100 text-green-700 rounded-lg">
+                {{ session('success') }}
+            </div>
+        @endif
         
         <!-- Header Section -->
         <div class="mb-8">
@@ -133,12 +139,12 @@
                             <i class="fas fa-camera text-sm"></i>
                         </button>
                     </div>
-                    <h2 class="text-xl font-bold text-brand-blue">Jane Okoro</h2>
-                    <p class="text-sm text-gray-500 mb-3">jane.okoro@example.com</p>
+                    <h2 class="text-xl font-bold text-brand-blue">{{ $user->name }}</h2>
+                    <p class="text-sm text-gray-500 mb-3">{{ $user->email }}</p>
                     <div class="inline-flex items-center text-xs font-semibold px-3 py-1 rounded-full bg-brand-gold/20 text-brand-gold">
                         <i class="fas fa-crown mr-1"></i> Premium Member
                     </div>
-                    <p class="text-xs text-gray-400 mt-4">Member since January 2024</p>
+                    <p class="text-xs text-gray-400 mt-4">Member since {{ $user->created_at->format('F Y') }}</p>
                 </div>
 
                 <!-- Account Status / Deactivation -->
@@ -157,38 +163,49 @@
                 <!-- 3. Personal Information Form -->
                 <div id="personal-info" class="bg-white p-6 md:p-8 rounded-3xl shadow-soft">
                     <h3 class="text-xl font-bold text-brand-blue mb-6 border-b border-brand-grey pb-3 flex items-center gap-3"><i class="fas fa-user-circle text-brand-teal"></i> Personal Information</h3>
-                    <form>
+                    <form action="{{ route('userprofile.update') }}" method="POST">
+                        @csrf
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- First Name -->
                             <div>
                                 <label for="first_name" class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                                <input type="text" id="first_name" name="first_name" value="Jane" class="form-input" required>
-                            </div>
-                            <!-- Last Name -->
-                            <div>
-                                <label for="last_name" class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                                <input type="text" id="last_name" name="last_name" value="Okoro" class="form-input" required>
-                            </div>
-                            <!-- Email -->
-                            <div class="md:col-span-2">
-                                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                                <input type="email" id="email" name="email" value="jane.okoro@example.com" class="form-input" disabled>
-                                <p class="text-xs text-gray-500 mt-1">Email address cannot be changed here. Contact support.</p>
+                                <input type="text" id="first_name" name="name" value="{{ $user->name }}" class="form-input" required>
+                                @error('name')
+                                    <div class="text-red-500 text-sm">{{ $message }}</div>
+                                @enderror
                             </div>
                             <!-- Phone Number -->
                             <div>
                                 <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                                <input type="tel" id="phone" name="phone" value="+234 803 123 4567" class="form-input">
+                                <input type="tel" id="phone" name="phone" value="{{ $user->phone }}" class="form-input" required>
+                                @error('phone')
+                                    <div class="text-red-500 text-sm">{{ $message }}</div>
+                                @enderror
                             </div>
-                            <!-- Date of Birth -->
-                            <div>
-                                <label for="dob" class="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
-                                <input type="date" id="dob" name="dob" value="1995-10-25" class="form-input">
+                            <!-- Email -->
+                            <div class="md:col-span-2">
+                                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                <input type="email" id="email" name="email" value="{{ $user->email }}" class="form-input" disabled>
+                                <p class="text-xs text-gray-500 mt-1">Email address cannot be changed here. Contact support.</p>
                             </div>
                         </div>
+                        @if(session('profile_success'))
+                            <div class="mb-4 p-4 mt-4 bg-green-100 text-green-700 rounded-lg">
+                                {{ session('profile_success') }}
+                            </div>
+                        @endif
                         <div class="mt-8 flex justify-end">
-                            <button type="submit" class="px-6 py-3 bg-brand-teal text-white font-semibold rounded-xl hover:bg-brand-teal/90 transition-colors shadow-sm-brand">
-                                Save Profile Changes
+                            <button id="submitBtn" type="submit" class="px-6 py-3 bg-brand-teal text-white font-semibold rounded-xl hover:bg-brand-teal/90 transition-colors shadow-sm-brand flex items-center gap-2">
+
+                                <!-- Spinner (hidden by default) -->
+                                <svg id="spinner" class="w-5 h-5 animate-spin hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="white" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="white"
+                                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z">
+                                    </path>
+                                </svg>
+
+                                <span id="btnText">Save Profile Changes</span>
                             </button>
                         </div>
                     </form>
@@ -200,22 +217,71 @@
                     
                     <div class="space-y-6">
                         <!-- Change Password Section -->
-                        <div class="border-b border-brand-grey pb-6">
+                        <form id="passwordForm" action="{{ route('password.update') }}" method="POST" class="border-b border-brand-grey pb-6">
+                            @csrf
                             <h4 class="font-semibold text-lg text-brand-blue mb-3">Change Password</h4>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label for="current_password" class="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
-                                    <input type="password" id="current_password" class="form-input" placeholder="Enter current password">
+                                <div class="relative">
+                                    <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-teal"></i>
+                                    <input type="password" name="current_password" id="current_password" placeholder="Enter current password" required class="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all">
+                                    <button type="button" onclick="toggleVisibility('current_password', 'toggleIcon1')" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-brand-teal transition-colors focus:outline-none">
+                                        <i id="toggleIcon1" class="fas fa-eye"></i>
+                                    </button>
                                 </div>
-                                <div>
-                                    <label for="new_password" class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
-                                    <input type="password" id="new_password" class="form-input" placeholder="Enter new password">
+
+                                <div class="relative">
+                                    <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-teal"></i>
+                                    <input type="password" name="password" id="new_password" placeholder="Enter new password" required class="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all">
+                                    <button type="button" onclick="toggleVisibility('new_password', 'toggleIcon3')" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-brand-teal transition-colors focus:outline-none">
+                                        <i id="toggleIcon3" class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Confirm Password -->
+                                <div class="md:col-span-2 relative">
+                                    <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-teal"></i>
+                                    <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Confirm new password" required class="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all">
+                                    <button type="button" onclick="toggleVisibility('password_confirmation', 'toggleIcon4')" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-brand-teal transition-colors focus:outline-none">
+                                        <i id="toggleIcon4" class="fas fa-eye"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <button class="mt-4 px-5 py-2 text-sm bg-brand-blue text-white font-semibold rounded-xl hover:bg-brand-blue/90 transition-colors">
-                                Update Password
+
+                            @if(session('password_success'))
+                                <div class="mb-4 p-4 mt-4 bg-green-100 text-green-700 rounded-lg">
+                                    {{ session('password_success') }}
+                                </div>
+                            @endif
+
+                            @if(session('password_error'))
+                                <div class="mb-4 p-4 mt-4 bg-red-100 text-red-700 rounded-lg">
+                                    {{ session('password_error') }}
+                                </div>
+                            @endif
+
+                            @if ($errors->any())
+                                <div class="mb-4 p-4 mt-4 bg-red-100 text-red-700 rounded-lg">
+                                    <ul class="list-disc pl-5">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+
+                            <!-- Button with Spinner -->
+                            <button id="passwordBtn" type="submit" class="mt-4 px-5 py-2 text-sm bg-brand-blue text-white font-semibold rounded-xl hover:bg-brand-blue/90 transition-colors flex items-center gap-2">
+
+                                <svg id="passwordSpinner" class="w-4 h-4 animate-spin hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="white" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="white"
+                                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z">
+                                    </path>
+                                </svg>
+
+                                <span id="passwordBtnText">Update Password</span>
                             </button>
-                        </div>
+                        </form>
 
                         <!-- Two-Factor Authentication Toggle -->
                         <div class="flex justify-between items-center">
@@ -223,10 +289,13 @@
                                 <h4 class="font-semibold text-lg text-brand-blue">Two-Factor Authentication (2FA)</h4>
                                 <p class="text-sm text-gray-600">Adds an extra layer of security to your account.</p>
                             </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" value="" class="sr-only peer" checked>
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-teal/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-teal"></div>
-                            </label>
+                            <form action="{{ route('2fa.toggle') }}" method="POST">
+                                @csrf
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="two_factor_enabled" value="1" class="sr-only peer" {{ $user->two_factor_enabled ? 'checked' : '' }} onchange="this.form.submit()">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand-teal/30 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 peer-checked:bg-brand-teal"></div>
+                                </label>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -317,6 +386,56 @@
                 }
             });
         });
+
+
+
+        document.querySelector("#personal-info form").addEventListener("submit", function () {
+            const btn = document.getElementById("submitBtn");
+            const spinner = document.getElementById("spinner");
+            const text = document.getElementById("btnText");
+
+            // Show spinner
+            spinner.classList.remove("hidden");
+
+            // Change text
+            text.innerText = "Saving...";
+
+            // Disable button
+            btn.disabled = true;
+        });
+
+
+
+        document.getElementById("passwordForm").addEventListener("submit", function () {
+            const btn = document.getElementById("passwordBtn");
+            const spinner = document.getElementById("passwordSpinner");
+            const text = document.getElementById("passwordBtnText");
+
+            spinner.classList.remove("hidden");
+            text.innerText = "Updating...";
+            btn.disabled = true;
+        });
+
+
+        // Toggle password visibility
+        function toggleVisibility(fieldId, iconId) {
+            const field = document.getElementById(fieldId);
+            const icon = document.getElementById(iconId);
+            if (field.type === 'password') {
+                field.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                field.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+
+        if (window.location.hash === "#security") {
+            document.getElementById("security").scrollIntoView({
+                behavior: "smooth"
+            });
+        }
     </script>
 </body>
 </html>
