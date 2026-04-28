@@ -246,9 +246,9 @@
 
                             </div>
 
-                            <button class="w-full md:w-auto mt-4 md:mt-0 ml-0 md:ml-6 bg-brand-teal text-white font-medium py-2 px-4 rounded-full hover:bg-brand-blue transition-colors text-sm shadow-sm-brand">
+                            <a href="{{ route('manage_subscription') }}" type="button" class="w-full md:w-auto mt-4 md:mt-0 ml-0 md:ml-6 bg-brand-teal text-white font-medium py-2 px-4 rounded-full hover:bg-brand-blue transition-colors text-sm shadow-sm-brand">
                                 <i class="fas fa-cog mr-2"></i> Manage Subscription
-                            </button>
+                            </a>
 
                         </div>
 

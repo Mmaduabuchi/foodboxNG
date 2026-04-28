@@ -22,6 +22,9 @@ use App\Http\Controllers\auth\forgotpasswordController;
 use App\Http\Controllers\auth\resetpasswordController; 
 use App\Http\Controllers\dashboard\TwoFactorController;
 use App\Http\Controllers\auth\loginOtpController;
+use App\Http\Controllers\dashboard\paymenthistoryController;
+use App\Http\Controllers\dashboard\managesubscriptionController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -119,6 +122,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/myorders', [myordersController::class, 'index'])->name('myorders');
     Route::get('/mypackages', [mypackagesController::class, 'index'])->name('mypackages');
     Route::get('/report', [reportController::class, 'index'])->name('report');
+
+    //payment history
+    Route::get('/payment_history', [paymenthistoryController::class, 'index'])->name('payment_history');
+
+    //manage subscription
+    Route::get('/manage_subscription', [managesubscriptionController::class, 'index'])->name('manage_subscription');
+    Route::post('/subscription/preferences', [managesubscriptionController::class, 'updatePreferences'])->name('subscription.preferences.update');
 
     // 2FA routes
     Route::post('/2fa/toggle', [TwoFactorController::class, 'toggle'])->name('2fa.toggle');

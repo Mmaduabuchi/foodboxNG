@@ -50,8 +50,8 @@
             <i class="fas fa-map-marker-alt text-lg w-6 text-center {{ request()->routeIs('delivery_address') ? 'text-brand-gold' : '' }}"></i>
             <span>Delivery Address</span>
         </a>
-        <a href="#" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all text-white/80 hover:bg-brand-teal hover:text-white">
-            <i class="fas fa-credit-card text-lg w-6 text-center"></i>
+        <a href="{{ route('payment_history') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('payment_history') ? 'bg-brand-teal text-white' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">
+            <i class="fas fa-credit-card text-lg w-6 text-center {{ request()->routeIs('payment_history') ? 'text-brand-gold' : '' }}"></i>
             <span>Payment History</span>
         </a>
         <a href="{{ route('userprofile') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('userprofile') ? 'bg-brand-teal text-white' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">

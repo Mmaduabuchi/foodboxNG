@@ -22,6 +22,8 @@ class Subscription extends Model
         'status',
         'delivery_frequency',
         'delivery_zone',
+        'delivery_window',
+        'special_notes',
         'next_renewal_date',
         'last_renewal_date',
         'paused_at',
