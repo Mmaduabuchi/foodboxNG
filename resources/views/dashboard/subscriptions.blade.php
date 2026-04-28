@@ -63,11 +63,22 @@
         /* Sidebar transition for smoother mobile opening/closing */
         #sidebar {
             transition: transform 0.3s ease-in-out;
-            transform: translateX(-100%);
             z-index: 50;
         }
-        #sidebar.open {
-            transform: translateX(0);
+        /* On mobile, hide the sidebar off-screen by default */
+        @media (max-width: 1023px) {
+            #sidebar {
+                transform: translateX(-100%);
+            }
+            #sidebar.open {
+                transform: translateX(0);
+            }
+        }
+        /* On desktop (lg+), sidebar is always visible */
+        @media (min-width: 1024px) {
+            #sidebar {
+                transform: translateX(0);
+            }
         }
         
         /* Backdrop for mobile sidebar */
@@ -109,7 +120,7 @@
     @include('dashboard.header')
 
     <!-- Main Content Area -->
-    <main class="mt-20 p-4 md:p-8 main-content">
+    <main class="p-4 mt-20 md:p-8 lg:ml-64 main-content">
         
         <!-- Header Section -->
         <div class="mb-6">

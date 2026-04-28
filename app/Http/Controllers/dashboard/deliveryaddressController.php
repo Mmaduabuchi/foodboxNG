@@ -11,6 +11,13 @@ class deliveryaddressController extends Controller
 {
     //
     public function index(){
+        $user = Auth::user();
+
+        // Safety check
+        if (!$user) {
+            return redirect()->route('login');
+        }
+        
         $addresses = Address::where('user_id', Auth::id())->get();
         return view('dashboard.delivery_address', compact('addresses'));
     }

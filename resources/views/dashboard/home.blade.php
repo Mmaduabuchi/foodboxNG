@@ -63,11 +63,22 @@
         /* Sidebar transition for smoother mobile opening/closing */
         #sidebar {
             transition: transform 0.3s ease-in-out;
-            transform: translateX(-100%);
             z-index: 50;
         }
-        #sidebar.open {
-            transform: translateX(0);
+        /* On mobile, hide the sidebar off-screen by default */
+        @media (max-width: 1023px) {
+            #sidebar {
+                transform: translateX(-100%);
+            }
+            #sidebar.open {
+                transform: translateX(0);
+            }
+        }
+        /* On desktop (lg+), sidebar is always visible */
+        @media (min-width: 1024px) {
+            #sidebar {
+                transform: translateX(0);
+            }
         }
         
         /* Backdrop for mobile sidebar */
@@ -107,7 +118,7 @@
     @include('dashboard.header')
     
     <!-- Main Content Area -->
-    <main class="p-4 mt-20 md:p-8 main-content">
+    <main class="p-4 mt-20 md:p-8 lg:ml-64 main-content">
 
         @if (session('success'))
             <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl mb-4" role="alert">
@@ -139,8 +150,8 @@
                     <i class="fas fa-cubes text-xl text-brand-teal"></i>
                 </div>
                 <div class="flex items-end justify-between">
-                    <span class="text-4xl font-extrabold text-brand-blue">2</span>
-                    <p class="text-xs text-brand-teal font-medium">+1 new this month</p>
+                    <span class="text-4xl font-extrabold text-brand-blue">{{ $activeSubscriptions }}</span>
+                    <!-- <p class="text-xs text-brand-teal font-medium">+1 new this month</p> -->
                 </div>
             </div>
 
@@ -151,7 +162,7 @@
                     <i class="fas fa-box text-xl text-brand-blue"></i>
                 </div>
                 <div class="flex items-end justify-between">
-                    <span class="text-4xl font-extrabold text-brand-blue">14</span>
+                    <span class="text-4xl font-extrabold text-brand-blue">{{ $totalOrders }}</span>
                     <p class="text-xs text-gray-500 font-medium">Lifetime count</p>
                 </div>
             </div>
@@ -163,8 +174,15 @@
                     <i class="fas fa-sync-alt text-xl text-brand-gold"></i>
                 </div>
                 <div class="flex items-end">
-                    <span class="text-xl font-extrabold text-brand-blue">Active</span>
-                    <p class="text-xs status-badge bg-brand-gold/20 text-brand-blue ml-2">Premium Plan</p>
+                    <span class="text-xl font-extrabold text-brand-blue">
+                        {{ $activeSubscription ? ucfirst($activeSubscription->status) : 'No Active Plan' }}
+                    </span>
+                    
+                    @if($activeSubscription && $activeSubscription->package)
+                        <p class="text-xs status-badge bg-brand-gold/20 text-brand-blue ml-2">
+                            {{ $activeSubscription->package->name }}
+                        </p>
+                    @endif
                 </div>
             </div>
 
@@ -175,7 +193,7 @@
                     <i class="fas fa-shipping-fast text-xl text-brand-orange"></i>
                 </div>
                 <div class="flex items-end justify-between">
-                    <span class="text-4xl font-extrabold text-brand-blue">1</span>
+                    <span class="text-4xl font-extrabold text-brand-blue">{{ $pendingOrders }}</span>
                     <p class="text-xs text-brand-orange font-medium">ETA: 2 days</p>
                 </div>
             </div>
@@ -189,82 +207,152 @@
 
                 <!-- 5. Active Subscription Section -->
                 <section class="bg-white p-6 rounded-2xl shadow-soft">
-                    <h3 class="text-xl font-bold mb-4 text-brand-blue">Active Subscription</h3>
-                    <div class="flex flex-col md:flex-row items-center bg-brand-grey/50 p-4 rounded-xl border border-gray-100">
-                        <img src="https://placehold.co/80x80/2A9D8F/ffffff?text=Premium" onerror="this.onerror=null; this.src='https://placehold.co/80x80/2A9D8F/ffffff?text=Premium';" alt="Package Image" class="w-20 h-20 object-cover rounded-lg mr-4 mb-4 md:mb-0 shadow-sm-brand">
-                        <div class="flex-grow text-center md:text-left">
-                            <p class="font-bold text-lg text-brand-blue">The Family Feast Package (Monthly)</p>
-                            <p class="text-sm text-gray-600 mt-1">Next Renewal: <span class="font-semibold text-brand-teal">October 15, 2025</span></p>
-                            <p class="text-sm text-gray-600">Renewal Amount: <span class="font-bold text-brand-blue">₦45,000</span></p>
+
+                    <h3 class="text-xl font-bold mb-4 text-brand-blue">
+                        Active Subscription
+                    </h3>
+
+                    @if($activeSubscription)
+
+                        <div class="flex flex-col md:flex-row items-center bg-brand-grey/50 p-4 rounded-xl border border-gray-100">
+
+                            <!-- Package Image (optional later) -->
+                            <img 
+                                src="https://placehold.co/80x80/2A9D8F/ffffff?text={{ $activeSubscription->package->name ?? 'Box' }}" 
+                                alt="Package Image"
+                                class="w-20 h-20 object-cover rounded-lg mr-4 mb-4 md:mb-0 shadow-sm-brand"
+                            >
+
+                            <div class="flex-grow text-center md:text-left">
+
+                                <p class="font-bold text-lg text-brand-blue">
+                                    {{ $activeSubscription->package->name ?? 'No Package' }}
+                                    ({{ ucfirst($activeSubscription->delivery_frequency) }})
+                                </p>
+
+                                <p class="text-sm text-gray-600 mt-1">
+                                    Next Renewal: 
+                                    <span class="font-semibold text-brand-teal">
+                                        {{ $activeSubscription->next_renewal_date?->format('M d, Y') }}
+                                    </span>
+                                </p>
+
+                                <p class="text-sm text-gray-600">
+                                    Renewal Amount: 
+                                    <span class="font-bold text-brand-blue">
+                                        ₦{{ number_format($activeSubscription->package->price ?? 0) }}
+                                    </span>
+                                </p>
+
+                            </div>
+
+                            <button class="w-full md:w-auto mt-4 md:mt-0 ml-0 md:ml-6 bg-brand-teal text-white font-medium py-2 px-4 rounded-full hover:bg-brand-blue transition-colors text-sm shadow-sm-brand">
+                                <i class="fas fa-cog mr-2"></i> Manage Subscription
+                            </button>
+
                         </div>
-                        <button class="w-full md:w-auto mt-4 md:mt-0 ml-0 md:ml-6 bg-brand-teal text-white font-medium py-2 px-4 rounded-full hover:bg-brand-blue transition-colors text-sm shadow-sm-brand">
-                            <i class="fas fa-cog mr-2"></i> Manage Subscription
-                        </button>
-                    </div>
+
+                    @else
+
+                        <!-- No subscription state -->
+                        <div class="text-center py-10 text-gray-500">
+                            <i class="fas fa-box-open text-3xl mb-3"></i>
+                            <p class="font-semibold">No active subscription</p>
+                            <p class="text-sm">Subscribe to a package to start deliveries</p>
+                        </div>
+
+                    @endif
+
                 </section>
 
 
                 <!-- 4. Recent Orders Section -->
                 <section class="bg-white p-6 rounded-2xl shadow-soft overflow-x-auto">
-                    <h3 class="text-xl font-bold mb-4 text-brand-blue">Recent Orders</h3>
-                    
+
+                    <h3 class="text-xl font-bold mb-4 text-brand-blue">
+                        Recent Orders
+                    </h3>
+
                     <table class="min-w-full divide-y divide-gray-200">
+
                         <thead class="bg-brand-grey">
                             <tr>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider rounded-tl-lg">Order ID</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Package Name</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Amount</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
-                                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider rounded-tr-lg">Action</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Order ID</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Package Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Amount</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Date</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Action</th>
                             </tr>
                         </thead>
+
                         <tbody class="divide-y divide-gray-100">
-                            <!-- Order 1 -->
-                            <tr class="hover:bg-brand-grey/50 transition-colors">
-                                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-brand-blue">#FBNG-2510</td>
-                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">The Student Pack</td>
-                                <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold text-brand-teal">₦15,000</td>
-                                <td class="px-4 py-4 whitespace-nowrap">
-                                    <span class="status-badge bg-brand-teal/20 text-brand-teal">Delivered</span>
-                                </td>
-                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">2025-09-25</td>
-                                <td class="px-4 py-4 whitespace-nowrap text-right">
-                                    <button class="text-brand-blue hover:text-brand-teal text-sm font-medium">View <i class="fas fa-chevron-right ml-1 text-xs"></i></button>
-                                </td>
-                            </tr>
-                            <!-- Order 2 (Processing) -->
-                            <tr class="hover:bg-brand-grey/50 transition-colors">
-                                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-brand-blue">#FBNG-2511</td>
-                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">The Family Feast</td>
-                                <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold text-brand-teal">₦45,000</td>
-                                <td class="px-4 py-4 whitespace-nowrap">
-                                    <span class="status-badge bg-brand-gold/20 text-brand-blue">Processing</span>
-                                </td>
-                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">2025-10-10</td>
-                                <td class="px-4 py-4 whitespace-nowrap text-right">
-                                    <button class="text-brand-blue hover:text-brand-teal text-sm font-medium">View <i class="fas fa-chevron-right ml-1 text-xs"></i></button>
-                                </td>
-                            </tr>
-                            <!-- Order 3 -->
-                            <tr class="hover:bg-brand-grey/50 transition-colors">
-                                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-brand-blue">#FBNG-2509</td>
-                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">The Starter Kit</td>
-                                <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold text-brand-teal">₦8,500</td>
-                                <td class="px-4 py-4 whitespace-nowrap">
-                                    <span class="status-badge bg-brand-teal/20 text-brand-teal">Delivered</span>
-                                </td>
-                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">2025-08-30</td>
-                                <td class="px-4 py-4 whitespace-nowrap text-right">
-                                    <button class="text-brand-blue hover:text-brand-teal text-sm font-medium">View <i class="fas fa-chevron-right ml-1 text-xs"></i></button>
-                                </td>
-                            </tr>
+
+                            @forelse($recentOrders as $order)
+
+                                <tr class="hover:bg-brand-grey/50 transition-colors">
+
+                                    <td class="px-4 py-4 text-sm font-medium text-brand-blue">
+                                        #FBNG-{{ str_pad($order->id, 4, '0', STR_PAD_LEFT) }}
+                                    </td>
+
+                                    <td class="px-4 py-4 text-sm text-gray-600">
+                                        {{ $order->package->name ?? 'N/A' }}
+                                    </td>
+
+                                    <td class="px-4 py-4 text-sm font-semibold text-brand-teal">
+                                        ₦{{ number_format($order->amount) }}
+                                    </td>
+
+                                    <td class="px-4 py-4">
+                                        @php
+                                            $statusColors = [
+                                                'pending' => 'bg-yellow-100 text-yellow-700',
+                                                'processing' => 'bg-blue-100 text-blue-700',
+                                                'completed' => 'bg-green-100 text-green-700',
+                                                'delivered' => 'bg-green-100 text-green-700',
+                                                'failed' => 'bg-red-100 text-red-700',
+                                            ];
+                                        @endphp
+
+                                        <span class="px-3 py-1 rounded-full text-xs font-semibold
+                                            {{ $statusColors[$order->status] ?? 'bg-gray-100 text-gray-600' }}">
+                                            {{ ucfirst($order->status) }}
+                                        </span>
+                                    </td>
+
+                                    <td class="px-4 py-4 text-sm text-gray-500">
+                                        {{ $order->created_at->format('Y-m-d') }}
+                                    </td>
+
+                                    <td class="px-4 py-4 text-right">
+                                        <a href="#" class="text-brand-blue hover:text-brand-teal text-sm font-medium">
+                                            View <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                                        </a>
+                                    </td>
+
+                                </tr>
+
+                            @empty
+
+                                <tr>
+                                    <td colspan="6" class="text-center py-6 text-gray-500">
+                                        No orders yet
+                                    </td>
+                                </tr>
+
+                            @endforelse
+
                         </tbody>
+
                     </table>
-                    
+
                     <div class="mt-4 text-center">
-                        <a href="#" class="text-brand-teal font-semibold hover:text-brand-blue transition-colors text-sm">View All Orders &rarr;</a>
+                        <a href="#" class="text-brand-teal font-semibold hover:text-brand-blue transition-colors text-sm">
+                            View All Orders →
+                        </a>
                     </div>
+
                 </section>
             </div>
 
@@ -296,15 +384,47 @@
                 
                 <!-- Delivery Info Card -->
                 <section class="bg-brand-blue/80 p-6 rounded-2xl shadow-soft border-t-4 border-brand-gold">
-                    <h3 class="text-xl font-bold mb-3 text-white">Next Delivery Window</h3>
-                    <div class="text-white/90 space-y-2">
-                        <p class="text-3xl font-extrabold text-brand-gold">Mon, Oct 14</p>
-                        <p class="font-medium">Between 10:00 AM and 2:00 PM</p>
-                        <p class="text-sm">To: 14 Ikeja Road, Lagos, NG</p>
-                        <button class="mt-3 text-sm font-semibold text-white/90 underline hover:text-brand-gold transition-colors">
-                            Change Delivery Date
-                        </button>
-                    </div>
+
+                    <h3 class="text-xl font-bold mb-3 text-white">
+                        Next Delivery Window
+                    </h3>
+
+                    @if($nextDelivery)
+
+                        <div class="text-white/90 space-y-2">
+
+                            <p class="text-3xl font-extrabold text-brand-gold">
+                                {{ $nextDelivery->next_renewal_date?->format('D, M d') }}
+                            </p>
+
+                            <p class="font-medium">
+                                Between 10:00 AM and 2:00 PM
+                                {{-- later you can make this dynamic --}}
+                            </p>
+
+                            <p class="text-sm">
+                                Package: {{ $nextDelivery->package->name ?? 'N/A' }}
+                            </p>
+
+                            <p class="text-sm">
+                                Frequency: {{ ucfirst($nextDelivery->delivery_frequency) }}
+                            </p>
+
+                            <button class="mt-3 text-sm font-semibold text-white/90 underline hover:text-brand-gold transition-colors">
+                                Change Delivery Date
+                            </button>
+
+                        </div>
+
+                    @else
+
+                        <div class="text-white/80">
+                            <p class="font-semibold">No upcoming delivery</p>
+                            <p class="text-sm">Subscribe to a package to schedule deliveries</p>
+                        </div>
+
+                    @endif
+
                 </section>
 
             </div>

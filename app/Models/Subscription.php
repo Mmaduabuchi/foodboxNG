@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Subscription extends Model
 {
     protected $table = 'subscriptions';
+
+    // Status constants
+    const STATUS_PENDING   = 'pending';
+    const STATUS_ACTIVE    = 'active';
+    const STATUS_PAUSED    = 'paused';
+    const STATUS_CANCELLED = 'cancelled';
     
     protected $fillable = [
         'user_id',
@@ -20,6 +26,7 @@ class Subscription extends Model
         'cancelled_at',
     ];
 
+    //relationships
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -30,21 +37,24 @@ class Subscription extends Model
         return $this->belongsTo(Package::class);
     }
 
-    //get active subscriptions
+    //scopes
+    public function scopePending($query)
+    {
+        return $query->where('status', self::STATUS_PENDING);
+    }
+
     public function scopeActive($query)
     {
-        return $query->where('status', 'active');
+        return $query->where('status', self::STATUS_ACTIVE);
     }
 
-    //get paused subscriptions
     public function scopePaused($query)
     {
-        return $query->where('status', 'paused');
+        return $query->where('status', self::STATUS_PAUSED);
     }
 
-    //get cancelled subscriptions
     public function scopeCancelled($query)
     {
-        return $query->where('status', 'cancelled');
+        return $query->where('status', self::STATUS_CANCELLED);
     }
 }

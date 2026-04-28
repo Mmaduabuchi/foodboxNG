@@ -21,9 +21,9 @@
 
     <!-- Profile Info (Top of Sidebar) -->
     <div class="flex items-center gap-3 mb-8">
-        <img src="https://placehold.co/40x40/E9C46A/264653?text=JO" onerror="this.onerror=null; this.src='https://placehold.co/40x40/E9C46A/264653?text=JO';" alt="Profile Avatar" class="w-10 h-10 rounded-full border-2 border-brand-gold/50 object-cover">
+        <img src="https://placehold.co/40x40/E9C46A/264653?text={{ strtoupper(substr($user->name, 0, 2)) }}" onerror="this.onerror=null; this.src='https://placehold.co/40x40/E9C46A/264653?text={{ strtoupper(substr($user->name, 0, 2)) }}';" alt="Profile Avatar" class="w-10 h-10 rounded-full border-2 border-brand-gold/50 object-cover">
         <div class="text-white">
-            <p class="font-semibold text-sm leading-tight">Jane Okoro</p>
+            <p class="font-semibold text-sm leading-tight">{{ $user->name }}</p>
             <p class="text-xs text-brand-teal">Premium User</p>
         </div>
     </div>
@@ -74,7 +74,7 @@
 </aside>
 
 <!-- 2. Top Header -->
-<header class="fixed top-0 right-0 w-full h-20 bg-white border-b border-gray-100 shadow-sm z-30 flex items-center px-4 md:px-8">
+<header class="fixed top-0 right-0 w-full lg:left-64 lg:w-[calc(100%-16rem)] h-20 bg-white border-b border-gray-100 shadow-sm z-30 flex items-center px-4 md:px-8">
     <div class="flex-grow">
         <!-- Search Bar -->
         <div class="relative w-full max-w-sm hidden md:block">
