@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Subscription extends Model
 {
+    use HasFactory;
     protected $table = 'subscriptions';
 
     // Status constants
@@ -24,6 +26,13 @@ class Subscription extends Model
         'last_renewal_date',
         'paused_at',
         'cancelled_at',
+    ];
+
+    protected $casts = [
+        'next_renewal_date' => 'datetime',
+        'last_renewal_date' => 'datetime',
+        'paused_at' => 'datetime',
+        'cancelled_at' => 'datetime',
     ];
 
     //relationships

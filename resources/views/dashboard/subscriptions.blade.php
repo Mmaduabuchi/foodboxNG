@@ -131,105 +131,143 @@
         <!-- Active Subscriptions Section -->
         <section class="mb-10">
             <h2 class="text-2xl font-semibold text-brand-blue mb-4 flex items-center gap-2">
-                <i class="fas fa-heart text-brand-red"></i> Active Subscriptions (2)
+                <i class="fas fa-heart text-brand-red"></i>
+                Active Subscriptions ({{ $activeSubscriptions->count() }})
             </h2>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-                <!-- Subscription Card 1: Family Feast (Active) -->
-                <div class="sub-card bg-white p-6 rounded-2xl shadow-soft flex flex-col sm:flex-row gap-4">
-                    <div class="w-full sm:w-24 h-24 sm:h-auto bg-brand-teal/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-utensils text-4xl text-brand-teal"></i>
-                    </div>
-                    <div class="flex-grow">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold text-brand-blue">The Family Feast</h3>
-                            <span class="px-3 py-1 bg-brand-teal text-white text-xs font-semibold rounded-full shadow-sm-brand">Active</span>
-                        </div>
-                        
-                        <p class="text-2xl font-extrabold text-brand-teal mb-3">
-                            ₦45,000 <span class="text-sm font-medium text-gray-500">/ month</span>
-                        </p>
-                        
-                        <div class="text-sm text-gray-600 space-y-1 mb-4">
-                            <p><i class="fas fa-calendar-alt text-brand-gold w-4"></i> Next Renewal: <span class="font-semibold text-brand-blue">Nov 30, 2025</span></p>
-                            <p><i class="fas fa-truck text-brand-gold w-4"></i> Delivery Frequency: <span class="font-semibold text-brand-blue">Bi-Weekly</span></p>
-                            <p><i class="fas fa-map-marker-alt text-brand-gold w-4"></i> Delivery Zone: <span class="font-semibold text-brand-blue">Zone A (Lagos Mainland)</span></p>
-                        </div>
-                        
-                        <div class="flex flex-col sm:flex-row gap-2 mt-4 pt-4 border-t border-brand-grey">
-                            <button class="flex-1 bg-brand-blue text-white py-2 rounded-xl text-sm font-semibold hover:bg-brand-blue/90 transition-colors">Modify Package</button>
-                            <button class="flex-1 bg-brand-orange/10 text-brand-orange py-2 rounded-xl text-sm font-semibold hover:bg-brand-orange/20 transition-colors">Pause Subscription</button>
-                        </div>
-                    </div>
+            @if($activeSubscriptions->isEmpty())
+                <div class="bg-white rounded-2xl shadow-soft p-10 text-center text-gray-500">
+                    <i class="fas fa-box-open text-5xl text-brand-teal/40 mb-4"></i>
+                    <p class="text-lg font-medium">You have no active subscriptions.</p>
+                    <p class="text-sm mt-1">Browse our packages below to get started!</p>
                 </div>
+            @else
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    @foreach($activeSubscriptions as $subscription)
+                        <div class="sub-card bg-white p-6 rounded-2xl shadow-soft flex flex-col sm:flex-row gap-4">
+                            <div class="w-full sm:w-24 h-24 sm:h-auto bg-brand-teal/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-utensils text-4xl text-brand-teal"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="text-xl font-bold text-brand-blue">
+                                        {{ $subscription->package->name ?? 'Package' }}
+                                    </h3>
+                                    <span class="px-3 py-1 bg-brand-teal text-white text-xs font-semibold rounded-full shadow-sm-brand capitalize">
+                                        {{ $subscription->status }}
+                                    </span>
+                                </div>
 
-                <!-- Subscription Card 2: Student Pack (Active) -->
-                <div class="sub-card bg-white p-6 rounded-2xl shadow-soft flex flex-col sm:flex-row gap-4">
-                    <div class="w-full sm:w-24 h-24 sm:h-auto bg-brand-gold/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-book text-4xl text-brand-gold"></i>
-                    </div>
-                    <div class="flex-grow">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold text-brand-blue">The Student Pack</h3>
-                            <span class="px-3 py-1 bg-brand-teal text-white text-xs font-semibold rounded-full shadow-sm-brand">Active</span>
+                                <p class="text-2xl font-extrabold text-brand-teal mb-3">
+                                    ₦{{ number_format($subscription->package->price ?? 0, 2) }}
+                                    <span class="text-sm font-medium text-gray-500">/ {{ $subscription->package->billing_cycle ?? 'month' }}</span>
+                                </p>
+
+                                <div class="text-sm text-gray-600 space-y-1 mb-4">
+                                    <p>
+                                        <i class="fas fa-calendar-alt text-brand-gold w-4"></i>
+                                        Next Renewal:
+                                        <span class="font-semibold text-brand-blue">
+                                            {{ $subscription->next_renewal_date ? \Carbon\Carbon::parse($subscription->next_renewal_date)->format('M d, Y') : 'N/A' }}
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <i class="fas fa-truck text-brand-gold w-4"></i>
+                                        Delivery Frequency:
+                                        <span class="font-semibold text-brand-blue capitalize">{{ $subscription->delivery_frequency }}</span>
+                                    </p>
+                                    <p>
+                                        <i class="fas fa-map-marker-alt text-brand-gold w-4"></i>
+                                        Delivery Zone:
+                                        <span class="font-semibold text-brand-blue">{{ $subscription->delivery_zone }}</span>
+                                    </p>
+                                </div>
+
+                                <div class="flex flex-col sm:flex-row gap-2 mt-4 pt-4 border-t border-brand-grey">
+                                    <button class="flex-1 bg-brand-blue text-white py-2 rounded-xl text-sm font-semibold hover:bg-brand-blue/90 transition-colors">Modify Package</button>
+                                    <button class="flex-1 bg-brand-orange/10 text-brand-orange py-2 rounded-xl text-sm font-semibold hover:bg-brand-orange/20 transition-colors">Pause Subscription</button>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <p class="text-2xl font-extrabold text-brand-teal mb-3">
-                            ₦15,000 <span class="text-sm font-medium text-gray-500">/ month</span>
-                        </p>
-                        
-                        <div class="text-sm text-gray-600 space-y-1 mb-4">
-                            <p><i class="fas fa-calendar-alt text-brand-gold w-4"></i> Next Renewal: <span class="font-semibold text-brand-blue">Dec 10, 2025</span></p>
-                            <p><i class="fas fa-truck text-brand-gold w-4"></i> Delivery Frequency: <span class="font-semibold text-brand-blue">Monthly</span></p>
-                            <p><i class="fas fa-map-marker-alt text-brand-gold w-4"></i> Delivery Zone: <span class="font-semibold text-brand-blue">Zone D (Ikeja)</span></p>
-                        </div>
-                        
-                        <div class="flex flex-col sm:flex-row gap-2 mt-4 pt-4 border-t border-brand-grey">
-                            <button class="flex-1 bg-brand-blue text-white py-2 rounded-xl text-sm font-semibold hover:bg-brand-blue/90 transition-colors">Modify Package</button>
-                            <button class="flex-1 bg-brand-orange/10 text-brand-orange py-2 rounded-xl text-sm font-semibold hover:bg-brand-orange/20 transition-colors">Pause Subscription</button>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
-            </div>
+            @endif
         </section>
 
         <!-- Paused/Inactive Subscriptions Section -->
         <section class="mb-10">
             <h2 class="text-2xl font-semibold text-brand-blue mb-4 flex items-center gap-2">
-                <i class="fas fa-stopwatch text-brand-orange"></i> Inactive/Paused (1)
+                <i class="fas fa-stopwatch text-brand-orange"></i>
+                Inactive / Paused ({{ $inactiveSubscriptions->count() }})
             </h2>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-60">
 
-                <!-- Subscription Card 3: Keto Health Pack (Paused) -->
-                <div class="sub-card bg-white p-6 rounded-2xl shadow-soft flex flex-col sm:flex-row gap-4">
-                    <div class="w-full sm:w-24 h-24 sm:h-auto bg-brand-red/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-pause-circle text-4xl text-brand-red"></i>
-                    </div>
-                    <div class="flex-grow">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold text-brand-blue">Keto Health Pack</h3>
-                            <span class="px-3 py-1 bg-brand-red/70 text-white text-xs font-semibold rounded-full shadow-sm">Paused</span>
-                        </div>
-                        
-                        <p class="text-2xl font-extrabold text-brand-teal mb-3">
-                            ₦28,000 <span class="text-sm font-medium text-gray-500">/ month</span>
-                        </p>
-                        
-                        <div class="text-sm text-gray-600 space-y-1 mb-4">
-                            <p><i class="fas fa-calendar-times text-brand-gold w-4"></i> Last Renewal: <span class="font-semibold text-brand-blue">Sep 01, 2025</span></p>
-                            <p><i class="fas fa-truck text-brand-gold w-4"></i> Delivery Frequency: <span class="font-semibold text-brand-blue">Weekly</span></p>
-                            <p><i class="fas fa-info-circle text-brand-gold w-4"></i> Status Info: <span class="font-semibold text-brand-red">Paused indefinitely by user</span></p>
-                        </div>
-                        
-                        <div class="flex flex-col sm:flex-row gap-2 mt-4 pt-4 border-t border-brand-grey">
-                            <button class="flex-1 bg-brand-teal text-white py-2 rounded-xl text-sm font-semibold hover:bg-brand-teal/90 transition-colors">Resume Subscription</button>
-                            <button class="flex-1 bg-brand-red/10 text-brand-red py-2 rounded-xl text-sm font-semibold hover:bg-brand-red/20 transition-colors">Cancel Permanently</button>
-                        </div>
-                    </div>
+            @if($inactiveSubscriptions->isEmpty())
+                <div class="bg-white rounded-2xl shadow-soft p-10 text-center text-gray-500">
+                    <i class="fas fa-check-circle text-5xl text-brand-teal/40 mb-4"></i>
+                    <p class="text-lg font-medium">No paused or cancelled subscriptions.</p>
                 </div>
-            </div>
+            @else
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 opacity-70">
+                    @foreach($inactiveSubscriptions as $subscription)
+                        @php
+                            $isPaused    = $subscription->status === 'paused';
+                            $isCancelled = $subscription->status === 'cancelled';
+                            $badgeClass  = $isPaused ? 'bg-brand-orange/80' : 'bg-brand-red/70';
+                            $iconClass   = $isPaused ? 'fa-pause-circle text-brand-orange' : 'fa-times-circle text-brand-red';
+                            $bgClass     = $isPaused ? 'bg-brand-orange/10' : 'bg-brand-red/10';
+                        @endphp
+                        <div class="sub-card bg-white p-6 rounded-2xl shadow-soft flex flex-col sm:flex-row gap-4">
+                            <div class="w-full sm:w-24 h-24 sm:h-auto {{ $bgClass }} rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas {{ $iconClass }} text-4xl"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="text-xl font-bold text-brand-blue">
+                                        {{ $subscription->package->name ?? 'Package' }}
+                                    </h3>
+                                    <span class="px-3 py-1 {{ $badgeClass }} text-white text-xs font-semibold rounded-full shadow-sm capitalize">
+                                        {{ $subscription->status }}
+                                    </span>
+                                </div>
+
+                                <p class="text-2xl font-extrabold text-brand-teal mb-3">
+                                    ₦{{ number_format($subscription->package->price ?? 0, 2) }}
+                                    <span class="text-sm font-medium text-gray-500">/ {{ $subscription->package->billing_cycle ?? 'month' }}</span>
+                                </p>
+
+                                <div class="text-sm text-gray-600 space-y-1 mb-4">
+                                    <p>
+                                        <i class="fas fa-calendar-times text-brand-gold w-4"></i>
+                                        Last Renewal:
+                                        <span class="font-semibold text-brand-blue">
+                                            {{ $subscription->last_renewal_date ? \Carbon\Carbon::parse($subscription->last_renewal_date)->format('M d, Y') : 'N/A' }}
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <i class="fas fa-truck text-brand-gold w-4"></i>
+                                        Delivery Frequency:
+                                        <span class="font-semibold text-brand-blue capitalize">{{ $subscription->delivery_frequency }}</span>
+                                    </p>
+                                    <p>
+                                        <i class="fas fa-info-circle text-brand-gold w-4"></i>
+                                        Status Info:
+                                        <span class="font-semibold text-brand-red capitalize">
+                                            {{ $isCancelled ? 'Cancelled permanently' : 'Paused by user' }}
+                                        </span>
+                                    </p>
+                                </div>
+
+                                <div class="flex flex-col sm:flex-row gap-2 mt-4 pt-4 border-t border-brand-grey">
+                                    @if($isPaused)
+                                        <button class="flex-1 bg-brand-teal text-white py-2 rounded-xl text-sm font-semibold hover:bg-brand-teal/90 transition-colors">Resume Subscription</button>
+                                    @endif
+                                    <button class="flex-1 bg-brand-red/10 text-brand-red py-2 rounded-xl text-sm font-semibold hover:bg-brand-red/20 transition-colors">Cancel Permanently</button>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
         </section>
 
         <!-- Explore Packages CTA -->

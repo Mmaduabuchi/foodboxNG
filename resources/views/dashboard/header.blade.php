@@ -30,33 +30,32 @@
 
     <!-- Navigation Links -->
     <nav class="space-y-2">
-        <!-- Dashboard (Active) -->
-        <a href="{{ route('dashboard') }}" class="nav-link active flex items-center gap-4 text-white font-medium p-3 rounded-xl hover:bg-brand-teal transition-all">
-            <i class="fas fa-chart-line text-lg text-brand-gold w-6 text-center"></i>
+        <a href="{{ route('dashboard') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('dashboard') ? 'bg-brand-teal text-white' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">
+            <i class="fas fa-chart-line text-lg w-6 text-center {{ request()->routeIs('dashboard') ? 'text-brand-gold' : '' }}"></i>
             <span>Dashboard</span>
         </a>
-        <a href="{{ route('myorders') }}" class="nav-link flex items-center gap-4 text-white/80 font-medium p-3 rounded-xl hover:bg-brand-teal transition-all hover:text-white">
-            <i class="fas fa-box text-lg w-6 text-center"></i>
+        <a href="{{ route('myorders') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('myorders') ? 'bg-brand-teal text-white' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">
+            <i class="fas fa-box text-lg w-6 text-center {{ request()->routeIs('myorders') ? 'text-brand-gold' : '' }}"></i>
             <span>My Orders</span>
         </a>
-        <a href="{{ route('mypackages') }}" class="nav-link flex items-center gap-4 text-white/80 font-medium p-3 rounded-xl hover:bg-brand-teal transition-all hover:text-white">
-            <i class="fas fa-cubes text-lg w-6 text-center"></i>
+        <a href="{{ route('mypackages') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('mypackages') ? 'bg-brand-teal text-white' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">
+            <i class="fas fa-cubes text-lg w-6 text-center {{ request()->routeIs('mypackages') ? 'text-brand-gold' : '' }}"></i>
             <span>My Packages</span>
         </a>
-        <a href="{{ route('subscriptions') }}" class="nav-link flex items-center gap-4 text-white/80 font-medium p-3 rounded-xl hover:bg-brand-teal transition-all hover:text-white">
-            <i class="fas fa-sync-alt text-lg w-6 text-center"></i>
+        <a href="{{ route('subscriptions') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('subscriptions') ? 'bg-brand-teal text-white' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">
+            <i class="fas fa-sync-alt text-lg w-6 text-center {{ request()->routeIs('subscriptions') ? 'text-brand-gold' : '' }}"></i>
             <span>Subscriptions</span>
         </a>
-        <a href="{{ route('delivery_address') }}" class="nav-link flex items-center gap-4 text-white/80 font-medium p-3 rounded-xl hover:bg-brand-teal transition-all hover:text-white">
-            <i class="fas fa-map-marker-alt text-lg w-6 text-center"></i>
+        <a href="{{ route('delivery_address') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('delivery_address') ? 'bg-brand-teal text-white' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">
+            <i class="fas fa-map-marker-alt text-lg w-6 text-center {{ request()->routeIs('delivery_address') ? 'text-brand-gold' : '' }}"></i>
             <span>Delivery Address</span>
         </a>
-        <a href="#" class="nav-link flex items-center gap-4 text-white/80 font-medium p-3 rounded-xl hover:bg-brand-teal transition-all hover:text-white">
+        <a href="#" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all text-white/80 hover:bg-brand-teal hover:text-white">
             <i class="fas fa-credit-card text-lg w-6 text-center"></i>
             <span>Payment History</span>
         </a>
-        <a href="{{ route('userprofile') }}" class="nav-link flex items-center gap-4 text-white/80 font-medium p-3 rounded-xl hover:bg-brand-teal transition-all hover:text-white">
-            <i class="fas fa-cog text-lg w-6 text-center"></i>
+        <a href="{{ route('userprofile') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('userprofile') ? 'bg-brand-teal text-white' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">
+            <i class="fas fa-cog text-lg w-6 text-center {{ request()->routeIs('userprofile') ? 'text-brand-gold' : '' }}"></i>
             <span>Profile Settings</span>
         </a>
     </nav>

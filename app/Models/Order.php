@@ -13,18 +13,32 @@ class Order extends Model
     const STATUS_COMPLETED = 'completed';
     const STATUS_FAILED    = 'failed';
     const STATUS_CANCELLED = 'cancelled';
+
+    const DELIVERY_PENDING = 'pending';
+    const DELIVERY_PROCESSING = 'processing';
+    const DELIVERY_OUT_FOR_DELIVERY = 'out_for_delivery';
+    const DELIVERY_DELIVERED = 'delivered';
     
     protected $fillable = [
         'user_id',
         'package_id',
         'subscription_id',
-        'package_name',
+
         'amount',
         'status',
         'transaction_id',
         'payment_method',
+
+        // subscription context
         'delivery_frequency',
         'delivery_zone',
+
+        // delivery scheduling
+        'scheduled_date',
+        'delivery_start_time',
+        'delivery_end_time',
+        'delivery_status',
+
         'cancelled_at',
     ];
 
@@ -73,5 +87,26 @@ class Order extends Model
     public function scopeCancelled($query)
     {
         return $query->where('status', self::STATUS_CANCELLED);
+    }
+
+    //delivery status scopes
+    public function scopeDeliveryPending($query)
+    {
+        return $query->where('delivery_status', self::DELIVERY_PENDING);
+    }
+    
+    public function scopeDeliveryProcessing($query)
+    {
+        return $query->where('delivery_status', self::DELIVERY_PROCESSING);
+    }
+
+    public function scopeOutForDelivery($query)
+    {
+        return $query->where('delivery_status', self::DELIVERY_OUT_FOR_DELIVERY);
+    }
+
+    public function scopeDelivered($query)
+    {
+        return $query->where('delivery_status', self::DELIVERY_DELIVERED);
     }
 }

@@ -12,7 +12,7 @@ use App\Models\Order;
 class myordersController extends Controller
 {
     //
-    public function index(){
+    public function index(Request $request){
         $user = Auth::user();
 
         // Safety check
@@ -20,26 +20,32 @@ class myordersController extends Controller
             return redirect()->route('login');
         }
 
-        // Single query approach
-        $orders = $user->orders();
+        // Base query
+        $ordersQuery = $user->orders();
 
-        $activeOrder = (clone $orders)
-            ->active()
-            ->latest()
-            ->first();
+        // Get order counts (always from full unfiltered base)
+        $pendingOrders   = (clone $ordersQuery)->pending()->count();
+        $completedOrders = (clone $ordersQuery)->completed()->count();
+        $cancelledOrders = (clone $ordersQuery)->cancelled()->count();
+        $totalOrders     = (clone $ordersQuery)->count();
 
-        // Get order counts
-        $pendingOrders = (clone $orders)->pending()->count();
-        $completedOrders = (clone $orders)->completed()->count();
-        $cancelledOrders = (clone $orders)->cancelled()->count();
-        //total orders
-        $totalOrders = (clone $orders)->count();
+        // Active order (regardless of filter)
+        $activeOrder = (clone $ordersQuery)->active()->latest()->first();
 
-        $recentOrders = (clone $orders)
-            ->with('package')
-            ->latest()
-            ->take(10)
-            ->get();
+        // Apply status filter from query string
+        $statusFilter = $request->query('status');
+        $filteredQuery = (clone $ordersQuery)->with('package')->latest();
+
+        if ($statusFilter === 'pending') {
+            $filteredQuery->pending();
+        } elseif ($statusFilter === 'completed') {
+            $filteredQuery->completed();
+        } elseif ($statusFilter === 'cancelled') {
+            $filteredQuery->cancelled();
+        }
+
+        // Paginate (appends query string to pagination links automatically)
+        $orders = $filteredQuery->paginate(10)->withQueryString();
 
         return view('dashboard.myorders', compact(
             'user',
@@ -48,7 +54,8 @@ class myordersController extends Controller
             'completedOrders',
             'cancelledOrders',
             'totalOrders',
-            'recentOrders'
+            'orders',
+            'statusFilter'
         ));
     }
 }

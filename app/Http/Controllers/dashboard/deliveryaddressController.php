@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Address;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+
 
 class deliveryaddressController extends Controller
 {
@@ -17,9 +20,13 @@ class deliveryaddressController extends Controller
         if (!$user) {
             return redirect()->route('login');
         }
-        
+
         $addresses = Address::where('user_id', Auth::id())->get();
-        return view('dashboard.delivery_address', compact('addresses'));
+        
+        return view('dashboard.delivery_address', compact(
+            'user',
+            'addresses'
+        ));
     }
 
     public function store(Request $request)

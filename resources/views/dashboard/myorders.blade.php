@@ -162,10 +162,10 @@
                 
                 <!-- Filter Tabs -->
                 <div class="flex space-x-2 p-1 bg-brand-grey rounded-xl overflow-x-auto">
-                    <button class="px-4 py-2 text-sm font-semibold rounded-lg bg-brand-teal text-white shadow-md transition-colors hover:bg-brand-blue">All Orders (14)</button>
-                    <button class="px-4 py-2 text-sm font-medium rounded-lg text-brand-blue transition-colors hover:bg-brand-teal/20">Processing (1)</button>
-                    <button class="px-4 py-2 text-sm font-medium rounded-lg text-brand-blue transition-colors hover:bg-brand-teal/20">Delivered (13)</button>
-                    <button class="px-4 py-2 text-sm font-medium rounded-lg text-brand-blue transition-colors hover:bg-brand-teal/20">Cancelled (0)</button>
+                    <a href="{{ request()->url() }}" class="px-4 py-2 text-sm font-{{ !$statusFilter ? 'semibold' : 'medium' }} rounded-lg {{ !$statusFilter ? 'bg-brand-teal text-white shadow-md' : 'text-brand-blue hover:bg-brand-teal/20' }} transition-colors">All Orders ({{ $totalOrders }})</a>
+                    <a href="{{ request()->url() }}?status=pending" class="px-4 py-2 text-sm font-{{ $statusFilter === 'pending' ? 'semibold' : 'medium' }} rounded-lg {{ $statusFilter === 'pending' ? 'bg-brand-teal text-white shadow-md' : 'text-brand-blue hover:bg-brand-teal/20' }} transition-colors">Processing ({{ $pendingOrders }})</a>
+                    <a href="{{ request()->url() }}?status=completed" class="px-4 py-2 text-sm font-{{ $statusFilter === 'completed' ? 'semibold' : 'medium' }} rounded-lg {{ $statusFilter === 'completed' ? 'bg-brand-teal text-white shadow-md' : 'text-brand-blue hover:bg-brand-teal/20' }} transition-colors">Delivered ({{ $completedOrders }})</a>
+                    <a href="{{ request()->url() }}?status=cancelled" class="px-4 py-2 text-sm font-{{ $statusFilter === 'cancelled' ? 'semibold' : 'medium' }} rounded-lg {{ $statusFilter === 'cancelled' ? 'bg-brand-teal text-white shadow-md' : 'text-brand-blue hover:bg-brand-teal/20' }} transition-colors">Cancelled ({{ $cancelledOrders }})</a>
                 </div>
                 
                 <!-- Search Input -->
@@ -193,108 +193,130 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
-                        <!-- Order 1: Processing -->
-                        <tr class="hover:bg-brand-grey/50 transition-colors">
-                            <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-brand-blue">#FBNG-2512</td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">The Student Pack</td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold text-brand-teal">₦15,000</td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">2025-10-12</td>
+                        @forelse($orders as $order)
+                        @php
+                            $isCancelled = $order->status === 'cancelled';
+                            $isPending   = $order->status === 'pending';
+                            $isCompleted = $order->status === 'completed';
+                        @endphp
+                        <tr class="hover:bg-brand-grey/50 transition-colors {{ $isCancelled ? 'opacity-70' : '' }}">
+                            <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-brand-blue">#FBNG-{{ $order->id }}</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">{{ $order->package_name }}</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold {{ $isCancelled ? 'text-brand-red line-through' : 'text-brand-teal' }}">₦{{ number_format($order->amount, 2) }}</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ $order->created_at->format('Y-m-d') }}</td>
                             <td class="px-4 py-4 whitespace-nowrap">
-                                <span class="status-badge bg-brand-gold/20 text-brand-blue">Processing</span>
+                                @if($isPending)
+                                    <span class="status-badge bg-brand-gold/20 text-brand-blue">Processing</span>
+                                @elseif($isCompleted)
+                                    <span class="status-badge bg-brand-teal/20 text-brand-teal">Delivered</span>
+                                @elseif($isCancelled)
+                                    <span class="status-badge bg-brand-red/20 text-brand-red">Cancelled</span>
+                                @else
+                                    <span class="status-badge bg-gray-200 text-gray-600">{{ ucfirst($order->status) }}</span>
+                                @endif
                             </td>
                             <td class="px-4 py-4 whitespace-nowrap text-right">
-                                <button class="bg-brand-orange text-white px-3 py-1 rounded-full text-xs font-medium hover:bg-brand-red transition-colors">Track Delivery</button>
+                                @if($isPending)
+                                    <button class="bg-brand-orange text-white px-3 py-1 rounded-full text-xs font-medium hover:bg-brand-red transition-colors">Track Delivery</button>
+                                @elseif($isCompleted)
+                                    <button class="bg-brand-blue text-white px-3 py-1 rounded-full text-xs font-medium hover:opacity-90 transition-opacity">Download Invoice</button>
+                                @else
+                                    <button class="bg-gray-400 text-white px-3 py-1 rounded-full text-xs font-medium cursor-not-allowed" disabled>View Details</button>
+                                @endif
                             </td>
                         </tr>
-                        <!-- Order 2: Delivered -->
-                        <tr class="hover:bg-brand-grey/50 transition-colors">
-                            <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-brand-blue">#FBNG-2511</td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">The Family Feast</td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold text-brand-teal">₦45,000</td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">2025-09-28</td>
-                            <td class="px-4 py-4 whitespace-nowrap">
-                                <span class="status-badge bg-brand-teal/20 text-brand-teal">Delivered</span>
-                            </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-right">
-                                <button class="bg-brand-blue text-white px-3 py-1 rounded-full text-xs font-medium hover:opacity-90 transition-opacity">Download Invoice</button>
+                        @empty
+                        <tr>
+                            <td colspan="6" class="px-4 py-12 text-center text-gray-400">
+                                <i class="fas fa-box-open text-4xl mb-3 block"></i>
+                                <p class="font-medium">No orders found.</p>
+                                <p class="text-sm mt-1">Your orders will appear here once you place one.</p>
                             </td>
                         </tr>
-                        <!-- Order 3: Delivered -->
-                        <tr class="hover:bg-brand-grey/50 transition-colors">
-                            <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-brand-blue">#FBNG-2510</td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">The Starter Kit</td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold text-brand-teal">₦8,500</td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">2025-08-15</td>
-                            <td class="px-4 py-4 whitespace-nowrap">
-                                <span class="status-badge bg-brand-teal/20 text-brand-teal">Delivered</span>
-                            </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-right">
-                                <button class="bg-brand-blue text-white px-3 py-1 rounded-full text-xs font-medium hover:opacity-90 transition-opacity">Download Invoice</button>
-                            </td>
-                        </tr>
-                        <!-- Order 4: Cancelled -->
-                        <tr class="hover:bg-brand-grey/50 transition-colors opacity-70">
-                            <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-brand-blue">#FBNG-2509</td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600">The Deluxe Box</td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold text-brand-red line-through">₦55,000</td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">2025-07-01</td>
-                            <td class="px-4 py-4 whitespace-nowrap">
-                                <span class="status-badge bg-brand-red/20 text-brand-red">Cancelled</span>
-                            </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-right">
-                                <button class="bg-gray-400 text-white px-3 py-1 rounded-full text-xs font-medium cursor-not-allowed" disabled>View Details</button>
-                            </td>
-                        </tr>
-                        
+                        @endforelse
                     </tbody>
                 </table>
             </div>
 
             <!-- Order List (Mobile/Card View) -->
             <div class="md:hidden divide-y divide-gray-200">
-                
-                <!-- Mobile Order 1: Processing -->
-                <div class="order-row">
-                    <p data-label="Order ID" class="text-brand-blue font-semibold">#FBNG-2512</p>
-                    <p data-label="Package Name" class="text-gray-700">The Student Pack</p>
-                    <p data-label="Amount Paid" class="font-bold text-brand-teal">₦15,000</p>
-                    <p data-label="Date Placed" class="text-gray-500">2025-10-12</p>
+                @forelse($orders as $order)
+                @php
+                    $isCancelled = $order->status === 'cancelled';
+                    $isPending   = $order->status === 'pending';
+                    $isCompleted = $order->status === 'completed';
+                @endphp
+                <div class="order-row {{ $isCancelled ? 'opacity-70' : '' }}">
+                    <p data-label="Order ID" class="text-brand-blue font-semibold">#FBNG-{{ $order->id }}</p>
+                    <p data-label="Package Name" class="text-gray-700">{{ $order->package_name }}</p>
+                    <p data-label="Amount Paid" class="font-bold {{ $isCancelled ? 'text-brand-red line-through' : 'text-brand-teal' }}">₦{{ number_format($order->amount, 2) }}</p>
+                    <p data-label="Date Placed" class="text-gray-500">{{ $order->created_at->format('Y-m-d') }}</p>
                     <p data-label="Status">
-                        <span class="status-badge bg-brand-gold/20 text-brand-blue">Processing</span>
+                        @if($isPending)
+                            <span class="status-badge bg-brand-gold/20 text-brand-blue">Processing</span>
+                        @elseif($isCompleted)
+                            <span class="status-badge bg-brand-teal/20 text-brand-teal">Delivered</span>
+                        @elseif($isCancelled)
+                            <span class="status-badge bg-brand-red/20 text-brand-red">Cancelled</span>
+                        @else
+                            <span class="status-badge bg-gray-200 text-gray-600">{{ ucfirst($order->status) }}</span>
+                        @endif
                     </p>
                     <div class="action-cell">
-                        <button class="w-full bg-brand-orange text-white px-3 py-2 rounded-xl text-sm font-medium hover:bg-brand-red transition-colors">Track Delivery</button>
+                        @if($isPending)
+                            <button class="w-full bg-brand-orange text-white px-3 py-2 rounded-xl text-sm font-medium hover:bg-brand-red transition-colors">Track Delivery</button>
+                        @elseif($isCompleted)
+                            <button class="w-full bg-brand-blue text-white px-3 py-2 rounded-xl text-sm font-medium hover:opacity-90 transition-opacity">Download Invoice</button>
+                        @else
+                            <button class="w-full bg-gray-400 text-white px-3 py-2 rounded-xl text-sm font-medium cursor-not-allowed" disabled>View Details</button>
+                        @endif
                     </div>
                 </div>
-
-                <!-- Mobile Order 2: Delivered -->
-                <div class="order-row">
-                    <p data-label="Order ID" class="text-brand-blue font-semibold">#FBNG-2511</p>
-                    <p data-label="Package Name" class="text-gray-700">The Family Feast</p>
-                    <p data-label="Amount Paid" class="font-bold text-brand-teal">₦45,000</p>
-                    <p data-label="Date Placed" class="text-gray-500">2025-09-28</p>
-                    <p data-label="Status">
-                        <span class="status-badge bg-brand-teal/20 text-brand-teal">Delivered</span>
-                    </p>
-                    <div class="action-cell">
-                        <button class="w-full bg-brand-blue text-white px-3 py-2 rounded-xl text-sm font-medium hover:opacity-90 transition-opacity">Download Invoice</button>
-                    </div>
+                @empty
+                <div class="py-12 text-center text-gray-400">
+                    <i class="fas fa-box-open text-4xl mb-3 block"></i>
+                    <p class="font-medium">No orders found.</p>
                 </div>
+                @endforelse
             </div>
 
             <!-- Pagination/View All Footer -->
+            @if($orders->hasPages())
             <div class="mt-8 flex justify-center text-sm">
                 <nav class="flex items-center space-x-2">
-                    <button class="p-2 rounded-full text-gray-500 hover:bg-brand-grey/50 disabled:opacity-50" disabled>
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <span class="px-4 py-1 font-semibold bg-brand-teal text-white rounded-full">1</span>
-                    <button class="px-4 py-1 font-medium text-brand-blue hover:bg-brand-grey/50 rounded-full">2</button>
-                    <button class="p-2 rounded-full text-gray-500 hover:bg-brand-grey/50">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
+                    {{-- Previous Page --}}
+                    @if($orders->onFirstPage())
+                        <span class="p-2 rounded-full text-gray-300 cursor-not-allowed">
+                            <i class="fas fa-chevron-left"></i>
+                        </span>
+                    @else
+                        <a href="{{ $orders->previousPageUrl() }}" class="p-2 rounded-full text-gray-500 hover:bg-brand-grey/50 transition-colors">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    @endif
+
+                    {{-- Page Numbers --}}
+                    @foreach($orders->getUrlRange(1, $orders->lastPage()) as $page => $url)
+                        @if($page == $orders->currentPage())
+                            <span class="px-4 py-1 font-semibold bg-brand-teal text-white rounded-full">{{ $page }}</span>
+                        @else
+                            <a href="{{ $url }}" class="px-4 py-1 font-medium text-brand-blue hover:bg-brand-grey/50 rounded-full transition-colors">{{ $page }}</a>
+                        @endif
+                    @endforeach
+
+                    {{-- Next Page --}}
+                    @if($orders->hasMorePages())
+                        <a href="{{ $orders->nextPageUrl() }}" class="p-2 rounded-full text-gray-500 hover:bg-brand-grey/50 transition-colors">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    @else
+                        <span class="p-2 rounded-full text-gray-300 cursor-not-allowed">
+                            <i class="fas fa-chevron-right"></i>
+                        </span>
+                    @endif
                 </nav>
             </div>
+            @endif
 
         </section>
         
