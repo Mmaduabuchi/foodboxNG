@@ -27,7 +27,9 @@ class Subscription extends Model
         'next_renewal_date',
         'last_renewal_date',
         'paused_at',
+        'pause_duration',
         'cancelled_at',
+        'cancel_reason',
     ];
 
     protected $casts = [

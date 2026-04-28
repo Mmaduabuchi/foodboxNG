@@ -129,6 +129,9 @@ Route::middleware('auth')->group(function () {
     //manage subscription
     Route::get('/manage_subscription', [managesubscriptionController::class, 'index'])->name('manage_subscription');
     Route::post('/subscription/preferences', [managesubscriptionController::class, 'updatePreferences'])->name('subscription.preferences.update');
+    Route::post('/subscription/pause', [managesubscriptionController::class, 'pause'])->name('subscription.pause');
+    Route::post('/subscription/cancel', [managesubscriptionController::class, 'cancel'])->name('subscription.cancel');
+    Route::post('/subscription/frequency', [managesubscriptionController::class, 'updateFrequency'])->name('subscription.frequency.update');
 
     // 2FA routes
     Route::post('/2fa/toggle', [TwoFactorController::class, 'toggle'])->name('2fa.toggle');

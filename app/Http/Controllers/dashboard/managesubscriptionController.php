@@ -71,4 +71,80 @@ class managesubscriptionController extends Controller
             'subscription' => $subscription
         ]);
     }
+
+    public function pause(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'duration' => 'required|string',
+        ]);
+
+        $subscription = $user->subscriptions()->active()->first();
+
+        if (!$subscription) {
+            return response()->json(['message' => 'No active subscription found to pause'], 404);
+        }
+
+        $subscription->update([
+            'status' => Subscription::STATUS_PAUSED,
+            'paused_at' => now(),
+            'pause_duration' => $request->duration,
+        ]);
+
+        return response()->json([
+            'message' => 'Subscription paused successfully',
+            'subscription' => $subscription
+        ]);
+    }
+
+    public function cancel(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'reason' => 'required|string',
+        ]);
+
+        $subscription = $user->subscriptions()->whereIn('status', [Subscription::STATUS_ACTIVE, Subscription::STATUS_PAUSED])->first();
+
+        if (!$subscription) {
+            return response()->json(['message' => 'No active or paused subscription found to cancel'], 404);
+        }
+
+        $subscription->update([
+            'status' => Subscription::STATUS_CANCELLED,
+            'cancelled_at' => now(),
+            'cancel_reason' => $request->reason,
+        ]);
+
+        return response()->json([
+            'message' => 'Subscription cancelled successfully',
+            'subscription' => $subscription
+        ]);
+    }
+
+    public function updateFrequency(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'delivery_frequency' => 'required|string',
+        ]);
+
+        $subscription = $user->subscriptions()->active()->first();
+
+        if (!$subscription) {
+            return response()->json(['message' => 'No active subscription found'], 404);
+        }
+
+        $subscription->update([
+            'delivery_frequency' => $request->delivery_frequency,
+        ]);
+
+        return response()->json([
+            'message' => 'Delivery frequency updated successfully',
+            'subscription' => $subscription
+        ]);
+    }
 }

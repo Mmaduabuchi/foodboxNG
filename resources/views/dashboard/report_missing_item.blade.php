@@ -143,7 +143,7 @@
                 <h1 class="text-3xl font-bold text-brand-blue mb-1">Report an Issue with a Package</h1>
                 <p class="text-gray-600">Quickly file a report for missing items, damaged goods, or incorrect packages.</p>
             </div>
-            <a href="foodbox_my_packages.html" class="hidden sm:inline-flex items-center text-brand-teal hover:text-brand-blue transition-colors font-medium">
+            <a href="{{ route('mypackages') }}" class="hidden sm:inline-flex items-center text-brand-teal hover:text-brand-blue transition-colors font-medium">
                 <i class="fas fa-arrow-left mr-2"></i> Back to My Packages
             </a>
         </div>

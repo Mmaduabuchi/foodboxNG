@@ -597,17 +597,17 @@
             </p>
             <div class="mb-5">
                 <label class="block text-sm font-semibold text-brand-blue mb-2">Pause Duration</label>
-                <select class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-brand-blue focus:border-brand-teal focus:outline-none transition-all text-sm">
-                    <option>1 week</option>
-                    <option>2 weeks</option>
-                    <option selected>1 month</option>
-                    <option>2 months</option>
-                    <option>Until I resume manually</option>
+                <select id="pauseDurationVal" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-brand-blue focus:border-brand-teal focus:outline-none transition-all text-sm">
+                    <option value="1 week">1 week</option>
+                    <option value="2 weeks">2 weeks</option>
+                    <option value="1 month" selected>1 month</option>
+                    <option value="2 months">2 months</option>
+                    <option value="indefinite">Until I resume manually</option>
                 </select>
             </div>
             <div class="flex gap-3">
                 <button onclick="closeModal('pauseModal')" class="flex-1 py-3 rounded-xl border-2 border-gray-200 text-brand-blue font-semibold text-sm hover:bg-brand-grey transition-colors">Cancel</button>
-                <button class="flex-1 py-3 rounded-xl bg-brand-orange text-white font-semibold text-sm hover:bg-brand-orange/90 transition-colors shadow-md shadow-brand-orange/30">
+                <button id="pauseBtn" onclick="submitPause()" class="flex-1 py-3 rounded-xl bg-brand-orange text-white font-semibold text-sm hover:bg-brand-orange/90 transition-colors shadow-md shadow-brand-orange/30">
                     <i class="fas fa-pause mr-2"></i> Pause Now
                 </button>
             </div>
@@ -636,18 +636,18 @@
             </div>
             <div class="mb-5">
                 <label class="block text-sm font-semibold text-brand-blue mb-2">Please tell us why you're leaving</label>
-                <select class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-brand-blue focus:border-brand-red focus:outline-none transition-all text-sm">
-                    <option>Too expensive</option>
-                    <option>Deliveries are late</option>
-                    <option>Quality issues</option>
-                    <option>No longer need the service</option>
-                    <option>Switching to another service</option>
-                    <option>Other reason</option>
+                <select id="cancelReasonVal" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-brand-blue focus:border-brand-red focus:outline-none transition-all text-sm">
+                    <option value="Too expensive">Too expensive</option>
+                    <option value="Deliveries are late">Deliveries are late</option>
+                    <option value="Quality issues">Quality issues</option>
+                    <option value="No longer need the service">No longer need the service</option>
+                    <option value="Switching to another service">Switching to another service</option>
+                    <option value="Other reason">Other reason</option>
                 </select>
             </div>
             <div class="flex gap-3">
                 <button onclick="closeModal('cancelModal')" class="flex-1 py-3 rounded-xl border-2 border-gray-200 text-brand-blue font-semibold text-sm hover:bg-brand-grey transition-colors">Keep Plan</button>
-                <button class="flex-1 py-3 rounded-xl bg-brand-red text-white font-semibold text-sm hover:bg-brand-red/90 transition-colors shadow-md shadow-brand-red/30">
+                <button id="cancelBtn" onclick="submitCancel()" class="flex-1 py-3 rounded-xl bg-brand-red text-white font-semibold text-sm hover:bg-brand-red/90 transition-colors shadow-md shadow-brand-red/30">
                     <i class="fas fa-times mr-2"></i> Cancel Subscription
                 </button>
             </div>
@@ -682,7 +682,7 @@
             </div>
             <div class="flex gap-3">
                 <button onclick="closeModal('changeFreqModal')" class="flex-1 py-3 rounded-xl border-2 border-gray-200 text-brand-blue font-semibold text-sm hover:bg-brand-grey transition-colors">Cancel</button>
-                <button class="flex-1 py-3 rounded-xl bg-brand-teal text-white font-semibold text-sm hover:bg-brand-teal/90 transition-colors shadow-sm-brand">
+                <button id="applyFreqBtn" onclick="submitFrequency()" class="flex-1 py-3 rounded-xl bg-brand-teal text-white font-semibold text-sm hover:bg-brand-teal/90 transition-colors shadow-sm-brand">
                     <i class="fas fa-check mr-2"></i> Apply Change
                 </button>
             </div>
@@ -807,6 +807,91 @@
                 console.error(err);
                 alert("Something went wrong!");
                 btn.innerHTML = '<i class="fas fa-save"></i> Save Preferences';
+                btn.disabled = false;
+            });
+        }
+        function submitPause() {
+            let btn = document.getElementById('pauseBtn');
+            let duration = document.getElementById('pauseDurationVal').value;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Pausing...';
+            btn.disabled = true;
+
+            fetch("{{ route('subscription.pause') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({ duration: duration })
+            })
+            .then(res => res.json())
+            .then(res => {
+                closeModal('pauseModal');
+                alert(res.message);
+                location.reload();
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Something went wrong!");
+                btn.innerHTML = '<i class="fas fa-pause mr-2"></i> Pause Now';
+                btn.disabled = false;
+            });
+        }
+
+        function submitCancel() {
+            let btn = document.getElementById('cancelBtn');
+            let reason = document.getElementById('cancelReasonVal').value;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Cancelling...';
+            btn.disabled = true;
+
+            fetch("{{ route('subscription.cancel') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({ reason: reason })
+            })
+            .then(res => res.json())
+            .then(res => {
+                closeModal('cancelModal');
+                alert(res.message);
+                location.reload();
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Something went wrong!");
+                btn.innerHTML = '<i class="fas fa-times mr-2"></i> Cancel Subscription';
+                btn.disabled = false;
+            });
+        }
+
+        function submitFrequency() {
+            let btn = document.getElementById('applyFreqBtn');
+            let frequency = document.querySelector('input[name="modal_freq"]:checked')?.value;
+            if (!frequency) return;
+
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Applying...';
+            btn.disabled = true;
+
+            fetch("{{ route('subscription.frequency.update') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({ delivery_frequency: frequency })
+            })
+            .then(res => res.json())
+            .then(res => {
+                closeModal('changeFreqModal');
+                // Could just update UI here, but reload guarantees a fresh state
+                location.reload();
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Something went wrong!");
+                btn.innerHTML = '<i class="fas fa-check mr-2"></i> Apply Change';
                 btn.disabled = false;
             });
         }

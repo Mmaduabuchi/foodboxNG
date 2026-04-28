@@ -129,8 +129,15 @@
         
         <!-- Header Section -->
         <div class="mb-6">
-            <h1 class="text-3xl font-bold text-brand-blue mb-1">Your Food Packages</h1>
-            <p class="text-gray-600">Track upcoming deliveries and review the contents of your past FoodBox NG packages.</p>
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-brand-blue mb-1">Your Food Packages</h1>
+                    <p class="text-gray-600">Track upcoming deliveries and review the contents of your past FoodBox NG packages.</p>
+                </div>
+                <a href="{{ route('report') }}" class="mt-4 md:mt-0 px-6 py-3 bg-brand-red text-white font-semibold rounded-xl hover:bg-brand-red/90 transition-colors shadow-sm-brand flex items-center">
+                    <i class="fas fa-exclamation-circle mr-2"></i> Report an Issue
+                </a>
+            </div>
         </div>
 
         <!-- Stats Bar -->
