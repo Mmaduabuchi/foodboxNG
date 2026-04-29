@@ -10,11 +10,12 @@ class settingsController extends Controller
 {
     //
     public function index() {
-        $user = Auth::user();
-
-        if (!$user) {
+        
+        if (!Auth::check()) {
             return redirect()->route('login');
         }
+
+        $user = Auth::user();
 
         return view('dashboard.settings', compact('user'));
     }

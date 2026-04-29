@@ -9,13 +9,13 @@ use App\Models\Subscription;
 
 class subscriptionController extends Controller
 {
-    public function index()
-    {
-        $user = Auth::user();
-
-        if (!$user) {
+    public function index() {
+        
+        if (!Auth::check()) {
             return redirect()->route('login');
         }
+
+        $user = Auth::user();
 
         // Fetch all subscriptions, eager-loading the package
         $allSubscriptions = Subscription::where('user_id', $user->id)

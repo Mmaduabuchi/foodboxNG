@@ -11,11 +11,12 @@ class paymenthistoryController extends Controller
 {
     public function index(Request $request)
     {
-        $user = Auth::user();
-
-        if (!$user) {
+        
+        if (!Auth::check()) {
             return redirect()->route('login');
         }
+
+        $user = Auth::user();
 
         // Base query for this user
         $baseQuery = $user->payments();

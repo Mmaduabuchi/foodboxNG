@@ -14,12 +14,12 @@ class deliveryaddressController extends Controller
 {
     //
     public function index(){
-        $user = Auth::user();
-
-        // Safety check
-        if (!$user) {
+        
+        if (!Auth::check()) {
             return redirect()->route('login');
         }
+
+        $user = Auth::user();
 
         $addresses = Address::where('user_id', Auth::id())->get();
         

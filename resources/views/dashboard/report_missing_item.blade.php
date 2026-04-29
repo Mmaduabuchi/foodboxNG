@@ -176,40 +176,41 @@
                 <div id="step-1" class="step-content">
                     <h3 class="text-xl font-semibold text-brand-blue mb-5 border-b border-brand-grey pb-3">Step 1: Which package has the issue?</h3>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                        <!-- Package Option 1 (Recent) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="package-options-container">
+                        @forelse($deliveredOrders as $index => $order)
+                        <!-- Package Option -->
                         <label class="block cursor-pointer">
-                            <input type="radio" name="package_id" value="FB-5477" class="hidden" checked>
-                            <div class="p-5 border-2 border-brand-teal/50 rounded-xl transition-all shadow-sm bg-brand-teal/5 hover:bg-brand-teal/10 radio-card">
-                                <p class="text-lg font-bold text-brand-blue">#FB-5477 - Weekly Family Box</p>
-                                <p class="text-sm text-gray-600 my-1">Delivered: Nov 27, 2025 at 3:15 PM</p>
-                                <p class="text-xs font-medium text-brand-teal">Contents: Fish, Plantain, Peppers, Onions...</p>
-                                <div class="mt-3 text-xs font-semibold px-2 py-0.5 w-max rounded-full bg-brand-gold/20 text-brand-gold">
-                                    <i class="fas fa-truck mr-1"></i> Delivered 2 days ago
+                            <input type="radio" name="package_id" value="{{ $order->id }}" class="hidden" {{ $index === 0 ? 'checked' : '' }}
+                                data-pkg-id="{{ str_pad($order->id, 4, '0', STR_PAD_LEFT) }}"
+                                data-pkg-name="{{ $order->package->name ?? 'Unknown Package' }}"
+                                data-date="{{ $order->updated_at ? $order->updated_at->format('M d, Y') : 'N/A' }}"
+                                data-items="{{ $order->package ? json_encode($order->package->items->pluck('item_name')) : '[]' }}">
+                            <div class="p-5 border-2 border-gray-200 rounded-xl transition-all shadow-sm hover:bg-brand-grey/50 radio-card h-full flex flex-col">
+                                <p class="text-lg font-bold text-brand-blue">#{{ str_pad($order->id, 4, '0', STR_PAD_LEFT) }} - {{ $order->package->name ?? 'Unknown Package' }}</p>
+                                <p class="text-sm text-gray-600 my-1">Delivered: {{ $order->updated_at ? $order->updated_at->format('M d, Y \a\t g:i A') : 'N/A' }}</p>
+                                <p class="text-xs font-medium text-brand-blue/70">Contents: {{ $order->package ? $order->package->items->take(4)->pluck('item_name')->join(', ') . ($order->package->items->count() > 4 ? '...' : '') : 'N/A' }}</p>
+                                <div class="mt-auto pt-3 text-xs font-semibold px-2 py-0.5 w-max rounded-full {{ $index === 0 ? 'bg-brand-gold/20 text-brand-gold' : 'bg-gray-200 text-gray-600' }}">
+                                    <i class="fas {{ $index === 0 ? 'fa-truck' : 'fa-history' }} mr-1"></i> Delivered {{ $order->updated_at ? $order->updated_at->diffForHumans() : 'N/A' }}
                                 </div>
                             </div>
                         </label>
-                        
-                        <!-- Package Option 2 (Older) -->
-                        <label class="block cursor-pointer">
-                            <input type="radio" name="package_id" value="FB-5463" class="hidden">
-                            <div class="p-5 border-2 border-gray-200 rounded-xl transition-all shadow-sm hover:bg-brand-grey/50 radio-card">
-                                <p class="text-lg font-bold text-brand-blue">#FB-5463 - Keto Health Pack</p>
-                                <p class="text-sm text-gray-600 my-1">Delivered: Nov 07, 2025 at 1:50 PM</p>
-                                <p class="text-xs font-medium text-brand-blue/70">Contents: Beef, Avocados, Broccoli, Eggs...</p>
-                                <div class="mt-3 text-xs font-semibold px-2 py-0.5 w-max rounded-full bg-gray-200 text-gray-600">
-                                    <i class="fas fa-history mr-1"></i> Delivered 3 weeks ago
-                                </div>
-                            </div>
-                        </label>
+                        <div class="flex justify-end mt-8">
+                            <button type="button" onclick="nextStep()" class="px-8 py-3 bg-brand-teal text-white font-semibold rounded-xl hover:bg-brand-teal/90 transition-colors shadow-sm-brand">
+                                Next: Identify Issue <i class="fas fa-chevron-right ml-2 text-sm"></i>
+                            </button>
+                        </div>
+                        @empty
+                        <div class="col-span-full p-5 bg-yellow-50 text-yellow-700 rounded-xl border border-yellow-200 text-center">
+                            No recent delivered packages found to report an issue for.
+                        </div>
+                        @endforelse
                     </div>
 
-                    <div class="flex justify-end mt-8">
+                    <!-- <div class="flex justify-end mt-8">
                         <button type="button" onclick="nextStep()" class="px-8 py-3 bg-brand-teal text-white font-semibold rounded-xl hover:bg-brand-teal/90 transition-colors shadow-sm-brand">
                             Next: Identify Issue <i class="fas fa-chevron-right ml-2 text-sm"></i>
                         </button>
-                    </div>
+                    </div> -->
                 </div>
 
                 <!-- Step 2: Identify Issue (Hidden by default) -->

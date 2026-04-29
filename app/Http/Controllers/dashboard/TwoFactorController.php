@@ -6,11 +6,17 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TwoFactorEnabled;
+use Illuminate\Support\Facades\Auth;
 
 class TwoFactorController extends Controller
 {
     public function toggle(Request $request) {
-        $user = $request->user();
+        
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        $user = Auth::user();
 
         $enabled = $request->boolean('two_factor_enabled');
 

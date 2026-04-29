@@ -13,12 +13,12 @@ class myordersController extends Controller
 {
     //
     public function index(Request $request){
-        $user = Auth::user();
-
-        // Safety check
-        if (!$user) {
+        
+        if (!Auth::check()) {
             return redirect()->route('login');
         }
+
+        $user = Auth::user();
 
         // Base query
         $ordersQuery = $user->orders();

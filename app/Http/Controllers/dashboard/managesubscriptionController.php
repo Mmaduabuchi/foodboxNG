@@ -11,11 +11,12 @@ class managesubscriptionController extends Controller
 {
     //
     public function index(){
-        $user = Auth::user();
-
-        if (!$user) {
+        
+        if (!Auth::check()) {
             return redirect()->route('login');
         }
+
+        $user = Auth::user();
 
         // Fetch subscriptions with package info
         $subscriptions = $user->subscriptions()

@@ -57,6 +57,11 @@ class userprofileController extends Controller
     }
 
     public function deactivate(Request $request) {
+        
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
         $user = Auth::user();
 
         // Mark account as inactive
