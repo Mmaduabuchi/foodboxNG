@@ -26,6 +26,18 @@ use App\Http\Controllers\dashboard\paymenthistoryController;
 use App\Http\Controllers\dashboard\managesubscriptionController;
 use App\Http\Controllers\secure\loginController as secureloginController;
 use App\Http\Controllers\superadmin\adminHomeController;
+use App\Http\Controllers\superadmin\adminManagementController;
+use App\Http\Controllers\superadmin\deliveryLogisticsController;
+use App\Http\Controllers\superadmin\subscriptionManagementController;
+use App\Http\Controllers\superadmin\paymentManagementController;
+use App\Http\Controllers\superadmin\systemSettingsController;
+use App\Http\Controllers\superadmin\userManagementController;
+use App\Http\Controllers\superadmin\inventoryManagementController;
+use App\Http\Controllers\superadmin\orderManagementController;
+use App\Http\Controllers\superadmin\reportsController;
+use App\Http\Controllers\superadmin\supportController;
+use App\Http\Controllers\superadmin\managePackagesController;
+
 
 
 Route::get('/', function () {
@@ -164,4 +176,16 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     //admin dashboard
     Route::get('/admin/dashboard', [adminHomeController::class, 'index'])->name('admin.dashboard');
+    Route::get('/admin/adminManagement', [adminManagementController::class, 'index'])->name('admin.adminManagement');
+    Route::get('/admin/deliveryLogistics', [deliveryLogisticsController::class, 'index'])->name('admin.deliveryLogistics');
+    Route::get('/admin/subscriptionManagement', [subscriptionManagementController::class, 'index'])->name('admin.subscriptionManagement');
+    Route::get('/admin/paymentManagement', [paymentManagementController::class, 'index'])->name('admin.paymentManagement');
+    Route::get('/admin/systemSettings', [systemSettingsController::class, 'index'])->name('admin.systemSettings');
+    Route::get('/admin/userManagement', [userManagementController::class, 'index'])->name('admin.userManagement');
+    Route::get('/admin/inventoryManagement', [inventoryManagementController::class, 'index'])->name('admin.inventoryManagement');
+    Route::get('/admin/orderManagement', [orderManagementController::class, 'index'])->name('admin.orderManagement');
+    Route::get('/admin/reports', [reportsController::class, 'index'])->name('admin.reports');
+    Route::get('/admin/support', [supportController::class, 'index'])->name('admin.support');
+    Route::get('/admin/managePackages', [managePackagesController::class, 'index'])->name('admin.managePackages');
+
 });

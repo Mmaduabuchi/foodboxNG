@@ -121,7 +121,7 @@
     @include('superAdminDashboard.header')
 
     <!-- Main Content Area -->
-    <main class="mt-20 p-4 md:p-8 main-content max-w-full">
+    <main class="mt-20 lg:ml-64 p-4 md:p-8 main-content max-w-full">
         
         <!-- Financial Metrics Cards (Monthly Overview) -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">

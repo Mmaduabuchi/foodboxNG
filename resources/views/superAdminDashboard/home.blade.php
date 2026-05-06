@@ -69,6 +69,12 @@
         #sidebar.open {
             transform: translateX(0);
         }
+        /* Always visible on desktop (lg: 1024px+) */
+        @media (min-width: 1024px) {
+            #sidebar {
+                transform: translateX(0) !important;
+            }
+        }
         
         /* Backdrop for mobile sidebar */
         #backdrop {
@@ -151,7 +157,7 @@
     @include('superAdminDashboard.header')
     
     <!-- Main Content Area -->
-    <main class="mt-20 p-4 md:p-8 main-content">
+    <main class="mt-20 lg:ml-64 p-4 md:p-8 main-content">
         
         <!-- 3. Dashboard Overview Cards -->
         <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6 lg:gap-6 mb-8">

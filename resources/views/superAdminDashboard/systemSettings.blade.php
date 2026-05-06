@@ -145,7 +145,7 @@
     @include('superAdminDashboard.header')
 
     <!-- Main Content Area -->
-    <main class="mt-20 p-4 md:p-8 main-content max-w-full">
+    <main class="mt-20 lg:ml-64 p-4 md:p-8 main-content max-w-full">
         
         <form class="space-y-8">
             
