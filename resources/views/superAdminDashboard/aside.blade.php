@@ -20,57 +20,30 @@
     </div>
 
     <!-- Scrollable Navigation -->
+    @php
+        $navLinks = [
+            ['route' => 'admin.dashboard',             'icon' => 'fa-tachometer-alt', 'label' => 'Dashboard Overview'],
+            ['route' => 'admin.managePackages',         'icon' => 'fa-cubes',          'label' => 'Manage Packages'],
+            ['route' => 'admin.orderManagement',        'icon' => 'fa-shopping-cart',  'label' => 'Orders Management'],
+            ['route' => 'admin.subscriptionManagement', 'icon' => 'fa-sync-alt',       'label' => 'Subscriptions'],
+            ['route' => 'admin.userManagement',         'icon' => 'fa-users',          'label' => 'Users Management'],
+            ['route' => 'admin.deliveryLogistics',      'icon' => 'fa-truck-fast',     'label' => 'Delivery Logistics'],
+            ['route' => 'admin.inventoryManagement',    'icon' => 'fa-warehouse',      'label' => 'Inventory / Stock'],
+            ['route' => 'admin.paymentManagement',      'icon' => 'fa-credit-card',    'label' => 'Payments & Transactions'],
+            ['route' => 'admin.systemSettings',         'icon' => 'fa-cog',            'label' => 'System Settings'],
+            ['route' => 'admin.adminManagement',        'icon' => 'fa-user-shield',    'label' => 'Admin Management'],
+        ];
+    @endphp
+
     <nav class="flex-1 overflow-y-auto px-6 py-4 space-y-1.5 sidebar-scroll">
-        <!-- Dashboard Overview (Active) -->
-        <a href="{{ route('admin.dashboard') }}" class="nav-link active flex items-center gap-4 text-white/90 font-semibold p-3 rounded-xl transition-all hover:bg-brand-blue/70">
-            <i class="fas fa-tachometer-alt text-lg w-6 text-center"></i>
-            <span>Dashboard Overview</span>
-        </a>
-        <!-- Manage Packages -->
-        <a href="{{ route('admin.managePackages') }}" class="nav-link flex items-center gap-4 text-white/70 font-medium p-3 rounded-xl transition-all hover:bg-brand-blue/70 hover:text-white">
-            <i class="fas fa-cubes text-lg w-6 text-center"></i>
-            <span>Manage Packages</span>
-        </a>
-        <!-- Orders Management -->
-        <a href="{{ route('admin.orderManagement') }}" class="nav-link flex items-center gap-4 text-white/70 font-medium p-3 rounded-xl transition-all hover:bg-brand-blue/70 hover:text-white">
-            <i class="fas fa-shopping-cart text-lg w-6 text-center"></i>
-            <span>Orders Management</span>
-        </a>
-        <!-- Subscriptions -->
-        <a href="{{ route('admin.subscriptionManagement') }}" class="nav-link flex items-center gap-4 text-white/70 font-medium p-3 rounded-xl transition-all hover:bg-brand-blue/70 hover:text-white">
-            <i class="fas fa-sync-alt text-lg w-6 text-center"></i>
-            <span>Subscriptions</span>
-        </a>
-        <!-- Users Management -->
-        <a href="{{ route('admin.userManagement') }}" class="nav-link flex items-center gap-4 text-white/70 font-medium p-3 rounded-xl transition-all hover:bg-brand-blue/70 hover:text-white">
-            <i class="fas fa-users text-lg w-6 text-center"></i>
-            <span>Users Management</span>
-        </a>
-        <!-- Delivery Logistics -->
-        <a href="{{ route('admin.deliveryLogistics') }}" class="nav-link flex items-center gap-4 text-white/70 font-medium p-3 rounded-xl transition-all hover:bg-brand-blue/70 hover:text-white">
-            <i class="fas fa-truck-fast text-lg w-6 text-center"></i>
-            <span>Delivery Logistics</span>
-        </a>
-        <!-- Inventory / Stock -->
-        <a href="{{ route('admin.inventoryManagement') }}" class="nav-link flex items-center gap-4 text-white/70 font-medium p-3 rounded-xl transition-all hover:bg-brand-blue/70 hover:text-white">
-            <i class="fas fa-warehouse text-lg w-6 text-center"></i>
-            <span>Inventory / Stock</span>
-        </a>
-        <!-- Payments & Transactions -->
-        <a href="{{ route('admin.paymentManagement') }}" class="nav-link flex items-center gap-4 text-white/70 font-medium p-3 rounded-xl transition-all hover:bg-brand-blue/70 hover:text-white">
-            <i class="fas fa-credit-card text-lg w-6 text-center"></i>
-            <span>Payments & Transactions</span>
-        </a>
-        <!-- System Settings -->
-        <a href="{{ route('admin.systemSettings') }}" class="nav-link flex items-center gap-4 text-white/70 font-medium p-3 rounded-xl transition-all hover:bg-brand-blue/70 hover:text-white">
-            <i class="fas fa-cog text-lg w-6 text-center"></i>
-            <span>System Settings</span>
-        </a>
-        <!-- Admin Management -->
-        <a href="{{ route('admin.adminManagement') }}" class="nav-link flex items-center gap-4 text-white/70 font-medium p-3 rounded-xl transition-all hover:bg-brand-blue/70 hover:text-white">
-            <i class="fas fa-user-shield text-lg w-6 text-center"></i>
-            <span>Admin Management</span>
-        </a>
+        @foreach($navLinks as $link)
+            @php $isActive = request()->routeIs($link['route']); @endphp
+            <a href="{{ route($link['route']) }}"
+               class="nav-link {{ $isActive ? 'active' : '' }} flex items-center gap-4 {{ $isActive ? 'text-white/90 font-semibold' : 'text-white/70 font-medium hover:bg-brand-blue/70 hover:text-white' }} p-3 rounded-xl transition-all">
+                <i class="fas {{ $link['icon'] }} text-lg w-6 text-center"></i>
+                <span>{{ $link['label'] }}</span>
+            </a>
+        @endforeach
     </nav>
 
     <!-- Fixed Bottom: Logout -->

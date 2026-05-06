@@ -223,48 +223,6 @@
             </div>
         </div>
 
-        <!-- 4. Sales & Orders Analytics Section (2-Column Layout) -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            
-            <!-- Sales Line Chart (Main Area) -->
-            <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-soft">
-                <h3 class="text-xl font-semibold mb-2 text-brand-blue">Revenue Over 30 Days</h3>
-                <p class="text-sm text-gray-500 mb-4">Total revenue generated: ₦15,489,000</p>
-                <!-- Chart Placeholder -->
-                <div class="chart-placeholder h-72 rounded-xl">
-                    <i class="fas fa-chart-line mr-2"></i> Placeholder: Large Sales Line Chart (Teal & Blue)
-                </div>
-                <div class="flex justify-end mt-3 space-x-2">
-                    <button class="text-xs text-brand-blue px-3 py-1 rounded-lg bg-brand-grey hover:bg-brand-blue/10">7 Days</button>
-                    <button class="text-xs text-white px-3 py-1 rounded-lg bg-brand-teal">30 Days</button>
-                    <button class="text-xs text-brand-blue px-3 py-1 rounded-lg bg-brand-grey hover:bg-brand-blue/10">Year</button>
-                </div>
-            </div>
-
-            <!-- Revenue Breakdown (Donut Chart) -->
-            <div class="bg-white p-6 rounded-2xl shadow-soft">
-                <h3 class="text-xl font-semibold mb-4 text-brand-blue">Revenue Breakdown</h3>
-                <!-- Chart Placeholder -->
-                <div class="chart-placeholder h-40 rounded-xl mb-4">
-                    <i class="fas fa-chart-pie mr-2"></i> Placeholder: Donut Chart (Packages vs. Add-ons)
-                </div>
-                <div class="space-y-2 text-sm">
-                    <div class="flex justify-between items-center">
-                        <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-brand-blue mr-2"></span> Package Subscriptions</span>
-                        <span class="font-bold">65%</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-brand-teal mr-2"></span> Custom Orders</span>
-                        <span class="font-bold">25%</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-brand-gold mr-2"></span> Premium Add-ons</span>
-                        <span class="font-bold">10%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- 5. Recent Orders Table & 6. Inventory/Activity Log (Grid Layout) -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
