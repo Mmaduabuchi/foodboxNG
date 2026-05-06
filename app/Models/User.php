@@ -28,6 +28,7 @@ class User extends Authenticatable
         'two_factor_enabled',
         'is_suspended',
         'is_active',
+        'role',
     ];
 
     public function addresses()

@@ -45,6 +45,7 @@ class registerController extends Controller
                 'token' => $token,
                 'referral_code' => $referral_code,
                 'is_suspended' => false,
+                'role' => "user",
             ]);
             
             Mail::to($user->email)->send(new VerifyEmailMail($user));

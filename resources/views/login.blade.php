@@ -101,27 +101,34 @@
             <div class="flex-grow border-t border-gray-200"></div>
         </div>
 
-        <?php
-            if($errors->any()){
-                foreach($errors->all() as $error){
-        ?>
-                    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
-                        <strong class="font-bold">Error!</strong>
-                        <span class="block sm:inline">{{ $error }}</span>
+        <!-- Alerts Section -->
+        @if($errors->any())
+            <div class="space-y-3 mb-6">
+                @foreach($errors->all() as $error)
+                    <div class="p-4 rounded-2xl bg-red-50 border border-red-100 flex items-center gap-4 text-red-700 shadow-sm animate-in fade-in slide-in-from-top-4 duration-300">
+                        <div class="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0 text-red-600">
+                            <i class="fas fa-circle-exclamation text-lg"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-xs uppercase tracking-wider font-bold opacity-60 mb-0.5">Error</p>
+                            <p class="text-sm font-semibold">{{ $error }}</p>
+                        </div>
                     </div>
-        <?php
-                }
-            }
+                @endforeach
+            </div>
+        @endif
 
-            if(session('success')){
-        ?>
-                <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded relative" role="alert">
-                    <strong class="font-bold">Success!</strong>
-                    <span class="block sm:inline">{{ session('success') }}</span>
+        @if(session('success'))
+            <div class="mb-6 p-4 rounded-2xl bg-green-50 border border-green-100 flex items-center gap-4 text-green-700 shadow-sm animate-in fade-in slide-in-from-top-4 duration-300">
+                <div class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0 text-green-600">
+                    <i class="fas fa-check-circle text-lg"></i>
                 </div>
-        <?php
-            }
-        ?>
+                <div class="flex-1">
+                    <p class="text-xs uppercase tracking-wider font-bold opacity-60 mb-0.5">Success</p>
+                    <p class="text-sm font-semibold">{{ session('success') }}</p>
+                </div>
+            </div>
+        @endif
 
         <!-- Login Form -->
         <form action="{{ route('login.store') }}" method="POST" class="space-y-4">

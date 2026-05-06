@@ -46,6 +46,12 @@ class loginController extends Controller
                 return back()->withErrors(['email' => 'Your account has been deactivated.']);
             }
 
+            //check user role
+            if ($user->role !== 'user') {
+                Auth::logout();
+                return back()->withErrors(['email' => 'You are not authorized to login as a user.']);
+            }
+
             //2fa
             if ($user->two_factor_enabled) {
                 // Generate OTP

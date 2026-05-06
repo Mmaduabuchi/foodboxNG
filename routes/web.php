@@ -24,6 +24,8 @@ use App\Http\Controllers\dashboard\TwoFactorController;
 use App\Http\Controllers\auth\loginOtpController;
 use App\Http\Controllers\dashboard\paymenthistoryController;
 use App\Http\Controllers\dashboard\managesubscriptionController;
+use App\Http\Controllers\secure\loginController as secureloginController;
+use App\Http\Controllers\superadmin\adminHomeController;
 
 
 Route::get('/', function () {
@@ -91,6 +93,13 @@ Route::middleware('guest')->group(function () {
     Route::get('/otp/verify', [loginOtpController::class, 'show'])->name('otp_verify');
     Route::post('/otp/verify', [loginOtpController::class, 'verify'])->name('otp_verify');
     Route::post('/otp/resend', [loginOtpController::class, 'resend'])->name('otp_resend');
+
+
+
+
+    //admin login routes
+    Route::get('/secure/login', [secureloginController::class, 'index'])->name('secure.login');
+    Route::post('/secure/login', [secureloginController::class, 'login'])->name('secure.login');
 });
 
 
@@ -98,7 +107,8 @@ Route::middleware('guest')->group(function () {
 Route::get('/verify-email/{token}', [registerController::class, 'verifyEmail'])->name('verify.email');
 
 
-Route::middleware('auth')->group(function () {
+
+Route::middleware(['auth'])->group(function () {
     //logout
     Route::post('/logout', [loginController::class, 'destroy'])->name("logout");
     
@@ -139,4 +149,19 @@ Route::middleware('auth')->group(function () {
     // Account deactivation
     Route::post('/account/deactivate', [userprofileController::class, 'deactivate'])->name('account.deactivate');
 
+});
+
+
+
+
+
+
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    
+    //admin logout
+    Route::post('/secure/logout', [adminHomeController::class, 'logout'])->name('secure.logout');
+
+    //admin dashboard
+    Route::get('/admin/dashboard', [adminHomeController::class, 'index'])->name('admin.dashboard');
 });

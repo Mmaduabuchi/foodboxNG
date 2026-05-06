@@ -86,20 +86,40 @@
             <p class="text-gray-500 text-sm">Please enter your credentials to access the console.</p>
         </div>
 
+        <!-- Session Alerts -->
+        @if(session('error'))
+            <div class="mb-6 p-4 rounded-2xl bg-red-50 border border-red-100 flex items-center gap-4 text-red-700 shadow-sm">
+                <div class="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0 text-red-600">
+                    <i class="fas fa-circle-exclamation text-lg"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-xs uppercase tracking-wider font-bold opacity-60 mb-0.5">Error</p>
+                    <p class="text-sm font-semibold">{{ session('error') }}</p>
+                </div>
+            </div>
+        @endif
+
+        @if(session('success'))
+            <div class="mb-6 p-4 rounded-2xl bg-brand-teal/5 border border-brand-teal/10 flex items-center gap-4 text-brand-teal shadow-sm">
+                <div class="w-10 h-10 rounded-xl bg-brand-teal/10 flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-check-circle text-lg"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-xs uppercase tracking-wider font-bold opacity-60 mb-0.5">Success</p>
+                    <p class="text-sm font-semibold">{{ session('success') }}</p>
+                </div>
+            </div>
+        @endif
+
         <!-- Login Form -->
-        <form id="admin-login-form" class="space-y-6">
+        <form action="{{ route('secure.login') }}" method="POST" id="admin-login-form" class="space-y-6">
+            @csrf
             
             <!-- Email/Username Field -->
             <div>
-                <label for="username" class="block text-sm font-semibold text-gray-700 mb-1">Username or Email</label>
+                <label for="email" class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
                 <div class="relative">
-                    <input 
-                        type="text" 
-                        id="username" 
-                        placeholder="admin@foodbox.ng" 
-                        class="form-input pl-11" 
-                        required
-                    >
+                    <input type="email" id="email" name="email" placeholder="admin@foodbox.ng" class="form-input pl-11" required>
                     <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                 </div>
             </div>
@@ -108,31 +128,16 @@
             <div>
                 <label for="password" class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
                 <div class="relative">
-                    <input 
-                        type="password" 
-                        id="password" 
-                        placeholder="••••••••" 
-                        class="form-input pl-11" 
-                        required
-                    >
+                    <input type="password" id="password" name="password" placeholder="••••••••" class="form-input pl-11" required>
                     <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                 </div>
             </div>
 
-            <!-- Forgot Password Link -->
-            <div class="flex justify-end">
-                <a href="#" class="text-sm font-medium text-brand-teal hover:text-brand-blue transition-colors">
-                    Forgot Password?
-                </a>
-            </div>
 
             <!-- Login Button -->
-            <button 
-                type="submit" 
-                class="w-full py-3 bg-brand-blue text-white font-bold rounded-xl hover:bg-brand-blue/90 transition-all duration-300 shadow-sm-brand flex items-center justify-center gap-2 text-lg uppercase tracking-wider"
-            >
+            <button type="submit" id="loginBtn" class="w-full py-3 bg-brand-blue text-white font-bold rounded-xl hover:bg-brand-blue/90 transition-all duration-300 shadow-sm-brand flex items-center justify-center gap-2 text-lg uppercase tracking-wider">
                 <i class="fas fa-sign-in-alt"></i>
-                Login Securely
+                <span>Login Securely</span>
             </button>
         </form>
 
@@ -150,9 +155,7 @@
 
     <!-- JavaScript for Form Handling and Custom Alert -->
     <script>
-        const loginForm = document.getElementById('admin-login-form');
-
-        // Custom Alert/Message Box function (reused from previous design)
+        // Custom Alert/Message Box function
         function alertMessage(message, type = 'info') {
             const container = document.getElementById('alert-container');
             
@@ -190,23 +193,23 @@
             }, 5000);
         }
 
-        // Handle Login Submission
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
+        document.getElementById('admin-login-form').addEventListener('submit', function() {
+            const btn = document.getElementById('loginBtn');
+            const btnText = btn.querySelector('span');
+            const icon = btn.querySelector('.fa-sign-in-alt');
             
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            // Simple validation simulation
-            if (username === 'admin@foodbox.ng' && password === '1234') {
-                alertMessage("Login successful! Redirecting to dashboard...", 'success');
-                // In a real application, you would redirect here:
-                // window.location.href = '/admin/dashboard.html';
-                console.log("Admin Login Success!");
-            } else {
-                alertMessage("Invalid credentials. Please check your username and password.", 'error');
+            // Disable button
+            btn.disabled = true;
+            btn.classList.add('opacity-70', 'cursor-not-allowed');
+            
+            // Change icon and text
+            if (icon) {
+                icon.className = 'fas fa-circle-notch fa-spin';
             }
+            btnText.textContent = 'Authenticating...';
         });
+
+
     </script>
 </body>
 </html>

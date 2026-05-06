@@ -133,93 +133,13 @@
     <div id="backdrop" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden opacity-0" onclick="toggleSidebar()"></div>
 
     <!-- 1. Sidebar Navigation (Deep Blue Background) -->
-    <aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-brand-blue p-6 shadow-admin lg:translate-x-0">
-        
-        <!-- Logo/Brand -->
-        <div class="flex items-center gap-2 mb-8 pb-4 border-b border-white/10">
-            <div class="w-10 h-10 bg-brand-teal rounded-lg flex items-center justify-center text-white shadow-lg">
-                <i class="fas fa-box-open text-xl"></i>
-            </div>
-            <span class="text-2xl font-extrabold text-white tracking-tight">FoodBox<span class="text-brand-teal">NG</span></span>
-        </div>
-
-        <!-- Admin Profile -->
-        <div class="flex items-center gap-3 mb-10 pb-4 border-b border-white/10">
-            <img src="https://placehold.co/40x40/E76F51/FFFFFF?text=SA" onerror="this.onerror=null; this.src='https://placehold.co/40x40/E76F51/FFFFFF?text=SA';" alt="Admin Avatar" class="w-10 h-10 rounded-full border-2 border-brand-gold/50 object-cover">
-            <div class="text-white">
-                <p class="font-semibold text-sm leading-tight">Admin J. Okoro</p>
-                <p class="text-xs text-brand-gold font-medium">Super Admin</p>
-            </div>
-        </div>
-
-        <!-- Navigation Links (Highlight Delivery Logistics) -->
-        <nav class="space-y-1.5">
-            <a href="superAdmin_dashboard.html" class="nav-link flex items-center gap-4 text-white/70 font-medium p-3 rounded-xl transition-all hover:bg-brand-blue/70 hover:text-white">
-                <i class="fas fa-tachometer-alt text-lg w-6 text-center"></i>
-                <span>Dashboard Overview</span>
-            </a>
-            <a href="superAdmin_add_new.html" class="nav-link flex items-center gap-4 text-white/70 font-medium p-3 rounded-xl transition-all hover:bg-brand-blue/70 hover:text-white">
-                <i class="fas fa-plus-circle text-lg w-6 text-center"></i>
-                <span>Add New</span>
-            </a>
-            <a href="superAdmin_orders_management.html" class="nav-link flex items-center gap-4 text-white/70 font-medium p-3 rounded-xl transition-all hover:bg-brand-blue/70 hover:text-white">
-                <i class="fas fa-shopping-cart text-lg w-6 text-center"></i>
-                <span>Orders Management</span>
-            </a>
-            <!-- NEW ACTIVE PAGE -->
-            <a href="#" class="nav-link active flex items-center gap-4 text-white/90 font-semibold p-3 rounded-xl transition-all hover:bg-brand-blue/70">
-                <i class="fas fa-route text-lg w-6 text-center"></i>
-                <span>Delivery & Logistics</span>
-            </a>
-            <a href="superAdmin_subscriptions_management.html" class="nav-link flex items-center gap-4 text-white/70 font-medium p-3 rounded-xl transition-all hover:bg-brand-blue/70 hover:text-white">
-                <i class="fas fa-sync-alt text-lg w-6 text-center"></i>
-                <span>Subscriptions</span>
-            </a>
-            <a href="superAdmin_users_management.html" class="nav-link flex items-center gap-4 text-white/70 font-medium p-3 rounded-xl hover:bg-brand-blue/70 hover:text-white">
-                <i class="fas fa-users text-lg w-6 text-center"></i>
-                <span>Users Management</span>
-            </a>
-            <a href="superAdmin_admin_management.html" class="nav-link flex items-center gap-4 text-white/70 font-medium p-3 rounded-xl hover:bg-brand-blue/70 hover:text-white">
-                <i class="fas fa-shield-alt text-lg w-6 text-center"></i>
-                <span>Admin Management</span>
-            </a>
-            <a href="superAdmin_payments_transactions.html" class="nav-link flex items-center gap-4 text-white/70 font-medium p-3 rounded-xl hover:bg-brand-blue/70 hover:text-white">
-                <i class="fas fa-wallet text-lg w-6 text-center"></i>
-                <span>Payments & Funds</span>
-            </a>
-            <a href="superAdmin_system_settings.html" class="nav-link flex items-center gap-4 text-white/70 font-medium p-3 rounded-xl hover:bg-brand-blue/70 hover:text-white">
-                <i class="fas fa-cog text-lg w-6 text-center"></i>
-                <span>System Settings</span>
-            </a>
-        </nav>
-    </aside>
+    @include('superAdminDashboard.aside')
 
     <!-- 2. Top Header -->
-    <header class="fixed top-0 right-0 w-full lg:w-[calc(100%-16rem)] h-20 bg-white border-b border-gray-100 shadow-soft z-30 flex items-center px-4 md:px-8 justify-between">
-        <h1 class="text-xl font-bold text-brand-blue">Delivery & Route Management</h1>
-        
-        <!-- Right Side Actions -->
-        <div class="flex items-center space-x-4">
-            
-            <!-- Notifications Bell -->
-            <button class="p-2 rounded-full text-gray-500 hover:bg-brand-grey transition-colors relative">
-                <i class="fas fa-bell text-lg"></i>
-                <span class="absolute top-0.5 right-0.5 block h-2 w-2 rounded-full ring-2 ring-white bg-brand-orange"></span>
-            </button>
-
-            <!-- Quick Action Button: Optimize Routes -->
-            <button onclick="optimizeRoutes()" class="px-4 py-2 bg-brand-teal text-white font-semibold rounded-xl hover:bg-brand-teal/90 transition-colors shadow-sm-brand flex items-center gap-2">
-                <i class="fas fa-map-marker-alt"></i>
-                <span class="hidden md:inline">Optimize Routes</span>
-            </button>
-            
-            <!-- Profile Avatar -->
-            <img src="https://placehold.co/36x36/E76F51/FFFFFF?text=SA" onerror="this.onerror=null; this.src='https://placehold.co/36x36/E76F51/FFFFFF?text=SA';" alt="Admin Avatar" class="w-9 h-9 rounded-full object-cover ring-2 ring-brand-blue/50 hidden sm:block">
-        </div>
-    </header>
+    @include('superAdminDashboard.header')
 
     <!-- Main Content Area -->
-    <main class="lg:ml-64 p-4 md:p-8 main-content max-w-full">
+    <main class="mt-20 p-4 md:p-8 main-content max-w-full">
         
         <!-- Logistics Quick-View Cards -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">

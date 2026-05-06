@@ -124,7 +124,7 @@
         ?>
 
         <!-- Sign Up Form -->
-        <form action="{{ route('register.store') }}" method="POST" class="space-y-4">
+        <form id="registerForm" action="{{ route('register.store') }}" method="POST" class="space-y-4">
             @csrf
             <!-- Name Input -->
             <div>
@@ -158,16 +158,22 @@
                 <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
                 <div class="relative">
                     <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-teal"></i>
-                    <input type="password" name="password" id="password" placeholder="Min. 8 characters" required class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all">
+                    <input type="password" name="password" id="password" placeholder="Min. 8 characters" required class="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all">
+                    <button type="button" onclick="togglePassword('password', this)" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-brand-teal transition-colors">
+                        <i class="fas fa-eye"></i>
+                    </button>
                 </div>
             </div>
 
-            <!-- confrim password -->
+            <!-- confirm password -->
             <div>
-                <label for="Confrimpassword" class="block text-sm font-medium text-gray-700 mb-1">Confrim password</label>
+                <label for="confrimpassword" class="block text-sm font-medium text-gray-700 mb-1">Confirm password</label>
                 <div class="relative">
                     <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-teal"></i>
-                    <input type="password" name="password_confirmation" id="confrimpassword" placeholder="Confrim password" required class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all">
+                    <input type="password" name="password_confirmation" id="confrimpassword" placeholder="Confirm password" required class="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all">
+                    <button type="button" onclick="togglePassword('confrimpassword', this)" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-brand-teal transition-colors">
+                        <i class="fas fa-eye"></i>
+                    </button>
                 </div>
             </div>
 
@@ -180,8 +186,8 @@
             </div>
 
             <!-- Submit Button -->
-            <button type="submit" class="w-full bg-brand-orange text-white font-bold py-3 rounded-xl hover:bg-brand-red transition-colors shadow-lg shadow-brand-orange/30 active:translate-y-0.5 mt-6">
-                Create My Account
+            <button type="submit" id="submitBtn" class="w-full bg-brand-orange text-white font-bold py-3 rounded-xl hover:bg-brand-red transition-all shadow-lg shadow-brand-orange/30 active:translate-y-0.5 mt-6 flex items-center justify-center gap-2">
+                <span>Create My Account</span>
             </button>
         </form>
 
@@ -193,6 +199,35 @@
     </div>
 
     <script>
+        function togglePassword(inputId, button) {
+            const input = document.getElementById(inputId);
+            const icon = button.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', function() {
+            const btn = document.getElementById('submitBtn');
+            const btnText = btn.querySelector('span');
+            
+            // Disable button
+            btn.disabled = true;
+            btn.classList.add('opacity-70', 'cursor-not-allowed');
+            
+            // Change text and add spinner
+            btnText.textContent = 'Creating Account...';
+            const spinner = document.createElement('i');
+            spinner.className = 'fas fa-circle-notch fa-spin mr-2';
+            btn.prepend(spinner);
+        });
     </script>
 </body>
 </html>
