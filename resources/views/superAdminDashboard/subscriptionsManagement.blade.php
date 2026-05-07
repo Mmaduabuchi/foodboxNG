@@ -130,20 +130,22 @@
             <div class="p-4 bg-white rounded-2xl shadow-soft border-t-4 border-brand-teal">
                 <div class="flex items-center justify-between">
                     <i class="fas fa-check-circle text-2xl text-brand-teal p-3 bg-brand-teal/10 rounded-xl"></i>
-                    <span class="text-sm font-semibold text-green-500 hidden md:block">+25 this week</span>
+                    <span class="text-sm font-semibold text-green-500 hidden md:block">+{{ $activeThisWeek }} this week</span>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Active Subscriptions</p>
-                <p class="text-2xl font-extrabold text-brand-blue">1,240</p>
+                <p class="text-2xl font-extrabold text-brand-blue">{{ $activeSubscriptions }}</p>
             </div>
 
             <!-- Card 2: Annual Recurring Revenue (ARR) -->
             <div class="p-4 bg-white rounded-2xl shadow-soft border-t-4 border-brand-blue">
                 <div class="flex items-center justify-between">
                     <i class="fas fa-chart-line text-2xl text-brand-blue p-3 bg-brand-blue/10 rounded-xl"></i>
-                    <span class="text-sm font-semibold text-brand-teal hidden md:block">Up 8%</span>
+                    <span class="text-sm font-semibold hidden md:block {{ $revenueGrowth >= 0 ? 'text-brand-teal' : 'text-red-500' }}">
+                        {{ $revenueGrowth >= 0 ? '+' : '' }}{{ number_format($revenueGrowth, 1) }}%
+                    </span>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Annual Revenue (Est.)</p>
-                <p class="text-2xl font-extrabold text-brand-blue">₦ 75M</p>
+                <p class="text-2xl font-extrabold text-brand-blue">₦ {{ number_format($annualRevenue, 2) }}</p>
             </div>
 
             <!-- Card 3: Expiring Soon (Orange/Gold) -->
@@ -153,7 +155,7 @@
                     <span class="text-sm font-semibold text-brand-orange hidden md:block">Action Required</span>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Expiring Next 7 Days</p>
-                <p class="text-2xl font-extrabold text-brand-blue">48</p>
+                <p class="text-2xl font-extrabold text-brand-blue">{{ $expiringNext7Days }}</p>
             </div>
 
             <!-- Card 4: Failed Payments (Red) -->
@@ -163,45 +165,63 @@
                     <span class="text-sm font-semibold text-red-500 hidden md:block">Immediate Attention</span>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Failed Renewals</p>
-                <p class="text-2xl font-extrabold text-brand-blue">12</p>
+                <p class="text-2xl font-extrabold text-brand-blue">{{ $failedRenewals }}</p>
             </div>
         </div>
 
         <!-- Filter & Search Bar -->
-        <div class="bg-white p-6 rounded-2xl shadow-soft mb-8">
-            <h3 class="text-lg font-semibold mb-4 text-brand-blue">Subscription Filters</h3>
+        <form method="GET" action="{{ url()->current() }}" class="bg-white p-6 rounded-2xl shadow-soft mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-brand-blue">Subscription Filters</h3>
+                @if(request()->hasAny(['search', 'status', 'renewal_date']))
+                    <a href="{{ url()->current() }}"
+                       class="text-sm text-brand-red hover:text-brand-red/80 font-medium flex items-center gap-1 transition-colors">
+                        <i class="fas fa-times-circle"></i> Clear Filters
+                    </a>
+                @endif
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                
+
                 <!-- Search -->
                 <div class="md:col-span-2 relative">
                     <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    <input type="search" placeholder="Search by Customer Name or Email..."
-                        class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:border-brand-teal focus:ring-1 focus:ring-brand-teal/20 outline-none transition-all text-sm bg-brand-grey/50">
+                    <input
+                        type="search"
+                        name="search"
+                        value="{{ request('search') }}"
+                        placeholder="Search by Customer Name or Email..."
+                        class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:border-brand-teal focus:ring-1 focus:ring-brand-teal/20 outline-none transition-all text-sm bg-brand-grey/50"
+                    >
                 </div>
 
                 <!-- Status Filter -->
                 <div>
-                    <select class="w-full py-3 px-4 border border-gray-200 rounded-xl text-sm bg-brand-grey/50 focus:border-brand-teal outline-none">
-                        <option>All Statuses</option>
-                        <option>Active</option>
-                        <option>Paused</option>
-                        <option>Cancelled</option>
-                        <option>In Grace Period</option>
+                    <select name="status" class="w-full py-3 px-4 border border-gray-200 rounded-xl text-sm bg-brand-grey/50 focus:border-brand-teal outline-none">
+                        <option value="">All Statuses</option>
+                        <option value="active"    {{ request('status') === 'active'    ? 'selected' : '' }}>Active</option>
+                        <option value="paused"    {{ request('status') === 'paused'    ? 'selected' : '' }}>Paused</option>
+                        <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                        <option value="pending"   {{ request('status') === 'pending'   ? 'selected' : '' }}>Pending</option>
                     </select>
                 </div>
 
                 <!-- Renewal Date -->
                 <div>
-                    <input type="date" class="w-full py-3 px-4 border border-gray-200 rounded-xl text-sm bg-brand-grey/50 focus:border-brand-teal outline-none">
+                    <input
+                        type="date"
+                        name="renewal_date"
+                        value="{{ request('renewal_date') }}"
+                        class="w-full py-3 px-4 border border-gray-200 rounded-xl text-sm bg-brand-grey/50 focus:border-brand-teal outline-none"
+                    >
                 </div>
 
-                <!-- Action Button -->
-                <button class="w-full py-3 bg-brand-blue text-white font-semibold rounded-xl hover:bg-brand-blue/90 transition-colors flex items-center justify-center gap-2">
+                <!-- Apply Button -->
+                <button type="submit" class="w-full py-3 bg-brand-blue text-white text-sm font-semibold rounded-xl hover:bg-brand-blue/90 transition-colors flex items-center justify-center gap-2">
                     <i class="fas fa-search"></i>
                     <span class="hidden sm:inline">Search Subscriptions</span>
                 </button>
             </div>
-        </div>
+        </form>
 
         <!-- Subscriptions Table -->
         <div class="bg-white p-6 rounded-2xl shadow-soft overflow-x-auto">
@@ -225,87 +245,77 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
-                    <!-- Row 1: Active -->
-                    <tr class="hover:bg-brand-grey transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Sub ID">SUB1001</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Customer">Aisha Lawal</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Package">Family Jumbo</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Frequency">Monthly</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-brand-teal font-semibold" data-label="Next Renewal">2023-12-05</td>
-                        <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Action">
-                            <button class="text-brand-blue hover:text-brand-teal transition-colors text-sm font-semibold">Manage</button>
-                        </td>
-                    </tr>
-                     <!-- Row 2: Paused -->
-                    <tr class="hover:bg-brand-grey transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Sub ID">SUB1002</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Customer">Ngozi Ezenwa</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Package">Standard Basic</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Frequency">Quarterly</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Next Renewal">2024-01-15</td>
-                        <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-200 text-gray-700">Paused</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Action">
-                            <button class="text-brand-blue hover:text-brand-teal transition-colors text-sm font-semibold">Activate</button>
-                        </td>
-                    </tr>
-                     <!-- Row 3: Payment Failed -->
-                    <tr class="hover:bg-brand-grey transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Sub ID">SUB1003</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Customer">Kunle Adebayo</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Package">Premium Vegan</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Frequency">Bi-Weekly</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-brand-red font-semibold" data-label="Next Renewal">2023-11-25 (Retrying)</td>
-                        <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-brand-red/10 text-brand-red">Payment Failed</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Action">
-                            <button class="text-brand-blue hover:text-brand-teal transition-colors text-sm font-semibold">Update Card</button>
-                        </td>
-                    </tr>
-                    <!-- Row 4: Expiring Soon -->
-                    <tr class="hover:bg-brand-grey transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Sub ID">SUB1004</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Customer">Hassan Musa</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Package">Custom Build</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Frequency">Monthly</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-brand-orange font-semibold" data-label="Next Renewal">2023-11-28 (Final Cycle)</td>
-                        <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-brand-orange/10 text-brand-orange">Expiring</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Action">
-                            <button class="text-brand-blue hover:text-brand-teal transition-colors text-sm font-semibold">View History</button>
-                        </td>
-                    </tr>
-                    <!-- Row 5: Active -->
-                    <tr class="hover:bg-brand-grey transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Sub ID">SUB1005</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Customer">Jessica P.</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Package">Student Starter</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Frequency">Monthly</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-brand-teal font-semibold" data-label="Next Renewal">2023-12-10</td>
-                        <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Action">
-                            <button class="text-brand-blue hover:text-brand-teal transition-colors text-sm font-semibold">Manage</button>
-                        </td>
-                    </tr>
+                    @forelse ($subscriptions as $sub)
+                        @php
+                            $badge = match($sub->status) {
+                                'active'    => ['bg-green-100 text-green-800',          'Active'],
+                                'paused'    => ['bg-gray-200 text-gray-700',            'Paused'],
+                                'cancelled' => ['bg-red-100 text-brand-red',            'Cancelled'],
+                                'pending'   => ['bg-brand-gold/10 text-brand-orange',   'Pending'],
+                                default     => ['bg-gray-100 text-gray-600',            ucfirst($sub->status)],
+                            };
+
+                            $renewalColor = match($sub->status) {
+                                'active'    => 'text-brand-teal font-semibold',
+                                'cancelled' => 'text-brand-red font-semibold',
+                                'paused'    => 'text-gray-500',
+                                default     => 'text-brand-orange font-semibold',
+                            };
+
+                            $actionLabel = match($sub->status) {
+                                'active'    => 'Manage',
+                                'paused'    => 'Activate',
+                                'cancelled' => 'View History',
+                                default     => 'Manage',
+                            };
+
+                            $frequency = ucwords(str_replace('_', ' ', $sub->delivery_frequency ?? '—'));
+                        @endphp
+                        <tr class="hover:bg-brand-grey transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Sub ID">
+                                SUB-{{ str_pad($sub->id, 4, '0', STR_PAD_LEFT) }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Customer">
+                                {{ $sub->user->name ?? 'Unknown' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Package">
+                                {{ $sub->package->name ?? '—' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Frequency">
+                                {{ $frequency }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm {{ $renewalColor }}" data-label="Next Renewal">
+                                {{ $sub->next_renewal_date ? $sub->next_renewal_date->format('Y-m-d') : '—' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $badge[0] }}">
+                                    {{ $badge[1] }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Action">
+                                <button class="text-brand-blue hover:text-brand-teal transition-colors text-sm font-semibold">
+                                    {{ $actionLabel }}
+                                </button>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="px-6 py-12 text-center text-sm text-gray-400 italic">
+                                <i class="fas fa-inbox text-3xl mb-3 block text-gray-300"></i>
+                                No subscriptions found.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
 
-            <div class="mt-6 flex justify-between items-center">
-                <p class="text-sm text-gray-600">Showing 1 to 5 of 1,240 results</p>
-                <div class="flex space-x-2">
-                    <button class="px-3 py-1 rounded-lg bg-brand-grey text-brand-blue font-medium hover:bg-gray-300 transition-colors"><i class="fas fa-chevron-left text-xs"></i></button>
-                    <span class="px-3 py-1 rounded-lg bg-brand-blue text-white font-medium">1</span>
-                    <button class="px-3 py-1 rounded-lg bg-brand-grey text-brand-blue font-medium hover:bg-gray-300 transition-colors">2</button>
-                    <button class="px-3 py-1 rounded-lg bg-brand-grey text-brand-blue font-medium hover:bg-gray-300 transition-colors">3</button>
-                    <button class="px-3 py-1 rounded-lg bg-brand-grey text-brand-blue font-medium hover:bg-gray-300 transition-colors"><i class="fas fa-chevron-right text-xs"></i></button>
+            <div class="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <p class="text-sm text-gray-600">
+                    Showing {{ $subscriptions->firstItem() ?? 0 }} to {{ $subscriptions->lastItem() ?? 0 }}
+                    of {{ number_format($subscriptions->total()) }} results
+                </p>
+                <div>
+                    {{ $subscriptions->links() }}
                 </div>
             </div>
         </div>

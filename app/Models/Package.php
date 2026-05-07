@@ -9,6 +9,10 @@ class Package extends Model
 {
     use HasFactory;
     protected $table = 'packages';
+
+    const STATUS_ACTIVE = 'active';
+    const STATUS_INACTIVE = 'inactive';
+    const STATUS_DRAFT = 'draft';
     
     protected $fillable = [
         'name',
@@ -17,6 +21,7 @@ class Package extends Model
         'billing_cycle',
         'short_description',
         'description',
+        'status',
         'is_available'
     ];
 
@@ -41,5 +46,21 @@ class Package extends Model
     public function items()
     {
         return $this->hasMany(PackageItem::class);
+    }
+
+    //Scopes
+    public function scopeActive($query)
+    {
+        return $query->where('status', self::STATUS_ACTIVE);
+    }
+
+    public function scopeDraft($query)
+    {
+        return $query->where('status', self::STATUS_DRAFT);
+    }
+
+    public function scopeInactive($query)
+    {
+        return $query->where('status', self::STATUS_INACTIVE);
     }
 }

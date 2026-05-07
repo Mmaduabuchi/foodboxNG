@@ -11,10 +11,11 @@ class Subscription extends Model
     protected $table = 'subscriptions';
 
     // Status constants
-    const STATUS_PENDING   = 'pending';
-    const STATUS_ACTIVE    = 'active';
-    const STATUS_PAUSED    = 'paused';
+    const STATUS_PENDING = 'pending';
+    const STATUS_ACTIVE = 'active';
+    const STATUS_PAUSED = 'paused';
     const STATUS_CANCELLED = 'cancelled';
+    const STATUS_FAILED = 'failed';
     
     protected $fillable = [
         'user_id',
@@ -69,5 +70,10 @@ class Subscription extends Model
     public function scopeCancelled($query)
     {
         return $query->where('status', self::STATUS_CANCELLED);
+    }
+
+    public function scopeFailed($query)
+    {
+        return $query->where('status', self::STATUS_FAILED);
     }
 }
