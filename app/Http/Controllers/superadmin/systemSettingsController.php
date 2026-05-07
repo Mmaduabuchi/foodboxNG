@@ -4,11 +4,16 @@ namespace App\Http\Controllers\superadmin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class systemSettingsController extends Controller
 {
     public function index()
     {
-        return view('superAdminDashboard.systemSettings');
+        // Authenticated admin name
+        $adminName = Auth::user()->name;
+
+        return view('superAdminDashboard.systemSettings', compact('adminName'));
     }
 }

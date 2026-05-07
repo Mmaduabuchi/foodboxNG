@@ -160,43 +160,39 @@
     <main class="mt-20 lg:ml-64 p-4 md:p-8 main-content">
         
         <!-- 3. Dashboard Overview Cards -->
-        <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6 lg:gap-6 mb-8">
+        <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5 lg:gap-5 mb-8">
             
             <!-- Card 1: Total Users -->
             <div class="p-4 bg-white rounded-2xl shadow-soft">
                 <div class="flex items-center justify-between">
                     <i class="fas fa-users text-2xl text-brand-teal p-3 bg-brand-teal/10 rounded-xl"></i>
-                    <span class="text-sm font-semibold text-green-500 hidden md:block">+12%</span>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Total Users</p>
-                <p class="text-2xl font-extrabold text-brand-blue">14,321</p>
+                <p class="text-2xl font-extrabold text-brand-blue">{{ $totalUsers }}</p>
             </div>
 
             <!-- Card 2: Total Orders -->
             <div class="p-4 bg-white rounded-2xl shadow-soft">
                 <div class="flex items-center justify-between">
                     <i class="fas fa-shopping-basket text-2xl text-brand-blue p-3 bg-brand-blue/10 rounded-xl"></i>
-                    <span class="text-sm font-semibold text-red-500 hidden md:block">-4%</span>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Total Orders</p>
-                <p class="text-2xl font-extrabold text-brand-blue">3,125</p>
+                <p class="text-2xl font-extrabold text-brand-blue">{{ $totalOrders }}</p>
             </div>
 
             <!-- Card 3: Active Subscriptions -->
             <div class="p-4 bg-white rounded-2xl shadow-soft">
                 <div class="flex items-center justify-between">
                     <i class="fas fa-sync-alt text-2xl text-brand-gold p-3 bg-brand-gold/10 rounded-xl"></i>
-                    <span class="text-sm font-semibold text-green-500 hidden md:block">+5%</span>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Active Subs</p>
-                <p class="text-2xl font-extrabold text-brand-blue">1,450</p>
+                <p class="text-2xl font-extrabold text-brand-blue">{{ $activeSubscriptions }}</p>
             </div>
 
             <!-- Card 4: Revenue This Month -->
             <div class="p-4 bg-white rounded-2xl shadow-soft">
                 <div class="flex items-center justify-between">
                     <i class="fas fa-money-bill-wave text-2xl text-brand-teal p-3 bg-brand-teal/10 rounded-xl"></i>
-                    <span class="text-sm font-semibold text-green-500 hidden md:block">+2.5%</span>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Rev. (This Month)</p>
                 <p class="text-2xl font-extrabold text-brand-blue">₦4.2M</p>
@@ -210,16 +206,6 @@
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Pending Deliveries</p>
                 <p class="text-2xl font-extrabold text-brand-blue">84</p>
-            </div>
-
-            <!-- Card 6: Out of Stock Items -->
-            <div class="p-4 bg-white rounded-2xl shadow-soft">
-                <div class="flex items-center justify-between">
-                    <i class="fas fa-exclamation-triangle text-2xl text-brand-red p-3 bg-brand-red/10 rounded-xl"></i>
-                    <span class="text-sm text-gray-500 hidden md:block">Critical</span>
-                </div>
-                <p class="text-sm text-gray-500 mt-2">Out of Stock</p>
-                <p class="text-2xl font-extrabold text-brand-blue">11</p>
             </div>
         </div>
 
@@ -242,48 +228,60 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
-                        <!-- Row 1 -->
-                        <tr class="hover:bg-brand-grey transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Order ID">#FB9001</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Customer">Ngozi A.</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Package">Standard Basic</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Amount">₦15,000</td>
-                            <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Delivered</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Date">1 hour ago</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Action">
-                                <button class="text-brand-teal hover:text-brand-blue transition-colors">View</button>
-                            </td>
-                        </tr>
-                         <!-- Row 2 -->
-                        <tr class="hover:bg-brand-grey transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Order ID">#FB9002</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Customer">Kunle D.</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Package">Premium Family</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Amount">₦45,500</td>
-                            <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Processing</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Date">2 hours ago</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Action">
-                                <button class="text-brand-teal hover:text-brand-blue transition-colors">View</button>
-                            </td>
-                        </tr>
-                         <!-- Row 3 -->
-                        <tr class="hover:bg-brand-grey transition-colors">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Order ID">#FB9003</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Customer">Jane I.</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Package">Starter Pack</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Amount">₦8,500</td>
-                            <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Cancelled</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Date">1 day ago</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Action">
-                                <button class="text-brand-teal hover:text-brand-blue transition-colors">View</button>
-                            </td>
-                        </tr>
+                        @forelse ($recentOrders as $order)
+                            @php
+                                $badge = match($order->delivery_status) {
+                                    'delivered'        => ['bg-green-100 text-green-800',  'Delivered'],
+                                    'processing'       => ['bg-yellow-100 text-yellow-800','Processing'],
+                                    'out_for_delivery' => ['bg-blue-100 text-blue-800',   'Out for Delivery'],
+                                    'pending'          => ['bg-gray-100 text-gray-700',   'Pending'],
+                                    default            => match($order->status) {
+                                        'cancelled' => ['bg-red-100 text-red-800',     'Cancelled'],
+                                        'completed' => ['bg-green-100 text-green-800', 'Completed'],
+                                        'failed'    => ['bg-red-100 text-red-800',     'Failed'],
+                                        default     => ['bg-gray-100 text-gray-700',   ucfirst($order->status)],
+                                    },
+                                };
+                                $customerName = $order->user
+                                    ? $order->user->name
+                                    : 'Unknown';
+                                $packageName = $order->package
+                                    ? $order->package->name
+                                    : '—';
+                            @endphp
+                            <tr class="hover:bg-brand-grey transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Order ID">
+                                    #FB{{ str_pad($order->id, 4, '0', STR_PAD_LEFT) }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Customer">
+                                    {{ $customerName }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Package">
+                                    {{ $packageName }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Amount">
+                                    ₦{{ number_format($order->amount, 2) }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $badge[0] }}">
+                                        {{ $badge[1] }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Date">
+                                    {{ $order->created_at->diffForHumans() }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Action">
+                                    <button class="text-brand-teal hover:text-brand-blue transition-colors">View</button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="px-6 py-10 text-center text-sm text-gray-400 italic">
+                                    <i class="fas fa-inbox text-2xl mb-2 block text-gray-300"></i>
+                                    No orders found yet.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

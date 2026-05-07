@@ -5,12 +5,39 @@ namespace App\Http\Controllers\superadmin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Models\Order;
+use App\Models\Subscription;
 
 class adminHomeController extends Controller
 {
     //
     public function index(){
-        return view("superAdminDashboard.home");
+        // Authenticated admin name
+        $adminName = Auth::user()->name;
+
+        // Total users
+        $totalUsers = User::where('role', 'user')->count();
+
+        // Total orders
+        $totalOrders = Order::count();
+
+        // Total active subscriptions
+        $activeSubscriptions = Subscription::active()->count();
+
+        // Recent orders (latest 5) with relationships
+        $recentOrders = Order::with(['user', 'package'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return view('superAdminDashboard.home', compact(
+            'adminName',
+            'totalUsers',
+            'totalOrders',
+            'activeSubscriptions',
+            'recentOrders'
+        ));
     }
 
     public function logout(Request $request){

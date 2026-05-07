@@ -10,11 +10,26 @@
         </div>
 
         <!-- Admin Profile -->
+        @php
+            $initials = collect(explode(' ', $adminName))
+                ->map(fn($word) => strtoupper(substr($word, 0, 1)))
+                ->join('');
+        @endphp
+
         <div class="flex items-center gap-3">
-            <img src="https://placehold.co/40x40/E76F51/FFFFFF?text=SA" onerror="this.onerror=null; this.src='https://placehold.co/40x40/E76F51/FFFFFF?text=SA';" alt="Admin Avatar" class="w-10 h-10 rounded-full border-2 border-brand-gold/50 object-cover flex-shrink-0">
+            <img src="https://placehold.co/40x40/E76F51/FFFFFF?text={{ $initials }}"
+                onerror="this.onerror=null; this.src='https://placehold.co/40x40/E76F51/FFFFFF?text=SA';"
+                alt="Admin Avatar" class="w-10 h-10 rounded-full border-2 border-brand-gold/50 object-cover flex-shrink-0"
+            >
+
             <div class="text-white min-w-0">
-                <p class="font-semibold text-sm leading-tight truncate">Admin J. Okoro</p>
-                <p class="text-xs text-brand-gold font-medium">Super Admin</p>
+                <p class="font-semibold text-sm leading-tight truncate">
+                    {{ strtoupper($adminName) }}
+                </p>
+
+                <p class="text-xs text-brand-gold font-medium">
+                    Super Admin
+                </p>
             </div>
         </div>
     </div>

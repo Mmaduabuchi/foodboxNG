@@ -32,13 +32,18 @@
                 <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-brand-grey rounded-t-xl"><i class="fas fa-cube mr-2"></i> Add Package</a>
                 <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-brand-grey"><i class="fas fa-box-open mr-2"></i> Add Item</a>
                 <div class="border-t border-gray-100"></div>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-brand-grey rounded-b-xl"><i class="fas fa-user-plus mr-2"></i> Add Admin</a>
+                <a href="{{ route("admin.adminManagement") }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-brand-grey rounded-b-xl"><i class="fas fa-user-plus mr-2"></i> Add Admin</a>
             </div>
         </div>
         
         <!-- Profile Avatar Dropdown -->
+        @php
+            $initials = collect(explode(' ', $adminName))
+                ->map(fn($word) => strtoupper(substr($word, 0, 1)))
+                ->join('');
+        @endphp
         <div class="relative group cursor-pointer hidden sm:block">
-            <img src="https://placehold.co/36x36/E76F51/FFFFFF?text=SA" onerror="this.onerror=null; this.src='https://placehold.co/36x36/E76F51/FFFFFF?text=SA';" alt="Admin Avatar" class="w-9 h-9 rounded-full object-cover ring-2 ring-brand-blue/50">
+            <img src="https://placehold.co/36x36/E76F51/FFFFFF?text={{ $initials }}" onerror="this.onerror=null; this.src='https://placehold.co/36x36/E76F51/FFFFFF?text=SA';" alt="Admin Avatar" class="w-9 h-9 rounded-full object-cover ring-2 ring-brand-blue/50">
         </div>
     </div>
 </header>
