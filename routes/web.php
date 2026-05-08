@@ -186,6 +186,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/orderManagement', [orderManagementController::class, 'index'])->name('admin.orderManagement');
     Route::get('/admin/reports', [reportsController::class, 'index'])->name('admin.reports');
     Route::get('/admin/support', [supportController::class, 'index'])->name('admin.support');
-    Route::get('/admin/managePackages', [managePackagesController::class, 'index'])->name('admin.managePackages');
 
+    //manage packages
+    Route::get('/admin/managePackages', [managePackagesController::class, 'index'])->name('admin.managePackages');
+    Route::delete('/admin/managePackages/{id}', [managePackagesController::class, 'destroy'])->name('admin.managePackages.delete');
+    Route::patch('/admin/managePackages/{package}/activate', [managePackagesController::class, 'activate'])->name('admin.managePackages.activate');
+    Route::patch('/admin/managePackages/{package}/deactivate', [managePackagesController::class, 'deactivate'])->name('admin.managePackages.deactivate');
 });

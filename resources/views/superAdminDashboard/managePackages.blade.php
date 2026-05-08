@@ -171,7 +171,7 @@
                     <p class="text-sm font-semibold text-gray-500">All Time</p>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Total Packages</p>
-                <p class="text-2xl font-extrabold text-brand-blue">24</p>
+                <p class="text-2xl font-extrabold text-brand-blue">{{ $totalPackages }}</p>
             </div>
 
             <!-- Card 2: Active Packages -->
@@ -181,7 +181,7 @@
                     <p class="text-sm font-semibold text-gray-500">Live Now</p>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Active Packages</p>
-                <p class="text-2xl font-extrabold text-brand-blue">18</p>
+                <p class="text-2xl font-extrabold text-brand-blue">{{ $activePackages }}</p>
             </div>
 
             <!-- Card 3: Most Popular -->
@@ -191,7 +191,7 @@
                     <p class="text-sm font-semibold text-gray-500">Top Seller</p>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Most Subscribed</p>
-                <p class="text-lg font-extrabold text-brand-blue truncate">Family Feast</p>
+                <p class="text-lg font-extrabold text-brand-blue truncate">{{ $topSeller->name ?? 'None Yet' }}</p>
             </div>
 
             <!-- Card 4: Draft / Inactive -->
@@ -201,7 +201,7 @@
                     <p class="text-sm font-semibold text-gray-500">Unpublished</p>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Drafts / Inactive</p>
-                <p class="text-2xl font-extrabold text-brand-blue">6</p>
+                <p class="text-2xl font-extrabold text-brand-blue">{{ $inactivePackages + $draftPackages }}</p>
             </div>
         </div>
 
@@ -223,12 +223,7 @@
 
                     <!-- Search Input -->
                     <div class="relative w-full sm:w-56">
-                        <input
-                            type="text"
-                            id="pkgSearchInput"
-                            onkeyup="searchPackages()"
-                            placeholder="Search packages..."
-                            class="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-1 focus:ring-brand-teal text-sm outline-none transition-all">
+                        <input type="text" id="pkgSearchInput" onkeyup="searchPackages()" placeholder="Search packages..." class="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-1 focus:ring-brand-teal text-sm outline-none transition-all">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
                     </div>
                 </div>
@@ -248,252 +243,123 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
-
-                        <!-- Row 1: Family Feast (Active, Popular) -->
-                        <tr class="hover:bg-brand-grey transition-colors bg-brand-gold/5" data-status="active" data-name="family feast">
-                            <td class="px-6 py-4 whitespace-nowrap" data-label="Package">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl pkg-color-2 flex items-center justify-center shrink-0">
-                                        <i class="fas fa-utensils text-brand-gold text-lg"></i>
+                        @forelse($packages as $package)
+                            @php
+                                $status = strtolower($package->status);
+                                $statusClass = match($status) {
+                                    'active' => 'bg-green-100 text-green-800',
+                                    'inactive' => 'bg-red-100 text-red-800',
+                                    'draft' => 'bg-yellow-100 text-yellow-800',
+                                    default => 'bg-gray-100 text-gray-800'
+                                };
+                                
+                                // Dynamic Category/Cycle mapping for icons and colors
+                                $category = strtolower($package->billing_cycle);
+                                $icon = match($category) {
+                                    'weekly' => 'fa-calendar-week',
+                                    'bi-weekly' => 'fa-calendar-alt',
+                                    'monthly' => 'fa-calendar-check',
+                                    default => 'fa-box'
+                                };
+                                $colorIdx = ($package->id % 5) + 1;
+                            @endphp
+                            <tr class="hover:bg-brand-grey transition-colors {{ $status === 'active' && $package->subscriptions_count > 100 ? 'bg-brand-gold/5' : '' }}" 
+                                data-status="{{ $status }}" data-name="{{ strtolower($package->name) }}">
+                                <td class="px-6 py-4 whitespace-nowrap" data-label="Package">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl pkg-color-{{ $colorIdx }} flex items-center justify-center shrink-0">
+                                            <i class="fas {{ $icon }} text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-bold text-brand-blue">{{ $package->name }}</p>
+                                            <p class="text-xs text-gray-500">ID: PKG-{{ str_pad($package->id, 3, '0', STR_PAD_LEFT) }}</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p class="text-sm font-bold text-brand-blue">Family Feast</p>
-                                        <p class="text-xs text-gray-500">ID: PKG-001</p>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" data-label="Category">
+                                    <span class="px-2 py-1 bg-brand-teal/15 text-brand-teal rounded-md text-xs font-medium">{{ ucfirst($package->billing_cycle) }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-brand-blue" data-label="Price / Week">₦{{ number_format($package->price) }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" data-label="Subscribers">
+                                    <span class="font-bold text-brand-teal">{{ number_format($package->subscriptions_count) }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
+                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusClass }}">{{ ucfirst($status) }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Actions">
+                                    <div class="flex items-center gap-3">
+                                        <button onclick="editPackage('{{ $package->id }}', '{{ addslashes($package->name) }}')" class="text-brand-blue hover:text-brand-teal transition-colors" title="Edit Package">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        @if($status === 'active')
+                                            <button onclick="togglePackageStatus('{{ $package->id }}', '{{ addslashes($package->name) }}', 'active')" class="text-brand-orange hover:text-brand-orange/70 transition-colors" title="Deactivate">
+                                                <i class="fas fa-toggle-on text-lg"></i>
+                                            </button>
+                                        @elseif($status === 'inactive')
+                                            <button onclick="togglePackageStatus('{{ $package->id }}', '{{ addslashes($package->name) }}', 'inactive')" class="text-gray-400 hover:text-brand-teal transition-colors" title="Activate">
+                                                <i class="fas fa-toggle-off text-lg"></i>
+                                            </button>
+                                        @else
+                                            <button onclick="publishPackage('{{ $package->id }}', '{{ addslashes($package->name) }}')" class="text-brand-teal hover:text-brand-teal/70 transition-colors font-semibold text-xs" title="Publish Package">
+                                                <i class="fas fa-paper-plane mr-1"></i>Publish
+                                            </button>
+                                        @endif
+                                        <button onclick="deletePackage('{{ $package->id }}', '{{ addslashes($package->name) }}')" class="text-brand-red hover:text-brand-red/70 transition-colors" title="Delete Package">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
                                     </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" data-label="Category">
-                                <span class="px-2 py-1 bg-brand-gold/15 text-brand-blue rounded-md text-xs font-medium">Family</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-brand-blue" data-label="Price / Week">₦18,500</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" data-label="Subscribers">
-                                <span class="font-bold text-brand-teal">1,204</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Actions">
-                                <div class="flex items-center gap-3">
-                                    <button onclick="editPackage('PKG-001', 'Family Feast')" class="text-brand-blue hover:text-brand-teal transition-colors" title="Edit Package">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button onclick="togglePackageStatus('PKG-001', 'Family Feast', 'active')" class="text-brand-orange hover:text-brand-orange/70 transition-colors" title="Deactivate">
-                                        <i class="fas fa-toggle-on text-lg"></i>
-                                    </button>
-                                    <button onclick="deletePackage('PKG-001', 'Family Feast')" class="text-brand-red hover:text-brand-red/70 transition-colors" title="Delete Package">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <!-- Row 2: Solo Lite (Active) -->
-                        <tr class="hover:bg-brand-grey transition-colors" data-status="active" data-name="solo lite">
-                            <td class="px-6 py-4 whitespace-nowrap" data-label="Package">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl pkg-color-1 flex items-center justify-center shrink-0">
-                                        <i class="fas fa-leaf text-brand-teal text-lg"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-bold text-brand-blue">Solo Lite</p>
-                                        <p class="text-xs text-gray-500">ID: PKG-002</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" data-label="Category">
-                                <span class="px-2 py-1 bg-brand-teal/15 text-brand-teal rounded-md text-xs font-medium">Solo</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-brand-blue" data-label="Price / Week">₦7,200</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" data-label="Subscribers">
-                                <span class="font-bold text-brand-teal">873</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Actions">
-                                <div class="flex items-center gap-3">
-                                    <button onclick="editPackage('PKG-002', 'Solo Lite')" class="text-brand-blue hover:text-brand-teal transition-colors" title="Edit Package">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button onclick="togglePackageStatus('PKG-002', 'Solo Lite', 'active')" class="text-brand-orange hover:text-brand-orange/70 transition-colors" title="Deactivate">
-                                        <i class="fas fa-toggle-on text-lg"></i>
-                                    </button>
-                                    <button onclick="deletePackage('PKG-002', 'Solo Lite')" class="text-brand-red hover:text-brand-red/70 transition-colors" title="Delete Package">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <!-- Row 3: Couple's Delight (Active) -->
-                        <tr class="hover:bg-brand-grey transition-colors" data-status="active" data-name="couple's delight">
-                            <td class="px-6 py-4 whitespace-nowrap" data-label="Package">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl pkg-color-3 flex items-center justify-center shrink-0">
-                                        <i class="fas fa-heart text-brand-orange text-lg"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-bold text-brand-blue">Couple's Delight</p>
-                                        <p class="text-xs text-gray-500">ID: PKG-003</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" data-label="Category">
-                                <span class="px-2 py-1 bg-brand-orange/15 text-brand-orange rounded-md text-xs font-medium">Couple</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-brand-blue" data-label="Price / Week">₦12,000</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" data-label="Subscribers">
-                                <span class="font-bold text-brand-teal">541</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Actions">
-                                <div class="flex items-center gap-3">
-                                    <button onclick="editPackage('PKG-003', 'Couple\'s Delight')" class="text-brand-blue hover:text-brand-teal transition-colors" title="Edit Package">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button onclick="togglePackageStatus('PKG-003', 'Couple\'s Delight', 'active')" class="text-brand-orange hover:text-brand-orange/70 transition-colors" title="Deactivate">
-                                        <i class="fas fa-toggle-on text-lg"></i>
-                                    </button>
-                                    <button onclick="deletePackage('PKG-003', 'Couple\'s Delight')" class="text-brand-red hover:text-brand-red/70 transition-colors" title="Delete Package">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <!-- Row 4: Premium Executive (Inactive) -->
-                        <tr class="hover:bg-brand-grey transition-colors bg-gray-50/80" data-status="inactive" data-name="premium executive">
-                            <td class="px-6 py-4 whitespace-nowrap" data-label="Package">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl pkg-color-5 flex items-center justify-center shrink-0">
-                                        <i class="fas fa-gem text-brand-blue text-lg"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-bold text-gray-400">Premium Executive</p>
-                                        <p class="text-xs text-gray-400">ID: PKG-004</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400" data-label="Category">
-                                <span class="px-2 py-1 bg-gray-200 text-gray-500 rounded-md text-xs font-medium">Premium</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-400" data-label="Price / Week">₦35,000</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400" data-label="Subscribers">
-                                <span class="font-bold">0</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Inactive</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Actions">
-                                <div class="flex items-center gap-3">
-                                    <button onclick="editPackage('PKG-004', 'Premium Executive')" class="text-brand-blue hover:text-brand-teal transition-colors" title="Edit Package">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button onclick="togglePackageStatus('PKG-004', 'Premium Executive', 'inactive')" class="text-gray-400 hover:text-brand-teal transition-colors" title="Activate">
-                                        <i class="fas fa-toggle-off text-lg"></i>
-                                    </button>
-                                    <button onclick="deletePackage('PKG-004', 'Premium Executive')" class="text-brand-red hover:text-brand-red/70 transition-colors" title="Delete Package">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <!-- Row 5: Student Bundle (Draft) -->
-                        <tr class="hover:bg-brand-grey transition-colors" data-status="draft" data-name="student bundle">
-                            <td class="px-6 py-4 whitespace-nowrap" data-label="Package">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl pkg-color-4 flex items-center justify-center shrink-0">
-                                        <i class="fas fa-graduation-cap text-brand-red text-lg"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-bold text-brand-blue">Student Bundle</p>
-                                        <p class="text-xs text-gray-500">ID: PKG-005</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" data-label="Category">
-                                <span class="px-2 py-1 bg-brand-red/10 text-brand-red rounded-md text-xs font-medium">Budget</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-brand-blue" data-label="Price / Week">₦5,500</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Subscribers">
-                                <span class="text-xs italic text-gray-400">Not published</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Draft</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Actions">
-                                <div class="flex items-center gap-3">
-                                    <button onclick="editPackage('PKG-005', 'Student Bundle')" class="text-brand-blue hover:text-brand-teal transition-colors" title="Edit Package">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button onclick="publishPackage('PKG-005', 'Student Bundle')" class="text-brand-teal hover:text-brand-teal/70 transition-colors font-semibold text-xs" title="Publish Package">
-                                        <i class="fas fa-paper-plane mr-1"></i>Publish
-                                    </button>
-                                    <button onclick="deletePackage('PKG-005', 'Student Bundle')" class="text-brand-red hover:text-brand-red/70 transition-colors" title="Delete Package">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <!-- Row 6: Weekend Griller (Active) -->
-                        <tr class="hover:bg-brand-grey transition-colors" data-status="active" data-name="weekend griller">
-                            <td class="px-6 py-4 whitespace-nowrap" data-label="Package">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl pkg-color-3 flex items-center justify-center shrink-0">
-                                        <i class="fas fa-drumstick-bite text-brand-orange text-lg"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-bold text-brand-blue">Weekend Griller</p>
-                                        <p class="text-xs text-gray-500">ID: PKG-006</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" data-label="Category">
-                                <span class="px-2 py-1 bg-brand-orange/15 text-brand-orange rounded-md text-xs font-medium">Weekend</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-brand-blue" data-label="Price / Week">₦9,800</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" data-label="Subscribers">
-                                <span class="font-bold text-brand-teal">312</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Actions">
-                                <div class="flex items-center gap-3">
-                                    <button onclick="editPackage('PKG-006', 'Weekend Griller')" class="text-brand-blue hover:text-brand-teal transition-colors" title="Edit Package">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button onclick="togglePackageStatus('PKG-006', 'Weekend Griller', 'active')" class="text-brand-orange hover:text-brand-orange/70 transition-colors" title="Deactivate">
-                                        <i class="fas fa-toggle-on text-lg"></i>
-                                    </button>
-                                    <button onclick="deletePackage('PKG-006', 'Weekend Griller')" class="text-brand-red hover:text-brand-red/70 transition-colors" title="Delete Package">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-6 py-10 text-center text-gray-500 italic">No packages found.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
 
             <!-- Pagination -->
             <div class="flex flex-col sm:flex-row justify-between items-center mt-6 gap-3">
-                <p class="text-sm text-gray-600">Showing 1 to 6 of 24 packages</p>
+                <p class="text-sm text-gray-600">
+                    Showing {{ $packages->firstItem() ?? 0 }} to {{ $packages->lastItem() ?? 0 }} of {{ number_format($packages->total()) }} packages
+                </p>
                 <div class="flex space-x-1">
-                    <button class="px-3 py-1 text-sm rounded-lg border border-gray-300 text-gray-400 cursor-not-allowed">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <button class="px-3 py-1 text-sm rounded-lg bg-brand-blue text-white font-semibold">1</button>
-                    <button class="px-3 py-1 text-sm rounded-lg border border-gray-300 text-gray-600 hover:bg-brand-grey transition-colors">2</button>
-                    <button class="px-3 py-1 text-sm rounded-lg border border-gray-300 text-gray-600 hover:bg-brand-grey transition-colors">3</button>
-                    <button class="px-3 py-1 text-sm rounded-lg border border-gray-300 text-gray-600 hover:bg-brand-grey transition-colors">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
+                    {{-- Previous Page Link --}}
+                    @if ($packages->onFirstPage())
+                        <button class="px-3 py-1 text-sm rounded-lg border border-gray-300 text-gray-400 cursor-not-allowed">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                    @else
+                        <a href="{{ $packages->previousPageUrl() }}" class="px-3 py-1 text-sm rounded-lg border border-gray-300 text-gray-600 hover:bg-brand-grey transition-colors flex items-center justify-center">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    @endif
+
+                    {{-- Pagination Elements --}}
+                    @foreach ($packages->getUrlRange(max(1, $packages->currentPage() - 1), min($packages->lastPage(), $packages->currentPage() + 1)) as $page => $url)
+                        @if ($page == $packages->currentPage())
+                            <button class="px-3 py-1 text-sm rounded-lg bg-brand-blue text-white font-semibold">{{ $page }}</button>
+                        @else
+                            <a href="{{ $url }}" class="px-3 py-1 text-sm rounded-lg border border-gray-300 text-gray-600 hover:bg-brand-grey transition-colors flex items-center justify-center">{{ $page }}</a>
+                        @endif
+                    @endforeach
+
+                    @if($packages->lastPage() > $packages->currentPage() + 1)
+                        <span class="px-2 py-1 text-gray-400">...</span>
+                        <a href="{{ $packages->url($packages->lastPage()) }}" class="px-3 py-1 text-sm rounded-lg border border-gray-300 text-gray-600 hover:bg-brand-grey transition-colors flex items-center justify-center">{{ $packages->lastPage() }}</a>
+                    @endif
+
+                    {{-- Next Page Link --}}
+                    @if ($packages->hasMorePages())
+                        <a href="{{ $packages->nextPageUrl() }}" class="px-3 py-1 text-sm rounded-lg border border-gray-300 text-gray-600 hover:bg-brand-grey transition-colors flex items-center justify-center">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    @else
+                        <button class="px-3 py-1 text-sm rounded-lg border border-gray-300 text-gray-400 cursor-not-allowed">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    @endif
                 </div>
             </div>
         </div>
@@ -502,9 +368,7 @@
         <div class="h-12"></div>
     </main>
 
-    <!-- =============================== -->
-    <!-- Create / Edit Package Modal     -->
-    <!-- =============================== -->
+    <!-- Create / Edit Package Modal -->
     <div id="packageModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50">
         <div class="bg-white w-full max-w-xl rounded-2xl shadow-admin overflow-y-auto max-h-[90vh]">
 
@@ -527,11 +391,7 @@
                 <!-- Package Name -->
                 <div class="space-y-1.5">
                     <label for="pkgName" class="block text-sm font-semibold text-gray-700">Package Name <span class="text-brand-red">*</span></label>
-                    <input
-                        type="text"
-                        id="pkgName"
-                        placeholder="e.g., Family Feast Weekly"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-brand-teal focus:ring-1 focus:ring-brand-teal outline-none transition-all bg-brand-grey/30">
+                    <input type="text" id="pkgName" placeholder="e.g., Family Feast Weekly" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-brand-teal focus:ring-1 focus:ring-brand-teal outline-none transition-all bg-brand-grey/30">
                 </div>
 
                 <!-- Category + Price -->
@@ -549,13 +409,8 @@
                         </select>
                     </div>
                     <div class="space-y-1.5">
-                        <label for="pkgPrice" class="block text-sm font-semibold text-gray-700">Weekly Price (₦) <span class="text-brand-red">*</span></label>
-                        <input
-                            type="number"
-                            id="pkgPrice"
-                            placeholder="e.g., 18500"
-                            min="0"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-brand-teal focus:ring-1 focus:ring-brand-teal outline-none transition-all bg-brand-grey/30">
+                        <label for="pkgPrice" class="block text-sm font-semibold text-gray-700">Price (₦) <span class="text-brand-red">*</span></label>
+                        <input type="number" id="pkgPrice" placeholder="e.g., 18500" min="0" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-brand-teal focus:ring-1 focus:ring-brand-teal outline-none transition-all bg-brand-grey/30">
                     </div>
                 </div>
 
@@ -563,12 +418,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="space-y-1.5">
                         <label for="pkgServings" class="block text-sm font-semibold text-gray-700">Servings / Day</label>
-                        <input
-                            type="number"
-                            id="pkgServings"
-                            placeholder="e.g., 3"
-                            min="1"
-                            class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-brand-teal focus:ring-1 focus:ring-brand-teal outline-none transition-all bg-brand-grey/30">
+                        <input type="number" id="pkgServings" placeholder="e.g., 3" min="1" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-brand-teal focus:ring-1 focus:ring-brand-teal outline-none transition-all bg-brand-grey/30">
                     </div>
                     <div class="space-y-1.5">
                         <label for="pkgDeliveryDays" class="block text-sm font-semibold text-gray-700">Delivery Days / Week</label>
@@ -585,11 +435,7 @@
                 <!-- Description -->
                 <div class="space-y-1.5">
                     <label for="pkgDescription" class="block text-sm font-semibold text-gray-700">Package Description</label>
-                    <textarea
-                        id="pkgDescription"
-                        rows="3"
-                        placeholder="Describe what's included in this package, dietary options, etc."
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-brand-teal focus:ring-1 focus:ring-brand-teal outline-none transition-all resize-none bg-brand-grey/30"></textarea>
+                    <textarea id="pkgDescription" rows="3" placeholder="Describe what's included in this package, dietary options, etc." class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-brand-teal focus:ring-1 focus:ring-brand-teal outline-none transition-all resize-none bg-brand-grey/30"></textarea>
                 </div>
 
                 <!-- Status -->
@@ -617,18 +463,48 @@
         </div>
     </div>
 
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteConfirmModal" class="hidden fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-admin overflow-hidden">
+            <div class="p-6 text-center">
+                <div class="w-16 h-16 bg-red-100 text-brand-red rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-exclamation-triangle text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-brand-blue mb-2">Confirm Delete</h3>
+                <p class="text-gray-500 mb-6 font-medium">Are you sure you want to delete the package <span id="deletePkgName" class="font-bold text-brand-blue"></span>? This action cannot be undone.</p>
+                
+                <div class="flex items-center justify-center gap-3">
+                    <button onclick="closeDeleteModal()" class="px-6 py-2.5 border border-gray-300 text-gray-600 font-semibold rounded-xl hover:bg-gray-100 transition-colors text-sm">
+                        Cancel
+                    </button>
+                    <button onclick="submitDelete()" class="px-6 py-2.5 bg-brand-red text-white font-semibold rounded-xl hover:bg-brand-red/90 transition-colors text-sm flex items-center gap-2 shadow-lg shadow-brand-red/20">
+                        <i class="fas fa-trash-alt"></i>
+                        <span>Delete Package</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Delete Form -->
+    <form id="deletePackageForm" method="POST" class="hidden">
+        @csrf
+        @method('DELETE')
+    </form>
+
     <!-- JavaScript -->
     <script>
         const sidebar = document.getElementById('sidebar');
         const backdrop = document.getElementById('backdrop');
         const packageModal = document.getElementById('packageModal');
+        const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+        let packageToDeleteId = null;
 
-        // ─── Modal Controls ───────────────────────────────────────────────
+        // Modal Controls
         function openPackageModal(editMode = false, id = null, name = null) {
             if (editMode) {
                 document.getElementById('modalTitle').textContent = `Edit: ${name}`;
                 document.getElementById('modalSubmitBtn').innerHTML = '<i class="fas fa-save"></i> <span>Update Package</span>';
-                // In a real app, populate form fields from server data here
                 // For now, simulate by pre-filling the name
                 document.getElementById('pkgName').value = name;
             } else {
@@ -660,7 +536,7 @@
             if (e.target === packageModal) closePackageModal();
         });
 
-        // ─── Package Action Functions ──────────────────────────────────────
+        // Package Action Functions
         function savePackage() {
             const name = document.getElementById('pkgName').value.trim();
             const category = document.getElementById('pkgCategory').value;
@@ -693,11 +569,26 @@
         }
 
         function deletePackage(id, name) {
-            alertMessage('red', `Package "${name}" (${id}) has been deleted.`);
-            console.log(`Delete requested for ${id}.`);
+            packageToDeleteId = id;
+            document.getElementById('deletePkgName').textContent = name;
+            deleteConfirmModal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
         }
 
-        // ─── Filter Tabs ──────────────────────────────────────────────────
+        function closeDeleteModal() {
+            deleteConfirmModal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+            packageToDeleteId = null;
+        }
+
+        function submitDelete() {
+            if (!packageToDeleteId) return;
+            const form = document.getElementById('deletePackageForm');
+            form.action = `/admin/managePackages/${packageToDeleteId}`;
+            form.submit();
+        }
+
+        // Filter Tabs
         function filterTable(status, btn) {
             // Update active tab style
             document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active-tab'));
@@ -714,7 +605,7 @@
             });
         }
 
-        // ─── Search Packages ──────────────────────────────────────────────
+        // Search Packages
         function searchPackages() {
             const query = document.getElementById('pkgSearchInput').value.toLowerCase();
             const rows = document.querySelectorAll('#packagesTable tbody tr');
@@ -724,7 +615,7 @@
             });
         }
 
-        // ─── Toast Notifications ──────────────────────────────────────────
+        // Toast Notifications
         function alertMessage(type, message) {
             const container = document.body;
             let bgColor, icon;
@@ -755,7 +646,7 @@
             }, 3500);
         }
 
-        // ─── Sidebar Toggle ───────────────────────────────────────────────
+        // Sidebar Toggle
         function toggleSidebar() {
             const isOpen = sidebar.classList.toggle('open');
             backdrop.classList.toggle('hidden', !isOpen);
@@ -775,6 +666,19 @@
                 }
             });
         });
+
+        // Handle Session Messages
+        @if(session('success'))
+            setTimeout(() => {
+                alertMessage('success', "{{ session('success') }}");
+            }, 500);
+        @endif
+
+        @if(session('error'))
+            setTimeout(() => {
+                alertMessage('red', "{{ session('error') }}");
+            }, 500);
+        @endif
     </script>
 </body>
 </html>

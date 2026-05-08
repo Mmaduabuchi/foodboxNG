@@ -133,17 +133,17 @@
                     <span class="text-sm font-semibold text-gray-500 hidden md:block">All Accounts</span>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Total Users</p>
-                <p class="text-2xl font-extrabold text-brand-blue">15,670</p>
+                <p class="text-2xl font-extrabold text-brand-blue">{{ $totalUsers }}</p>
             </div>
 
             <!-- Card 2: Active Customer Users (Teal) -->
             <div class="p-4 bg-white rounded-2xl shadow-soft border-t-4 border-brand-teal">
                 <div class="flex items-center justify-between">
                     <i class="fas fa-user-check text-2xl text-brand-teal p-3 bg-brand-teal/10 rounded-xl"></i>
-                    <span class="text-sm font-semibold text-green-500 hidden md:block">92% Active</span>
+                    <span class="text-sm font-semibold text-green-500 hidden md:block">{{ $activeUsersPercent }}% Active</span>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Active Customers</p>
-                <p class="text-2xl font-extrabold text-brand-blue">14,416</p>
+                <p class="text-2xl font-extrabold text-brand-blue">{{ $activeUsers }}</p>
             </div>
 
             <!-- Card 3: New Users This Month (Gold) -->
@@ -153,7 +153,7 @@
                     <span class="text-sm font-semibold text-brand-gold hidden md:block">Growth</span>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">New Users (Month)</p>
-                <p class="text-2xl font-extrabold text-brand-blue">485</p>
+                <p class="text-2xl font-extrabold text-brand-blue">{{ $newUsersThisMonth }}</p>
             </div>
 
             <!-- Card 4: Deactivated/Banned (Red) -->
@@ -163,49 +163,48 @@
                     <span class="text-sm font-semibold text-red-500 hidden md:block">Flagged</span>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Deactivated Accounts</p>
-                <p class="text-2xl font-extrabold text-brand-blue">42</p>
+                <p class="text-2xl font-extrabold text-brand-blue">{{ $suspendedUsers }}</p>
             </div>
         </div>
 
         <!-- Filter & Search Bar -->
         <div class="bg-white p-6 rounded-2xl shadow-soft mb-8">
             <h3 class="text-lg font-semibold mb-4 text-brand-blue">User Filtering & Search</h3>
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <form action="{{ route('admin.userManagement') }}" method="GET" class="grid grid-cols-1 md:grid-cols-5 gap-4">
                 
                 <!-- Search -->
                 <div class="md:col-span-2 relative">
                     <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    <input type="search" placeholder="Search by Name, Email, or Phone..."
+                    <input type="search" name="search" value="{{ request('search') }}" placeholder="Search by Name, Email, or Phone..."
                         class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:border-brand-teal focus:ring-1 focus:ring-brand-teal/20 outline-none transition-all text-sm bg-brand-grey/50">
                 </div>
 
                 <!-- Role Filter -->
                 <div>
-                    <select class="w-full py-3 px-4 border border-gray-200 rounded-xl text-sm bg-brand-grey/50 focus:border-brand-teal outline-none">
+                    <select name="role" class="w-full py-3 px-4 border border-gray-200 rounded-xl text-sm bg-brand-grey/50 focus:border-brand-teal outline-none">
                         <option>All Roles</option>
-                        <option>Customer</option>
-                        <option>Admin</option>
-                        <option>Delivery Agent</option>
-                        <option>Partner</option>
+                        <option {{ request('role') == 'Customer' ? 'selected' : '' }}>Customer</option>
+                        <option {{ request('role') == 'Delivery Agent' ? 'selected' : '' }}>Delivery Agent</option>
+                        <option {{ request('role') == 'Partner' ? 'selected' : '' }}>Partner</option>
                     </select>
                 </div>
 
                 <!-- Status Filter -->
                 <div>
-                    <select class="w-full py-3 px-4 border border-gray-200 rounded-xl text-sm bg-brand-grey/50 focus:border-brand-teal outline-none">
+                    <select name="status" class="w-full py-3 px-4 border border-gray-200 rounded-xl text-sm bg-brand-grey/50 focus:border-brand-teal outline-none">
                         <option>All Statuses</option>
-                        <option>Active</option>
-                        <option>Inactive</option>
-                        <option>Banned</option>
+                        <option {{ request('status') == 'Active' ? 'selected' : '' }}>Active</option>
+                        <option {{ request('status') == 'Inactive' ? 'selected' : '' }}>Inactive</option>
+                        <option {{ request('status') == 'Banned' ? 'selected' : '' }}>Banned</option>
                     </select>
                 </div>
 
                 <!-- Action Button -->
-                <button class="w-full py-3 bg-brand-blue text-white font-semibold rounded-xl hover:bg-brand-blue/90 transition-colors flex items-center justify-center gap-2">
+                <button type="submit" class="w-full py-3 bg-brand-blue text-white font-semibold rounded-xl hover:bg-brand-blue/90 transition-colors flex items-center justify-center gap-2">
                     <i class="fas fa-filter"></i>
                     <span class="hidden sm:inline">Apply Filters</span>
                 </button>
-            </div>
+            </form>
         </div>
 
         <!-- User List Table -->
@@ -229,106 +228,91 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
-                    <!-- User Row 1: Active Customer -->
+                    @forelse($users as $user)
                     <tr class="hover:bg-brand-grey transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="User ID">UID-5421</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="User ID">UID-{{ str_pad($user->id, 4, '0', STR_PAD_LEFT) }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Name/Email">
                             <div class="flex items-center space-x-3">
-                                <img src="https://placehold.co/32x32/2A9D8F/FFFFFF?text=AO" class="w-8 h-8 rounded-full" />
+                                <div class="w-8 h-8 rounded-full bg-brand-teal/10 flex items-center justify-center text-brand-teal font-bold text-xs">
+                                    {{ strtoupper(substr($user->name, 0, 2)) }}
+                                </div>
                                 <div>
-                                    <p class="font-semibold">Amara Okoro</p>
-                                    <p class="text-xs text-gray-500">amara.o@mail.com</p>
+                                    <p class="font-semibold">{{ $user->name }}</p>
+                                    <p class="text-xs text-gray-500">{{ $user->email }}</p>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Role">Customer</td>
-                        <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Role">
+                            {{ ucfirst(str_replace('_', ' ', $user->role)) }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Last Login">3 min ago</td>
+                        <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
+                            @if($user->is_suspended)
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Suspended</span>
+                            @else
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Last Login">
+                            {{ $user->updated_at->diffForHumans() }}
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Actions">
                             <button class="text-brand-blue hover:text-brand-teal transition-colors text-sm font-semibold mr-3">Edit</button>
-                            <button class="text-brand-red hover:text-brand-red/80 transition-colors text-sm font-semibold">Deactivate</button>
+                            @if($user->is_suspended)
+                                <button class="text-brand-teal hover:text-brand-blue transition-colors text-sm font-semibold">Activate</button>
+                            @else
+                                <button class="text-brand-red hover:text-brand-red/80 transition-colors text-sm font-semibold">Deactivate</button>
+                            @endif
                         </td>
                     </tr>
-                     <!-- User Row 2: Inactive Customer -->
-                    <tr class="hover:bg-brand-grey transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="User ID">UID-6889</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Name/Email">
-                            <div class="flex items-center space-x-3">
-                                <img src="https://placehold.co/32x32/E9C46A/FFFFFF?text=TB" class="w-8 h-8 rounded-full" />
-                                <div>
-                                    <p class="font-semibold">Tunde Bello</p>
-                                    <p class="text-xs text-gray-500">tunde.b@mail.com</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Role">Customer</td>
-                        <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-200 text-gray-700">Inactive</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Last Login">1 month ago</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Actions">
-                            <button class="text-brand-blue hover:text-brand-teal transition-colors text-sm font-semibold mr-3">Edit</button>
-                            <button class="text-brand-teal hover:text-brand-blue transition-colors text-sm font-semibold">Activate</button>
+                    @empty
+                    <tr>
+                        <td colspan="6" class="px-6 py-10 text-center text-gray-500 italic">
+                            No users found matching your criteria.
                         </td>
                     </tr>
-                     <!-- User Row 3: Admin -->
-                    <tr class="hover:bg-brand-grey transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="User ID">UID-0010</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Name/Email">
-                            <div class="flex items-center space-x-3">
-                                <img src="https://placehold.co/32x32/264653/FFFFFF?text=CE" class="w-8 h-8 rounded-full" />
-                                <div>
-                                    <p class="font-semibold">Chinedu Eze</p>
-                                    <p class="text-xs text-gray-500">admin.ce@foodbox.ng</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Role">Admin</td>
-                        <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-brand-teal/10 text-brand-blue">Active</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Last Login">15 hours ago</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Actions">
-                            <button class="text-brand-blue hover:text-brand-teal transition-colors text-sm font-semibold mr-3">Edit Role</button>
-                            <button class="text-brand-red hover:text-brand-red/80 transition-colors text-sm font-semibold">Suspend</button>
-                        </td>
-                    </tr>
-                    <!-- User Row 4: Delivery Agent -->
-                    <tr class="hover:bg-brand-grey transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="User ID">UID-9011</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Name/Email">
-                            <div class="flex items-center space-x-3">
-                                <img src="https://placehold.co/32x32/F4A261/FFFFFF?text=FM" class="w-8 h-8 rounded-full" />
-                                <div>
-                                    <p class="font-semibold">Fatimah Musa</p>
-                                    <p class="text-xs text-gray-500">fmusadeli@box.ng</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Role">Delivery Agent</td>
-                        <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-brand-orange/10 text-brand-orange">On Duty</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Last Login">5 min ago</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Actions">
-                            <button class="text-brand-blue hover:text-brand-teal transition-colors text-sm font-semibold mr-3">Edit</button>
-                            <button class="text-brand-teal hover:text-brand-blue transition-colors text-sm font-semibold">Track</button>
-                        </td>
-                    </tr>
+                    @endforelse
                 </tbody>
             </table>
 
             <div class="mt-6 flex justify-between items-center">
-                <p class="text-sm text-gray-600">Showing 1 to 4 of 15,670 results</p>
+                <p class="text-sm text-gray-600">
+                    Showing {{ $users->firstItem() ?? 0 }} to {{ $users->lastItem() ?? 0 }} of {{ number_format($users->total()) }} results
+                </p>
                 <div class="flex space-x-2">
-                    <button class="px-3 py-1 rounded-lg bg-brand-grey text-brand-blue font-medium hover:bg-gray-300 transition-colors"><i class="fas fa-chevron-left text-xs"></i></button>
-                    <span class="px-3 py-1 rounded-lg bg-brand-blue text-white font-medium">1</span>
-                    <button class="px-3 py-1 rounded-lg bg-brand-grey text-brand-blue font-medium hover:bg-gray-300 transition-colors">2</button>
-                    <button class="px-3 py-1 rounded-lg bg-brand-grey text-brand-blue font-medium hover:bg-gray-300 transition-colors">3</button>
-                    <button class="px-3 py-1 rounded-lg bg-brand-grey text-brand-blue font-medium hover:bg-gray-300 transition-colors">...</button>
-                    <button class="px-3 py-1 rounded-lg bg-brand-grey text-brand-blue font-medium hover:bg-gray-300 transition-colors"><i class="fas fa-chevron-right text-xs"></i></button>
+                    {{-- Previous Page Link --}}
+                    @if ($users->onFirstPage())
+                        <button class="px-3 py-1 rounded-lg bg-brand-grey text-gray-400 cursor-not-allowed">
+                            <i class="fas fa-chevron-left text-xs"></i>
+                        </button>
+                    @else
+                        <a href="{{ $users->previousPageUrl() }}" class="px-3 py-1 rounded-lg bg-brand-grey text-brand-blue font-medium hover:bg-gray-300 transition-colors">
+                            <i class="fas fa-chevron-left text-xs"></i>
+                        </a>
+                    @endif
+
+                    {{-- Pagination Elements --}}
+                    @foreach ($users->getUrlRange(max(1, $users->currentPage() - 2), min($users->lastPage(), $users->currentPage() + 2)) as $page => $url)
+                        @if ($page == $users->currentPage())
+                            <span class="px-3 py-1 rounded-lg bg-brand-blue text-white font-medium">{{ $page }}</span>
+                        @else
+                            <a href="{{ $url }}" class="px-3 py-1 rounded-lg bg-brand-grey text-brand-blue font-medium hover:bg-gray-300 transition-colors">{{ $page }}</a>
+                        @endif
+                    @endforeach
+
+                    @if($users->lastPage() > $users->currentPage() + 2)
+                        <span class="px-3 py-1 rounded-lg bg-brand-grey text-brand-blue font-medium">...</span>
+                    @endif
+
+                    {{-- Next Page Link --}}
+                    @if ($users->hasMorePages())
+                        <a href="{{ $users->nextPageUrl() }}" class="px-3 py-1 rounded-lg bg-brand-grey text-brand-blue font-medium hover:bg-gray-300 transition-colors">
+                            <i class="fas fa-chevron-right text-xs"></i>
+                        </a>
+                    @else
+                        <button class="px-3 py-1 rounded-lg bg-brand-grey text-gray-400 cursor-not-allowed">
+                            <i class="fas fa-chevron-right text-xs"></i>
+                        </button>
+                    @endif
                 </div>
             </div>
         </div>
