@@ -331,87 +331,54 @@
                 <h3 class="text-xl font-semibold mb-4 text-brand-blue">Top 3 Packages</h3>
                 <div class="space-y-4">
                     
-                    <!-- Package Card 1 -->
-                    <div class="bg-white p-4 rounded-2xl shadow-soft flex items-center justify-between">
-                        <div class="flex items-center space-x-4">
-                            <img src="https://placehold.co/60x60/2A9D8F/FFFFFF?text=P1" onerror="this.onerror=null; this.src='https://placehold.co/60x60/2A9D8F/FFFFFF?text=P1';" alt="Package 1" class="w-16 h-16 rounded-xl object-cover ring-1 ring-brand-teal/30">
-                            <div>
-                                <p class="font-bold text-brand-blue">The Family Deluxe</p>
-                                <p class="text-sm text-gray-500">₦45,500 <span class="font-semibold text-brand-teal ml-2">2,100 Sold</span></p>
+                    @forelse($topPackages as $pkg)
+                        @php
+                            $colors = ['2A9D8F', '264653', 'F4A261', 'E76F51', 'E9C46A'];
+                            $color = $colors[$pkg->id % count($colors)];
+                            $initial = strtoupper(substr($pkg->name, 0, 1));
+                        @endphp
+                        <!-- Package Card -->
+                        <div class="bg-white p-4 rounded-2xl shadow-soft flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <img src="https://placehold.co/60x60/{{ $color }}/FFFFFF?text={{ $initial }}" 
+                                    onerror="this.onerror=null; this.src='https://placehold.co/60x60/{{ $color }}/FFFFFF?text={{ $initial }}';" 
+                                    alt="{{ $pkg->name }}" class="w-16 h-16 rounded-xl object-cover ring-1 ring-brand-teal/30">
+                                <div>
+                                    <p class="font-bold text-brand-blue">{{ $pkg->name }}</p>
+                                    <p class="text-sm text-gray-500 text-nowrap">₦{{ number_format($pkg->price, 0) }} <span class="font-semibold text-brand-teal ml-2">{{ number_format($pkg->subscriptions_count) }} Sold</span></p>
+                                </div>
                             </div>
+                            <a href="{{ route('admin.managePackages') }}" class="text-brand-gold hover:text-brand-orange transition-colors p-2 rounded-full">
+                                <i class="fas fa-edit"></i>
+                            </a>
                         </div>
-                        <button class="text-brand-gold hover:text-brand-orange transition-colors p-2 rounded-full">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </div>
-
-                    <!-- Package Card 2 -->
-                    <div class="bg-white p-4 rounded-2xl shadow-soft flex items-center justify-between">
-                        <div class="flex items-center space-x-4">
-                            <img src="https://placehold.co/60x60/264653/FFFFFF?text=P2" onerror="this.onerror=null; this.src='https://placehold.co/60x60/264653/FFFFFF?text=P2';" alt="Package 2" class="w-16 h-16 rounded-xl object-cover ring-1 ring-brand-blue/30">
-                            <div>
-                                <p class="font-bold text-brand-blue">Standard Basic</p>
-                                <p class="text-sm text-gray-500">₦15,000 <span class="font-semibold text-brand-teal ml-2">1,580 Sold</span></p>
-                            </div>
+                    @empty
+                        <div class="p-6 text-center bg-white rounded-2xl shadow-soft">
+                            <p class="text-gray-400 italic text-sm">No active packages found.</p>
                         </div>
-                        <button class="text-brand-gold hover:text-brand-orange transition-colors p-2 rounded-full">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </div>
-
-                    <!-- Package Card 3 -->
-                    <div class="bg-white p-4 rounded-2xl shadow-soft flex items-center justify-between">
-                        <div class="flex items-center space-x-4">
-                            <img src="https://placehold.co/60x60/F4A261/FFFFFF?text=P3" onerror="this.onerror=null; this.src='https://placehold.co/60x60/F4A261/FFFFFF?text=P3';" alt="Package 3" class="w-16 h-16 rounded-xl object-cover ring-1 ring-brand-orange/30">
-                            <div>
-                                <p class="font-bold text-brand-blue">Student Starter</p>
-                                <p class="text-sm text-gray-500">₦8,500 <span class="font-semibold text-brand-teal ml-2">890 Sold</span></p>
-                            </div>
-                        </div>
-                        <button class="text-brand-gold hover:text-brand-orange transition-colors p-2 rounded-full">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </div>
+                    @endforelse
                 </div>
             </div>
             
             <!-- System Activity Log -->
             <div>
-                <h3 class="text-xl font-semibold mb-4 text-brand-blue">System Activity Log</h3>
+                <h3 class="text-xl font-semibold mb-4 text-brand-blue">Recent registered Users</h3>
                 <div class="bg-white p-6 rounded-2xl shadow-soft h-full">
                     <ul class="space-y-4 text-sm">
-                        <!-- Activity 1: Order Update (Teal) -->
+                        @forelse($recentUsers as $user)
+                        <!-- User Signup -->
                         <li class="flex items-start space-x-3">
-                            <i class="fas fa-check-circle mt-1 text-brand-teal"></i>
+                            <i class="fas fa-user-plus mt-1 text-brand-teal"></i>
                             <div>
-                                <p class="text-brand-blue font-medium">Order <span class="font-bold">#FB9001</span> marked as Delivered.</p>
-                                <p class="text-xs text-gray-500">By Admin J. Okoro, 2 min ago.</p>
+                                <p class="text-brand-blue font-medium">New user registered: <span class="font-bold">{{ $user->name }}</span></p>
+                                <p class="text-xs text-gray-500">{{ $user->email }} • {{ $user->created_at->diffForHumans() }}</p>
                             </div>
                         </li>
-                        <!-- Activity 2: User Signup (Blue) -->
-                        <li class="flex items-start space-x-3">
-                            <i class="fas fa-user-plus mt-1 text-brand-blue"></i>
-                            <div>
-                                <p class="text-brand-blue font-medium">New user registered: <span class="font-bold">Nneka G.</span></p>
-                                <p class="text-xs text-gray-500">Via Mobile App, 5 min ago.</p>
-                            </div>
+                        @empty
+                        <li class="text-gray-400 italic text-center py-4">
+                            No recent user registrations found.
                         </li>
-                         <!-- Activity 3: Critical Error (Red) -->
-                        <li class="flex items-start space-x-3">
-                            <i class="fas fa-bug mt-1 text-brand-red"></i>
-                            <div>
-                                <p class="text-brand-red font-medium">CRITICAL: Payment Gateway API Timeout.</p>
-                                <p class="text-xs text-gray-500">System Alert, 10 min ago.</p>
-                            </div>
-                        </li>
-                         <!-- Activity 4: Package Update (Gold) -->
-                        <li class="flex items-start space-x-3">
-                            <i class="fas fa-cube mt-1 text-brand-gold"></i>
-                            <div>
-                                <p class="text-brand-blue font-medium">Package: Family Deluxe price updated to <span class="font-bold">₦45,500</span>.</p>
-                                <p class="text-xs text-gray-500">By Admin S. Tobi, 30 min ago.</p>
-                            </div>
-                        </li>
+                        @endforelse
                     </ul>
                 </div>
             </div>

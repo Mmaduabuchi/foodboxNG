@@ -19,6 +19,7 @@ class Package extends Model
         'name',
         'price',
         'image',
+        'category',
         'billing_cycle',
         'short_description',
         'description',

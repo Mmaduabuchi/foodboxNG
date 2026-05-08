@@ -236,7 +236,8 @@
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Package</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price / Week</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Billing Cycle</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subscribers</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -277,9 +278,20 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" data-label="Category">
-                                    <span class="px-2 py-1 bg-brand-teal/15 text-brand-teal rounded-md text-xs font-medium">{{ ucfirst($package->billing_cycle) }}</span>
+                                    <span class="px-2 py-1 bg-brand-teal/15 text-brand-teal rounded-md text-xs font-medium">
+                                        {{ empty($package->category) ? 'N/A' : ucfirst($package->category) }}
+                                    </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-brand-blue" data-label="Price / Week">₦{{ number_format($package->price) }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" data-label="Billing Cycle">
+                                    <span class="px-2 py-1 rounded-md text-xs font-medium
+                                        {{ $package->billing_cycle == 'monthly' ? 'bg-blue-100 text-blue-500' : '' }}
+                                        {{ $package->billing_cycle == 'weekly' ? 'bg-green-100 text-green-700' : '' }}
+                                        {{ empty($package->billing_cycle) ? 'bg-gray-100 text-gray-500' : '' }}
+                                    ">
+                                        {{ empty($package->billing_cycle) ? 'N/A' : ucfirst($package->billing_cycle) }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-brand-blue" data-label="Price">₦{{ number_format($package->price) }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" data-label="Subscribers">
                                     <span class="font-bold text-brand-teal">{{ number_format($package->subscriptions_count) }}</span>
                                 </td>
@@ -415,26 +427,26 @@
                 </div>
 
                 <!-- Servings + Delivery Days -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 gap-4">
                     <div class="space-y-1.5">
-                        <label for="pkgServings" class="block text-sm font-semibold text-gray-700">Servings / Day</label>
-                        <input type="number" id="pkgServings" placeholder="e.g., 3" min="1" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-brand-teal focus:ring-1 focus:ring-brand-teal outline-none transition-all bg-brand-grey/30">
-                    </div>
-                    <div class="space-y-1.5">
-                        <label for="pkgDeliveryDays" class="block text-sm font-semibold text-gray-700">Delivery Days / Week</label>
+                        <label for="pkgDeliveryDays" class="block text-sm font-semibold text-gray-700">Billing Cycle</label>
                         <select id="pkgDeliveryDays" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-brand-teal focus:ring-1 focus:ring-brand-teal outline-none transition-all bg-brand-grey/30">
                             <option value="">-- Select --</option>
-                            <option value="5">5 days (Weekdays)</option>
-                            <option value="7">7 days (Daily)</option>
-                            <option value="2">2 days (Weekends)</option>
-                            <option value="3">3 days (Mon/Wed/Fri)</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
                         </select>
                     </div>
                 </div>
 
+                <!-- Short Description -->
+                <div class="space-y-1.5">
+                    <label for="pkgShortDescription" class="block text-sm font-semibold text-gray-700">Short Description</label>
+                    <textarea id="pkgShortDescription" rows="3" placeholder="Describe what's included in this package, dietary options, etc." class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-brand-teal focus:ring-1 focus:ring-brand-teal outline-none transition-all resize-none bg-brand-grey/30"></textarea>
+                </div>
+
                 <!-- Description -->
                 <div class="space-y-1.5">
-                    <label for="pkgDescription" class="block text-sm font-semibold text-gray-700">Package Description</label>
+                    <label for="pkgDescription" class="block text-sm font-semibold text-gray-700">Full Description</label>
                     <textarea id="pkgDescription" rows="3" placeholder="Describe what's included in this package, dietary options, etc." class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-brand-teal focus:ring-1 focus:ring-brand-teal outline-none transition-all resize-none bg-brand-grey/30"></textarea>
                 </div>
 
@@ -465,7 +477,7 @@
 
     <!-- Delete Confirmation Modal -->
     <div id="deleteConfirmModal" class="hidden fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-admin overflow-hidden">
+        <div class="bg-white w-full max-md rounded-2xl shadow-admin overflow-hidden">
             <div class="p-6 text-center">
                 <div class="w-16 h-16 bg-red-100 text-brand-red rounded-full flex items-center justify-center mx-auto mb-4">
                     <i class="fas fa-exclamation-triangle text-2xl"></i>
@@ -486,10 +498,39 @@
         </div>
     </div>
 
+    <!-- Status Toggle Confirmation Modal -->
+    <div id="statusConfirmModal" class="hidden fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-admin overflow-hidden">
+            <div class="p-6 text-center">
+                <div id="statusIconContainer" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i id="statusIcon" class="fas text-2xl"></i>
+                </div>
+                <h3 id="statusModalTitle" class="text-xl font-bold text-brand-blue mb-2">Change Status</h3>
+                <p class="text-gray-500 mb-6 font-medium">Are you sure you want to <span id="statusActionText" class="font-bold"></span> the package <span id="statusPkgName" class="font-bold text-brand-blue"></span>?</p>
+                
+                <div class="flex items-center justify-center gap-3">
+                    <button onclick="closeStatusModal()" class="px-6 py-2.5 border border-gray-300 text-gray-600 font-semibold rounded-xl hover:bg-gray-100 transition-colors text-sm">
+                        Cancel
+                    </button>
+                    <button onclick="submitStatusToggle()" id="statusSubmitBtn" class="px-6 py-2.5 text-white font-semibold rounded-xl transition-colors text-sm flex items-center gap-2 shadow-lg">
+                        <i id="statusSubmitIcon" class="fas"></i>
+                        <span id="statusSubmitBtnText">Confirm</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Hidden Delete Form -->
     <form id="deletePackageForm" method="POST" class="hidden">
         @csrf
         @method('DELETE')
+    </form>
+
+    <!-- Hidden Status Form -->
+    <form id="statusPackageForm" method="POST" class="hidden">
+        @csrf
+        @method('PATCH')
     </form>
 
     <!-- JavaScript -->
@@ -498,7 +539,10 @@
         const backdrop = document.getElementById('backdrop');
         const packageModal = document.getElementById('packageModal');
         const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+        const statusConfirmModal = document.getElementById('statusConfirmModal');
         let packageToDeleteId = null;
+        let packageToToggleId = null;
+        let packageToggleAction = null;
 
         // Modal Controls
         function openPackageModal(editMode = false, id = null, name = null) {
@@ -525,7 +569,6 @@
             document.getElementById('pkgName').value = '';
             document.getElementById('pkgCategory').value = '';
             document.getElementById('pkgPrice').value = '';
-            document.getElementById('pkgServings').value = '';
             document.getElementById('pkgDeliveryDays').value = '';
             document.getElementById('pkgDescription').value = '';
             document.getElementById('pkgStatus').value = 'draft';
@@ -555,17 +598,57 @@
         }
 
         function togglePackageStatus(id, name, currentStatus) {
-            if (currentStatus === 'active') {
-                alertMessage('warning', `Package "${name}" (${id}) has been deactivated.`);
+            packageToToggleId = id;
+            packageToggleAction = currentStatus === 'active' ? 'deactivate' : 'activate';
+            
+            const actionText = packageToggleAction;
+            const pkgName = name;
+            
+            document.getElementById('statusPkgName').textContent = pkgName;
+            document.getElementById('statusActionText').textContent = actionText;
+            document.getElementById('statusModalTitle').textContent = `${actionText.charAt(0).toUpperCase() + actionText.slice(1)} Package`;
+            
+            const iconContainer = document.getElementById('statusIconContainer');
+            const icon = document.getElementById('statusIcon');
+            const submitBtn = document.getElementById('statusSubmitBtn');
+            const submitIcon = document.getElementById('statusSubmitIcon');
+            const submitBtnText = document.getElementById('statusSubmitBtnText');
+            
+            if (packageToggleAction === 'activate') {
+                iconContainer.className = "w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4";
+                icon.className = "fas fa-check-circle text-2xl";
+                submitBtn.className = "px-6 py-2.5 bg-brand-teal text-white font-semibold rounded-xl hover:bg-brand-teal/90 transition-colors text-sm flex items-center gap-2 shadow-lg shadow-brand-teal/20";
+                submitIcon.className = "fas fa-toggle-on";
+                submitBtnText.textContent = "Activate Now";
             } else {
-                alertMessage('success', `Package "${name}" (${id}) is now live and active.`);
+                iconContainer.className = "w-16 h-16 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto mb-4";
+                icon.className = "fas fa-power-off text-2xl";
+                submitBtn.className = "px-6 py-2.5 bg-brand-orange text-white font-semibold rounded-xl hover:bg-brand-orange/90 transition-colors text-sm flex items-center gap-2 shadow-lg shadow-brand-orange/20";
+                submitIcon.className = "fas fa-toggle-off";
+                submitBtnText.textContent = "Deactivate Now";
             }
-            console.log(`Toggle status for ${id}: ${currentStatus} => ${currentStatus === 'active' ? 'inactive' : 'active'}`);
+
+            statusConfirmModal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeStatusModal() {
+            statusConfirmModal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+            packageToToggleId = null;
+            packageToggleAction = null;
+        }
+
+        function submitStatusToggle() {
+            if (!packageToToggleId || !packageToggleAction) return;
+            const form = document.getElementById('statusPackageForm');
+            form.action = `/admin/managePackages/${packageToToggleId}/${packageToggleAction}`;
+            form.submit();
         }
 
         function publishPackage(id, name) {
-            alertMessage('success', `Package "${name}" (${id}) is now published and live!`);
-            console.log(`Publish requested for ${id}.`);
+            // Publishing is equivalent to activating a draft
+            togglePackageStatus(id, name, 'inactive');
         }
 
         function deletePackage(id, name) {

@@ -45,6 +45,7 @@ class managePackagesController extends Controller
     public function deactivate($id) {
         $package = Package::findOrFail($id);
         $package->status = Package::STATUS_INACTIVE;
+        $package->is_available = 0;
         $package->save();
 
         return redirect()->back()->with('success', 'Package deactivated successfully');
@@ -53,6 +54,7 @@ class managePackagesController extends Controller
     public function activate($id) {
         $package = Package::findOrFail($id);
         $package->status = Package::STATUS_ACTIVE;
+        $package->is_available = 1;
         $package->save();
 
         return redirect()->back()->with('success', 'Package activated successfully');
