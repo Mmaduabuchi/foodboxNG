@@ -80,6 +80,10 @@ Route::get('/packages', function () {
     return view('packages');
 })->name('packages');
 
+Route::get('/coming-soon', function () {
+    return view('comingsoon');
+})->name('coming_soon');
+
 //home routes
 Route::get('/description', [descriptionController::class, 'index'])->name('description');
 Route::get('/student_packages', [studentpackagesController::class, 'index'])->name('student_packages');
@@ -110,7 +114,7 @@ Route::middleware('guest')->group(function () {
 
 
     //admin login routes
-    Route::get('/secure/login', [secureloginController::class, 'index'])->name('secure.login');
+    Route::get('/secure/login', [secureloginController::class, 'index'])->name('secure');
     Route::post('/secure/login', [secureloginController::class, 'login'])->name('secure.login');
 });
 
@@ -120,7 +124,7 @@ Route::get('/verify-email/{token}', [registerController::class, 'verifyEmail'])-
 
 
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'user'])->group(function () {
     //logout
     Route::post('/logout', [loginController::class, 'destroy'])->name("logout");
     

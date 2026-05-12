@@ -62,6 +62,6 @@ class adminHomeController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('secure.login')->with('success', 'Logged out successfully');
+        return redirect()->route('secure')->with('success', 'Logged out successfully');
     }
 }

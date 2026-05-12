@@ -221,11 +221,11 @@
                 <!-- FAQ Item 1 -->
                 <div class="border border-gray-200 rounded-2xl overflow-hidden">
                     <button class="w-full flex justify-between items-center p-6 bg-gray-50 hover:bg-brand-teal/5 transition-colors text-left focus:outline-none group" onclick="toggleFAQ(this)">
-                        <span class="font-bold text-brand-blue group-hover:text-brand-teal">Do you deliver outside Lagos?</span>
+                        <span class="font-bold text-brand-blue group-hover:text-brand-teal">Do you deliver outside Abuja?</span>
                         <i class="fas fa-chevron-down text-gray-400 transition-transform group-hover:text-brand-teal"></i>
                     </button>
                     <div class="hidden p-6 pt-0 text-gray-600 leading-relaxed bg-gray-50">
-                        Yes! We currently deliver to Lagos, Abuja, Port Harcourt, Ibadan, and Enugu. We are working on expanding to more cities soon.
+                        At the moment, we are currently operating only within Abuja to ensure fast and reliable delivery service. We’ll be expanding to more cities across Nigeria very soon.
                     </div>
                 </div>
 
@@ -236,7 +236,7 @@
                         <i class="fas fa-chevron-down text-gray-400 transition-transform group-hover:text-brand-teal"></i>
                     </button>
                     <div class="hidden p-6 pt-0 text-gray-600 leading-relaxed bg-gray-50">
-                        Absolutely. While we have curated bundles, you can use our "Build Your Own" feature to select exactly which items and quantities you want in your box.
+                        Yes! We are currently working on a “Build Your Own” feature that will allow you to fully customize your monthly package by selecting the exact items and quantities you want. This feature will be available soon.
                     </div>
                 </div>
 

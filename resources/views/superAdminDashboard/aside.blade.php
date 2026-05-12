@@ -63,10 +63,13 @@
 
     <!-- Fixed Bottom: Logout -->
     <div class="flex-shrink-0 px-6 pb-6 pt-4 border-t border-white/10">
-        <a href="{{ route('secure.logout') }}" class="flex items-center gap-4 text-brand-red font-semibold p-3 rounded-xl bg-white/10 transition-all hover:bg-brand-red/20">
-            <i class="fas fa-sign-out-alt text-lg w-6 text-center"></i>
-            <span>Log Out</span>
-        </a>
+        <form action="{{ route('secure.logout') }}" method="POST" class="flex items-center gap-4 text-brand-red font-semibold p-3 rounded-xl bg-white/10 transition-all hover:bg-brand-red/20">
+            @csrf
+            <button type="submit" class="flex items-center gap-4">
+                <i class="fas fa-sign-out-alt text-lg w-6 text-center"></i>
+                <span>Log Out</span>
+            </button>
+        </form>
     </div>
 </aside>
 

@@ -157,8 +157,8 @@
             <!-- Remember Me / Forgot Password -->
             <div class="flex justify-between items-center text-sm">
                 <div class="flex items-center">
-                    <input type="checkbox" id="remember" class="h-4 w-4 text-brand-teal border-gray-300 rounded focus:ring-brand-teal">
-                    <label for="remember" class="ml-2 text-gray-600">Remember Me</label>
+                    <!-- <input type="checkbox" id="remember" class="h-4 w-4 text-brand-teal border-gray-300 rounded focus:ring-brand-teal">
+                    <label for="remember" class="ml-2 text-gray-600">Remember Me</label> -->
                 </div>
                 <a href="{{ route('forgotpassword') }}" class="font-medium text-brand-teal hover:text-brand-blue transition-colors">Forgot Password?</a>
             </div>

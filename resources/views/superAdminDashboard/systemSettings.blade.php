@@ -112,7 +112,7 @@
         }
 
         /* Input Focus Styling */
-        input[type="text"], input[type="email"], select, textarea {
+        input[type="text"], input[type="email"], input[type="password"], select, textarea {
             border: 1px solid #E5E7EB;
             padding: 0.75rem 1rem;
             border-radius: 0.75rem;
@@ -160,37 +160,16 @@
                     <!-- App Name -->
                     <div class="space-y-2">
                         <label for="appName" class="block text-sm font-medium text-gray-700">Application Name</label>
-                        <input type="text" id="appName" value="FoodBox NG" class="w-full bg-brand-grey/50">
+                        <input type="text" disabled id="appName" value="FoodBox NG" class="w-full bg-brand-grey/50">
                         <p class="text-xs text-gray-500">The primary display name for the platform.</p>
                     </div>
 
-                    <!-- Default Timezone -->
-                    <div class="space-y-2">
-                        <label for="timezone" class="block text-sm font-medium text-gray-700">Default Timezone</label>
-                        <select id="timezone" class="w-full bg-brand-grey/50">
-                            <option value="WAT" selected>WAT (West Africa Time) - Lagos</option>
-                            <option value="GMT">GMT (Greenwich Mean Time)</option>
-                            <option value="CET">CET (Central European Time)</option>
-                        </select>
-                        <p class="text-xs text-gray-500">Affects all order and transaction timestamps.</p>
-                    </div>
 
                     <!-- Contact Email -->
                     <div class="space-y-2">
                         <label for="contactEmail" class="block text-sm font-medium text-gray-700">Support Contact Email</label>
                         <input type="email" id="contactEmail" value="support@foodbox.ng" class="w-full bg-brand-grey/50">
                         <p class="text-xs text-gray-500">Used for automated support messages and communication.</p>
-                    </div>
-                    
-                    <!-- Currency Symbol -->
-                    <div class="space-y-2">
-                        <label for="currencySymbol" class="block text-sm font-medium text-gray-700">Primary Currency Symbol</label>
-                        <select id="currencySymbol" class="w-full bg-brand-grey/50">
-                            <option value="NGN" selected>₦ (Nigerian Naira)</option>
-                            <option value="USD">$ (US Dollar)</option>
-                            <option value="GBP">£ (British Pound)</option>
-                        </select>
-                        <p class="text-xs text-gray-500">Sets the currency for all prices and transactions.</p>
                     </div>
                 </div>
                 
@@ -201,11 +180,48 @@
                 </div>
             </div>
 
-            <!-- Section 2: Security & Integrations -->
+            <!-- Section 2: Admin Password Reset -->
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-soft border-t-4 border-brand-red">
+                <div class="flex items-center space-x-3 mb-6 border-b pb-4">
+                    <i class="fas fa-key text-3xl text-brand-red"></i>
+                    <h2 class="text-2xl font-bold text-brand-blue">2. Administrator Security</h2>
+                </div>
+
+                <!-- current password -->
+                <div class="space-y-2">
+                    <label for="currentPassword" class="block text-sm font-medium text-gray-700">Current Password</label>
+                    <input type="password" id="currentPassword" placeholder="••••••••" class="w-full bg-brand-grey/50">
+                    <p class="text-xs text-gray-500">Enter your current password to verify your identity.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 mt-10 gap-6">
+                    <!-- New Password -->
+                    <div class="space-y-2">
+                        <label for="newPassword" class="block text-sm font-medium text-gray-700">New Admin Password</label>
+                        <input type="password" id="newPassword" placeholder="••••••••" class="w-full bg-brand-grey/50">
+                        <p class="text-xs text-gray-500">Recommend a mix of letters, numbers, and symbols.</p>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="space-y-2">
+                        <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                        <input type="password" id="confirmPassword" placeholder="••••••••" class="w-full bg-brand-grey/50">
+                        <p class="text-xs text-gray-500">Ensure this matches the password above.</p>
+                    </div>
+                </div>
+                
+                <div class="mt-6 pt-6 border-t border-gray-100 flex justify-end">
+                    <button type="button" onclick="saveSection('security')" class="px-6 py-2 bg-brand-red text-white font-semibold rounded-xl hover:bg-brand-red/90 transition-colors">
+                        Update Login Security
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section 3: Security & Integrations -->
             <div class="bg-white p-6 md:p-8 rounded-2xl shadow-soft border-t-4 border-brand-gold">
                 <div class="flex items-center space-x-3 mb-6 border-b pb-4">
                     <i class="fas fa-lock text-3xl text-brand-gold"></i>
-                    <h2 class="text-2xl font-bold text-brand-blue">2. Security & Integrations</h2>
+                    <h2 class="text-2xl font-bold text-brand-blue">3. Platform Gateways & Features</h2>
                 </div>
 
                 <!-- Feature Toggles -->
@@ -218,17 +234,6 @@
                         </div>
                         <label class="toggle-switch">
                             <input type="checkbox" checked>
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-
-                    <div class="flex justify-between items-center py-2">
-                        <div>
-                            <p class="font-medium">Guest Checkout Enabled</p>
-                            <p class="text-xs text-gray-500">Allow users to place orders without creating an account.</p>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox">
                             <span class="slider"></span>
                         </label>
                     </div>
@@ -252,48 +257,6 @@
                     <button type="button" onclick="saveSection(2)" class="px-6 py-2 bg-brand-blue text-white font-semibold rounded-xl hover:bg-brand-blue/90 transition-colors">
                         Save Security & Integrations
                     </button>
-                </div>
-            </div>
-
-            <!-- Section 3: Maintenance & Data Management -->
-            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-soft border-t-4 border-brand-teal">
-                <div class="flex items-center space-x-3 mb-6 border-b pb-4">
-                    <i class="fas fa-database text-3xl text-brand-teal"></i>
-                    <h2 class="text-2xl font-bold text-brand-blue">3. Maintenance & Data</h2>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    
-                    <!-- Cache Management -->
-                    <div class="space-y-3 p-4 border border-gray-100 rounded-xl bg-brand-grey/50">
-                        <h4 class="font-semibold text-lg flex items-center gap-2"><i class="fas fa-broom text-brand-teal"></i> Clear Application Cache</h4>
-                        <p class="text-sm text-gray-600">Clears compiled views, configuration, and session data. Recommended after updates.</p>
-                        <button type="button" onclick="performAction('cache')" class="w-full py-2 bg-brand-teal text-white font-semibold rounded-lg hover:bg-brand-teal/90 transition-colors">
-                            Run Cache Clear
-                        </button>
-                    </div>
-                    
-                    <!-- Database Backup -->
-                    <div class="space-y-3 p-4 border border-gray-100 rounded-xl bg-brand-grey/50">
-                        <h4 class="font-semibold text-lg flex items-center gap-2"><i class="fas fa-cloud-download-alt text-brand-blue"></i> Database Backup</h4>
-                        <p class="text-sm text-gray-600">Generates and downloads a full SQL dump of the production database.</p>
-                        <button type="button" onclick="performAction('backup')" class="w-full py-2 bg-brand-blue text-white font-semibold rounded-lg hover:bg-brand-blue/90 transition-colors">
-                            Initiate Backup
-                        </button>
-                    </div>
-                    
-                    <!-- Logs & Reporting -->
-                    <div class="space-y-3 p-4 border border-gray-100 rounded-xl bg-brand-grey/50">
-                        <h4 class="font-semibold text-lg flex items-center gap-2"><i class="fas fa-file-alt text-brand-orange"></i> View System Logs</h4>
-                        <p class="text-sm text-gray-600">Downloads the past 7 days of application error and access logs for debugging.</p>
-                        <button type="button" onclick="performAction('logs')" class="w-full py-2 bg-brand-orange text-white font-semibold rounded-lg hover:bg-brand-orange/90 transition-colors">
-                            Download Logs
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="mt-6 pt-6 border-t border-gray-100 flex justify-end">
-                    <p class="text-sm text-brand-red font-medium italic">Warning: Maintenance actions are irreversible.</p>
                 </div>
             </div>
 

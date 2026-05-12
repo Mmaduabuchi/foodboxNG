@@ -95,8 +95,8 @@
                 <button class="px-6 py-2 rounded-full bg-brand-teal text-white font-bold shadow-lg shadow-brand-teal/20 whitespace-nowrap active-tab">All Packages</button>
                 <button class="px-6 py-2 rounded-full bg-white text-gray-600 hover:bg-brand-teal/10 font-medium border border-gray-200 whitespace-nowrap transition-colors">Students</button>
                 <button class="px-6 py-2 rounded-full bg-white text-gray-600 hover:bg-brand-teal/10 font-medium border border-gray-200 whitespace-nowrap transition-colors">Families</button>
-                <button class="px-6 py-2 rounded-full bg-white text-gray-600 hover:bg-brand-teal/10 font-medium border border-gray-200 whitespace-nowrap transition-colors">Bulk / Business</button>
-                <button class="px-6 py-2 rounded-full bg-white text-gray-600 hover:bg-brand-teal/10 font-medium border border-gray-200 whitespace-nowrap transition-colors">Essentials Only</button>
+                <!-- <button class="px-6 py-2 rounded-full bg-white text-gray-600 hover:bg-brand-teal/10 font-medium border border-gray-200 whitespace-nowrap transition-colors">Bulk / Business</button> -->
+                <button class="px-6 py-2 rounded-full bg-white text-gray-600 hover:bg-brand-teal/10 font-medium border border-gray-200 whitespace-nowrap transition-colors">Bachelor Only</button>
             </div>
         </div>
     </section>
@@ -110,7 +110,7 @@
                 <div class="bg-white rounded-3xl overflow-hidden hover:shadow-soft transition-all duration-300 group flex flex-col h-full border border-gray-100">
                     <div class="relative h-56 overflow-hidden">
                         <div class="absolute top-4 left-4 bg-brand-gold text-brand-blue text-xs font-bold px-3 py-1 rounded-full z-10">Best Seller</div>
-                        <img src="https://images.unsplash.com/photo-1603048297172-c92544798d5e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Student Pack" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80" alt="Student Pack" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
                     <div class="p-8 flex-1 flex flex-col">
                         <div class="flex justify-between items-start mb-2">
@@ -152,7 +152,7 @@
                 <!-- Package 2: The Bachelor -->
                 <div class="bg-white rounded-3xl overflow-hidden hover:shadow-soft transition-all duration-300 group flex flex-col h-full border border-gray-100">
                     <div class="relative h-56 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1620916297397-a4a5402a3c6c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Bachelor Pack" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=600&q=80" alt="Single Pack" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
                     <div class="p-8 flex-1 flex flex-col">
                          <div class="flex justify-between items-start mb-2">
@@ -196,7 +196,7 @@
                      <div class="absolute top-0 left-0 w-full h-1 bg-brand-teal"></div>
                     <div class="relative h-56 overflow-hidden">
                         <div class="absolute top-4 left-4 bg-brand-teal text-white text-xs font-bold px-3 py-1 rounded-full z-10">Most Popular</div>
-                        <img src="https://images.unsplash.com/photo-1584263347416-85a696b4eda7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Family Pack" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80" alt="Family Pack" class="w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-500">
                     </div>
                     <div class="p-8 flex-1 flex flex-col">
                          <div class="flex justify-between items-start mb-2">
@@ -320,7 +320,7 @@
                 <!-- Package 6: Breakfast Bundle -->
                 <div class="bg-white rounded-3xl overflow-hidden hover:shadow-soft transition-all duration-300 group flex flex-col h-full border border-gray-100">
                     <div class="relative h-56 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1525351484163-7529414395d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Breakfast" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80" alt="Student Pack" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
                     <div class="p-8 flex-1 flex flex-col">
                          <div class="flex justify-between items-start mb-2">
@@ -378,9 +378,11 @@
                 </div>
 
                 <div class="relative z-10">
-                    <button class="bg-brand-gold text-brand-blue px-10 py-5 rounded-full font-bold text-lg hover:bg-white transition-all shadow-xl transform hover:scale-105">
-                        Start Building Now
-                    </button>
+                    <a href="{{ route('coming_soon') }}">
+                        <button class="bg-brand-gold text-brand-blue px-10 py-5 rounded-full font-bold text-lg hover:bg-white transition-all shadow-xl transform hover:scale-105">
+                            Start Building Now
+                        </button>
+                    </a>
                 </div>
             </div>
         </div>

@@ -9,68 +9,88 @@
 <div id="backdrop" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden opacity-0" onclick="toggleSidebar()"></div>
 
 <!-- 1. Sticky Sidebar Navigation -->
-<aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-brand-blue p-6 shadow-xl-heavy lg:translate-x-0">
+<aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-brand-blue shadow-xl-heavy lg:translate-x-0 flex flex-col transition-transform duration-300">
     
-    <!-- Logo/Brand -->
-    <div class="flex items-center gap-2 mb-10 pb-4 border-b border-white/10">
-        <div class="w-10 h-10 bg-brand-teal rounded-lg flex items-center justify-center text-white shadow-lg shadow-brand-teal/40">
-            <i class="fas fa-leaf text-xl"></i>
+    <!-- Fixed Top: Logo & Profile -->
+    <div class="flex-shrink-0 p-6 border-b border-white/10">
+        <!-- Logo/Brand -->
+        <div class="flex items-center gap-2 mb-8">
+            <div class="w-10 h-10 bg-brand-teal rounded-lg flex items-center justify-center text-white shadow-lg shadow-brand-teal/40">
+                <i class="fas fa-leaf text-xl"></i>
+            </div>
+            <span class="text-2xl font-extrabold text-white tracking-tight">FoodBox<span class="text-brand-teal">NG</span></span>
         </div>
-        <span class="text-2xl font-extrabold text-white tracking-tight">FoodBox<span class="text-brand-teal">NG</span></span>
+
+        <!-- Profile Info -->
+        <div class="flex items-center gap-3">
+            <img src="https://placehold.co/40x40/E9C46A/264653?text={{ strtoupper(substr($user->name, 0, 2)) }}" onerror="this.onerror=null; this.src='https://placehold.co/40x40/E9C46A/264653?text={{ strtoupper(substr($user->name, 0, 2)) }}';" alt="Profile Avatar" class="w-10 h-10 rounded-full border-2 border-brand-gold/50 object-cover flex-shrink-0">
+            <div class="text-white min-w-0">
+                <p class="font-semibold text-sm leading-tight truncate">{{ $user->name }}</p>
+                <p class="text-[10px] uppercase font-bold tracking-wider text-brand-teal">Premium User</p>
+            </div>
+        </div>
     </div>
 
-    <!-- Profile Info (Top of Sidebar) -->
-    <div class="flex items-center gap-3 mb-8">
-        <img src="https://placehold.co/40x40/E9C46A/264653?text={{ strtoupper(substr($user->name, 0, 2)) }}" onerror="this.onerror=null; this.src='https://placehold.co/40x40/E9C46A/264653?text={{ strtoupper(substr($user->name, 0, 2)) }}';" alt="Profile Avatar" class="w-10 h-10 rounded-full border-2 border-brand-gold/50 object-cover">
-        <div class="text-white">
-            <p class="font-semibold text-sm leading-tight">{{ $user->name }}</p>
-            <p class="text-xs text-brand-teal">Premium User</p>
-        </div>
-    </div>
-
-    <!-- Navigation Links -->
-    <nav class="space-y-2">
-        <a href="{{ route('dashboard') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('dashboard') ? 'bg-brand-teal text-white' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">
+    <!-- Scrollable Navigation -->
+    <nav class="flex-1 overflow-y-auto p-6 space-y-2 sidebar-scroll">
+        <a href="{{ route('dashboard') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('dashboard') ? 'bg-brand-teal text-white shadow-lg shadow-brand-teal/20' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">
             <i class="fas fa-chart-line text-lg w-6 text-center {{ request()->routeIs('dashboard') ? 'text-brand-gold' : '' }}"></i>
             <span>Dashboard</span>
         </a>
-        <a href="{{ route('myorders') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('myorders') ? 'bg-brand-teal text-white' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">
+        <a href="{{ route('myorders') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('myorders') ? 'bg-brand-teal text-white shadow-lg shadow-brand-teal/20' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">
             <i class="fas fa-box text-lg w-6 text-center {{ request()->routeIs('myorders') ? 'text-brand-gold' : '' }}"></i>
             <span>My Orders</span>
         </a>
-        <a href="{{ route('mypackages') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('mypackages') ? 'bg-brand-teal text-white' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">
+        <a href="{{ route('mypackages') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('mypackages') ? 'bg-brand-teal text-white shadow-lg shadow-brand-teal/20' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">
             <i class="fas fa-cubes text-lg w-6 text-center {{ request()->routeIs('mypackages') ? 'text-brand-gold' : '' }}"></i>
             <span>My Packages</span>
         </a>
-        <a href="{{ route('subscriptions') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('subscriptions') ? 'bg-brand-teal text-white' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">
+        <a href="{{ route('subscriptions') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('subscriptions') ? 'bg-brand-teal text-white shadow-lg shadow-brand-teal/20' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">
             <i class="fas fa-sync-alt text-lg w-6 text-center {{ request()->routeIs('subscriptions') ? 'text-brand-gold' : '' }}"></i>
             <span>Subscriptions</span>
         </a>
-        <a href="{{ route('delivery_address') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('delivery_address') ? 'bg-brand-teal text-white' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">
+        <a href="{{ route('delivery_address') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('delivery_address') ? 'bg-brand-teal text-white shadow-lg shadow-brand-teal/20' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">
             <i class="fas fa-map-marker-alt text-lg w-6 text-center {{ request()->routeIs('delivery_address') ? 'text-brand-gold' : '' }}"></i>
             <span>Delivery Address</span>
         </a>
-        <a href="{{ route('payment_history') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('payment_history') ? 'bg-brand-teal text-white' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">
+        <a href="{{ route('payment_history') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('payment_history') ? 'bg-brand-teal text-white shadow-lg shadow-brand-teal/20' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">
             <i class="fas fa-credit-card text-lg w-6 text-center {{ request()->routeIs('payment_history') ? 'text-brand-gold' : '' }}"></i>
             <span>Payment History</span>
         </a>
-        <a href="{{ route('userprofile') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('userprofile') ? 'bg-brand-teal text-white' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">
+        <a href="{{ route('userprofile') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('userprofile') ? 'bg-brand-teal text-white shadow-lg shadow-brand-teal/20' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">
             <i class="fas fa-cog text-lg w-6 text-center {{ request()->routeIs('userprofile') ? 'text-brand-gold' : '' }}"></i>
             <span>Profile Settings</span>
         </a>
     </nav>
 
-    <!-- Logout link at the bottom -->
-    <div class="absolute bottom-6 left-6 right-6">
+    <!-- Fixed Bottom: Logout -->
+    <div class="flex-shrink-0 p-6 border-t border-white/10">
         <form action="{{ route('logout') }}" method="POST">
             @csrf
-            <button type="submit" class="flex items-center gap-4 text-brand-red font-medium p-3 rounded-xl hover:bg-brand-red/10 transition-all">
+            <button type="submit" class="w-full flex items-center gap-4 text-brand-red font-semibold p-3 rounded-xl bg-white/5 hover:bg-brand-red/10 transition-all">
                 <i class="fas fa-sign-out-alt text-lg w-6 text-center"></i>
                 <span>Log Out</span>
             </button>
         </form>
     </div>
 </aside>
+
+<style>
+    /* Custom thin scrollbar for sidebar nav */
+    .sidebar-scroll::-webkit-scrollbar {
+        width: 4px;
+    }
+    .sidebar-scroll::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .sidebar-scroll::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 4px;
+    }
+    .sidebar-scroll::-webkit-scrollbar-thumb:hover {
+        background: rgba(42, 157, 143, 0.5);
+    }
+</style>
 
 <!-- 2. Top Header -->
 <header class="fixed top-0 right-0 w-full lg:left-64 lg:w-[calc(100%-16rem)] h-20 bg-white border-b border-gray-100 shadow-sm z-30 flex items-center px-4 md:px-8">
