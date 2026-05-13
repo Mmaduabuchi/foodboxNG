@@ -147,7 +147,7 @@
     <!-- Main Content Area -->
     <main class="mt-20 lg:ml-64 p-4 md:p-8 main-content max-w-full">
         
-        <form class="space-y-8">
+        <div class="space-y-8">
             
             <!-- Section 1: General Platform Configuration -->
             <div class="bg-white p-6 md:p-8 rounded-2xl shadow-soft border-t-4 border-brand-blue">
@@ -187,38 +187,78 @@
                     <h2 class="text-2xl font-bold text-brand-blue">2. Administrator Security</h2>
                 </div>
 
-                <!-- current password -->
-                <div class="space-y-2">
-                    <label for="currentPassword" class="block text-sm font-medium text-gray-700">Current Password</label>
-                    <input type="password" id="currentPassword" placeholder="••••••••" class="w-full bg-brand-grey/50">
-                    <p class="text-xs text-gray-500">Enter your current password to verify your identity.</p>
-                </div>
+                @if (session('success'))
+                    <div class="mb-6 flex items-center gap-3 p-4 bg-brand-teal/10 border border-brand-teal/20 text-brand-teal rounded-xl animate-fade-in">
+                        <i class="fas fa-check-circle"></i>
+                        <span class="font-semibold">{{ session('success') }}</span>
+                    </div>
+                @endif
 
-                <div class="grid grid-cols-1 md:grid-cols-2 mt-10 gap-6">
-                    <!-- New Password -->
+                @if ($errors->any())
+                    <div class="mb-6 flex flex-col gap-2 p-4 bg-brand-red/10 border border-brand-red/20 text-brand-red rounded-xl animate-fade-in">
+                        <div class="flex items-center gap-2 font-bold mb-1">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>There were some errors:</span>
+                        </div>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <form id="form" action="{{ route('admin.password.update') }}" method="POST">
+                    @csrf
+
+                    <!-- current password -->
                     <div class="space-y-2">
-                        <label for="newPassword" class="block text-sm font-medium text-gray-700">New Admin Password</label>
-                        <input type="password" id="newPassword" placeholder="••••••••" class="w-full bg-brand-grey/50">
-                        <p class="text-xs text-gray-500">Recommend a mix of letters, numbers, and symbols.</p>
+                        <label for="currentPassword" class="block text-sm font-medium text-gray-700">Current Password</label>
+                        <div class="relative">
+                            <input type="password" name="current_password" id="currentPassword" placeholder="••••••••" class="w-full bg-brand-grey/50 pr-10">
+                            <button type="button" onclick="togglePasswordVisibility('currentPassword', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-brand-teal transition-colors">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500">Enter your current password to verify your identity.</p>
                     </div>
 
-                    <!-- Confirm Password -->
-                    <div class="space-y-2">
-                        <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
-                        <input type="password" id="confirmPassword" placeholder="••••••••" class="w-full bg-brand-grey/50">
-                        <p class="text-xs text-gray-500">Ensure this matches the password above.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 mt-10 gap-6">
+                        <!-- New Password -->
+                        <div class="space-y-2">
+                            <label for="newPassword" class="block text-sm font-medium text-gray-700">New Admin Password</label>
+                            <div class="relative">
+                                <input type="password" name="new_password" id="newPassword" placeholder="••••••••" class="w-full bg-brand-grey/50 pr-10">
+                                <button type="button" onclick="togglePasswordVisibility('newPassword', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-brand-teal transition-colors">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-500">Recommend a mix of letters, numbers, and symbols.</p>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="space-y-2">
+                            <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                            <div class="relative">
+                                <input type="password" name="new_password_confirmation" id="confirmPassword" placeholder="••••••••" class="w-full bg-brand-grey/50 pr-10">
+                                <button type="button" onclick="togglePasswordVisibility('confirmPassword', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-brand-teal transition-colors">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-500">Ensure this matches the password above.</p>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="mt-6 pt-6 border-t border-gray-100 flex justify-end">
-                    <button type="button" onclick="saveSection('security')" class="px-6 py-2 bg-brand-red text-white font-semibold rounded-xl hover:bg-brand-red/90 transition-colors">
-                        Update Login Security
-                    </button>
-                </div>
+                    
+                    <div class="mt-6 pt-6 border-t border-gray-100 flex justify-end">
+                        <button type="submit" class="px-6 py-2 bg-brand-red text-white font-semibold rounded-xl hover:bg-brand-red/90 transition-colors">
+                            Update Login Security
+                        </button>
+                    </div>
+                </form>
             </div>
 
             <!-- Section 3: Security & Integrations -->
-            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-soft border-t-4 border-brand-gold">
+            <div class="bg-white mt-10 p-6 md:p-8 rounded-2xl shadow-soft border-t-4 border-brand-gold">
                 <div class="flex items-center space-x-3 mb-6 border-b pb-4">
                     <i class="fas fa-lock text-3xl text-brand-gold"></i>
                     <h2 class="text-2xl font-bold text-brand-blue">3. Platform Gateways & Features</h2>
@@ -260,7 +300,7 @@
                 </div>
             </div>
 
-        </form>
+        </div>
         
         <!-- Footer Spacer -->
         <div class="h-12"></div>
@@ -268,6 +308,19 @@
 
     <!-- JavaScript for Mobile Sidebar Toggle and Mock Actions -->
     <script>
+        // --- Password Visibility Toggle ---
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
         const sidebar = document.getElementById('sidebar');
         const backdrop = document.getElementById('backdrop');
 
@@ -283,24 +336,12 @@
         }
 
         function regenerateKey(name) {
-             alertMessage('warning', `New ${name} key generated. Remember to update external services!`);
+            alertMessage('warning', `New ${name} key generated. Remember to update external services!`);
             console.log(`Regenerate key requested for ${name}.`);
         }
 
-        function performAction(action) {
-            let message = '';
-            if (action === 'cache') {
-                message = 'Application cache cleared successfully.';
-            } else if (action === 'backup') {
-                message = 'Database backup initiated and downloaded.';
-            } else if (action === 'logs') {
-                message = 'System logs successfully downloaded.';
-            }
-             alertMessage('success', message);
-            console.log(`Maintenance action: ${action} performed.`);
-        }
 
-        // Simple custom alert/toast simulation (since alert() is forbidden)
+        // Simple custom alert/toast simulation
         function alertMessage(type, message) {
             const container = document.body;
             let bgColor, icon;
@@ -316,7 +357,7 @@
             }
 
             const alertDiv = document.createElement('div');
-            alertDiv.className = `fixed top-4 right-4 p-4 rounded-xl text-white shadow-lg flex items-center space-x-3 transition-transform duration-500 transform translate-x-full ${bgColor}`;
+            alertDiv.className = `fixed z-50 top-4 right-4 p-4 rounded-xl text-white shadow-lg flex items-center space-x-3 transition-transform duration-500 transform translate-x-full ${bgColor}`;
             alertDiv.innerHTML = `${icon} <span class="font-semibold">${message}</span>`;
             
             container.appendChild(alertDiv);

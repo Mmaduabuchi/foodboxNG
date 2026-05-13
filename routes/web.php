@@ -196,4 +196,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('/admin/managePackages/{id}', [managePackagesController::class, 'destroy'])->name('admin.managePackages.delete');
     Route::patch('/admin/managePackages/{package}/activate', [managePackagesController::class, 'activate'])->name('admin.managePackages.activate');
     Route::patch('/admin/managePackages/{package}/deactivate', [managePackagesController::class, 'deactivate'])->name('admin.managePackages.deactivate');
+    
+    //update password
+    Route::post('/admin/password/update', [systemSettingsController::class, 'updatePassword'])->name('admin.password.update');
+
 });
