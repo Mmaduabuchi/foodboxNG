@@ -13,6 +13,9 @@
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -258,7 +261,7 @@
             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all scale-95 opacity-0 m-4">
                 <!-- Modal Header -->
                 <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-brand-grey/30 rounded-t-2xl">
-                    <h3 class="text-xl font-semibold text-brand-blue">Add New Staff</h3>
+                    <h3 class="text-xl font-semibold text-brand-blue" id="modalTitle">Add New Staff</h3>
                     <button onclick="closeStaffModal()" class="text-gray-400 hover:text-brand-red transition-colors p-1">
                         <i class="fas fa-times text-lg"></i>
                     </button>
@@ -268,6 +271,9 @@
                 <div class="p-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
                     <form action="{{ route('admin.staffManagement') }}" method="POST" id="staffForm">
                         @csrf
+                        <input type="hidden" name="_method" id="formMethod" value="POST">
+                        <input type="hidden" name="staff_id" id="staffId">
+                        
                         <div class="space-y-4">
                             <div>
                                 <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
@@ -316,9 +322,12 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="space-y-2">
-                                    <label for="password" class="block text-sm font-medium text-gray-700">Initial Password</label>
+                                    <label for="password" class="block text-sm font-medium text-gray-700">
+                                        Initial Password 
+                                        <span class="edit-only text-xs text-gray-400 font-normal hidden">(Leave blank to keep current)</span>
+                                    </label>
                                     <div class="relative group">
-                                        <input type="password" name="password" id="password" placeholder="••••••••" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none transition-all pr-10" required>
+                                        <input type="password" name="password" id="password" placeholder="••••••••" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none transition-all pr-10">
                                         <button type="button" onclick="togglePasswordVisibility('password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-brand-teal transition-colors">
                                             <i class="fas fa-eye text-sm"></i>
                                         </button>
@@ -327,7 +336,7 @@
                                 <div class="space-y-2">
                                     <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
                                     <div class="relative group">
-                                        <input type="password" name="password_confirmation" id="password_confirmation" placeholder="••••••••" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none transition-all pr-10" required>
+                                        <input type="password" name="password_confirmation" id="password_confirmation" placeholder="••••••••" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none transition-all pr-10">
                                         <button type="button" onclick="togglePasswordVisibility('password_confirmation', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-brand-teal transition-colors">
                                             <i class="fas fa-eye text-sm"></i>
                                         </button>
@@ -374,6 +383,7 @@
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name & ID</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">State</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Login</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -411,6 +421,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Email">{{ $staff->email }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="State">{{ $staff->state }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Role">
                                 <span class="px-2 py-1 bg-{{ $roleColor }}/10 text-{{ $roleColor }} rounded-lg text-[10px] font-bold uppercase tracking-wider">
                                     {{ str_replace('_', ' ', $staff->role) }}
@@ -425,10 +436,10 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex space-x-2" data-label="Actions">
-                                <button onclick="editAdmin('{{ $staff->id }}')" class="p-2 bg-brand-blue/5 text-brand-blue rounded-lg hover:bg-brand-blue hover:text-white transition-all">
+                                <button onclick="editStaff('{{ $staff->id }}')" class="p-2 bg-brand-blue/5 text-brand-blue rounded-lg hover:bg-brand-blue hover:text-white transition-all">
                                     <i class="fas fa-edit text-xs"></i>
                                 </button>
-                                @if($staff->status === 'inactive')
+                                @if($staff->status === 'inactive' || $staff->status === 'suspended')
                                     <button onclick="reInviteAdmin('{{ $staff->id }}', '{{ $staff->fullname }}')" class="p-2 bg-brand-gold/5 text-brand-gold rounded-lg hover:bg-brand-gold hover:text-white transition-all">
                                         <i class="fas fa-paper-plane text-xs"></i>
                                     </button>
@@ -470,14 +481,80 @@
             console.log("Add New Admin modal simulated.");
         }
 
-        function editAdmin(id) {
-            alertMessage('info', `Editing staff member with ID: ${id}.`);
-            console.log(`Edit Admin requested for ID: ${id}.`);
+        async function editStaff(id) {
+            try {
+                const response = await fetch(`/admin/staff/${id}/edit`);
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    const staff = result.data;
+                    const form = document.getElementById('staffForm');
+                    
+                    form.action = `/admin/staff/${id}`;
+                    document.getElementById('formMethod').value = 'PUT';
+                    document.getElementById('staffId').value = id;
+                    document.getElementById('modalTitle').textContent = 'Edit Staff Member';
+                    document.getElementById('buttonText').textContent = 'Update Staff';
+                    document.querySelectorAll('.edit-only').forEach(el => el.classList.remove('hidden'));
+                    
+                    // Fill data
+                    document.getElementById('name').value = staff.fullname;
+                    document.getElementById('email').value = staff.email;
+                    document.getElementById('phone').value = staff.phone;
+                    document.getElementById('role').value = staff.role;
+                    document.getElementById('nin').value = staff.NIN;
+                    document.getElementById('address').value = staff.address;
+                    document.getElementById('state').value = staff.state;
+                    
+                    // Open Modal
+                    const modal = document.getElementById('newStaffModal');
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                    setTimeout(() => {
+                        modal.querySelector('div').classList.remove('scale-95', 'opacity-0');
+                        modal.querySelector('div').classList.add('scale-100', 'opacity-100');
+                    }, 10);
+                } else {
+                    alertMessage('warning', 'Could not fetch staff data.');
+                }
+            } catch (error) {
+                alertMessage('warning', 'Network error. Please try again.');
+            }
         }
         
-        function suspendStaff(id, name) {
-            alertMessage('warning', `Confirming access revocation for ${name} (${id}).`);
-            console.log(`Revoke Admin requested for ID: ${id}.`);
+        async function suspendStaff(id, name) {
+            Swal.fire({
+                title: 'Suspend Staff?',
+                text: `Are you sure you want to suspend ${name}? This will revoke their access immediately.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#E76F51',
+                cancelButtonColor: '#264653',
+                confirmButtonText: 'Yes, suspend access',
+                cancelButtonText: 'Cancel'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch(`/admin/staff/${id}/suspend`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        });
+                        const result = await response.json();
+                        if (result.status === 'success') {
+                            alertMessage('success', result.message);
+                            setTimeout(() => window.location.reload(), 2000);
+                        } else {
+                            alertMessage('warning', result.message || 'Failed to suspend staff.');
+                        }
+                    } catch (error) {
+                        alertMessage('warning', 'Network error. Please try again.');
+                    }
+                }
+            });
         }
 
         function togglePasswordVisibility(inputId, button) {
@@ -495,9 +572,39 @@
             }
         }
 
-        function reInviteAdmin(id, name) {
-            alertMessage('success', `Re-invitation email sent to ${name} (${id}).`);
-            console.log(`Re-Invite Admin requested for ID: ${id}.`);
+        async function reInviteAdmin(id, name) {
+            Swal.fire({
+                title: 'Restore Access?',
+                text: `Are you sure you want to restore access for ${name}?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#2A9D8F',
+                cancelButtonColor: '#264653',
+                confirmButtonText: 'Yes, restore access',
+                cancelButtonText: 'Cancel'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch(`/admin/staff/${id}/activate`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        });
+                        const result = await response.json();
+                        if (result.status === 'success') {
+                            alertMessage('success', result.message);
+                            setTimeout(() => window.location.reload(), 2000);
+                        } else {
+                            alertMessage('warning', result.message || 'Failed to restore staff access.');
+                        }
+                    } catch (error) {
+                        alertMessage('warning', 'Network error. Please try again.');
+                    }
+                }
+            });
         }
 
         function alertMessage(type, message) {
@@ -602,7 +709,7 @@
                 const result = await response.json();
                 
                 if (result.status === "success") {
-                    alertMessage('success', result.message || 'Staff member added successfully!');
+                    alertMessage('success', result.message || 'Operation successful!');
                     form.reset();
                     closeStaffModal();
                     // Reload
@@ -621,15 +728,26 @@
                 alertMessage('warning', 'Network error. Please try again.');
             } finally {
                 // End Processing State
+                const isEdit = document.getElementById('staffId').value;
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
-                buttonText.textContent = 'Add Staff';
+                buttonText.textContent = isEdit ? 'Update Staff' : 'Add Staff';
                 buttonSpinner.classList.add('hidden');
             }
         });
 
         //Staff Modal Functions
         function openStaffModal() {
+            // Reset for Add mode
+            const form = document.getElementById('staffForm');
+            form.reset();
+            form.action = "{{ route('admin.staffManagement') }}";
+            document.getElementById('formMethod').value = 'POST';
+            document.getElementById('staffId').value = '';
+            document.getElementById('modalTitle').textContent = 'Add New Staff';
+            document.getElementById('buttonText').textContent = 'Add Staff';
+            document.querySelectorAll('.edit-only').forEach(el => el.classList.add('hidden'));
+
             const modal = document.getElementById('newStaffModal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');

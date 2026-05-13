@@ -203,4 +203,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     //staff management
     Route::post('/admin/staffManagement', [staffController::class, 'store'])->name('admin.staffManagement');
+    Route::get('/admin/staff/{id}/edit', [staffController::class, 'edit'])->name('admin.staff.edit');
+    Route::put('/admin/staff/{id}', [staffController::class, 'update'])->name('admin.staff.update');
+    Route::post('/admin/staff/{id}/suspend', [staffController::class, 'suspend'])->name('admin.staff.suspend');
+    Route::post('/admin/staff/{id}/activate', [staffController::class, 'activate'])->name('admin.staff.activate');
 });

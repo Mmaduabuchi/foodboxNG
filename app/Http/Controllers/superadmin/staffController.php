@@ -38,4 +38,72 @@ class staffController extends Controller
             'message' => 'New staff member added successfully!'
         ]);
     }
+
+    public function edit($id)
+    {
+        $staff = Staff::findOrFail($id);
+        return response()->json([
+            'status' => 'success',
+            'data' => $staff
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $staff = Staff::findOrFail($id);
+
+        $request->validate([
+            'fullname' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'email' => 'required|email|unique:staffs,email,' . $id,
+            'role' => 'required|in:editor,dispatcher,support',
+            'nin' => 'required|string|max:20|unique:staffs,NIN,' . $id,
+            'address' => 'required|string|max:255',
+            'state' => 'required|string|max:100',
+            'password' => 'nullable|string|min:6|confirmed',
+        ]);
+
+        $staff->fullname = $request->fullname;
+        $staff->email = $request->email;
+        $staff->phone = $request->phone;
+        $staff->state = $request->state;
+        $staff->address = $request->address;
+        $staff->NIN = $request->nin;
+        $staff->role = $request->role;
+
+        if ($request->password) {
+            $staff->password = Hash::make($request->password);
+        }
+
+        $staff->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Staff record updated successfully!'
+        ]);
+    }
+
+    public function suspend($id)
+    {
+        $staff = Staff::findOrFail($id);
+        $staff->status = 'inactive';
+        $staff->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => "{$staff->fullname} has been suspended."
+        ]);
+    }
+
+    public function activate($id)
+    {
+        $staff = Staff::findOrFail($id);
+        $staff->status = 'active';
+        $staff->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => "{$staff->fullname}'s access has been restored."
+        ]);
+    }
 }
