@@ -317,11 +317,21 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="space-y-2">
                                     <label for="password" class="block text-sm font-medium text-gray-700">Initial Password</label>
-                                    <input type="password" name="password" id="password" placeholder="••••••••" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none transition-all" required>
+                                    <div class="relative group">
+                                        <input type="password" name="password" id="password" placeholder="••••••••" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none transition-all pr-10" required>
+                                        <button type="button" onclick="togglePasswordVisibility('password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-brand-teal transition-colors">
+                                            <i class="fas fa-eye text-sm"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="space-y-2">
                                     <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
-                                    <input type="password" name="password_confirmation" id="password_confirmation" placeholder="••••••••" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none transition-all" required>
+                                    <div class="relative group">
+                                        <input type="password" name="password_confirmation" id="password_confirmation" placeholder="••••••••" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none transition-all pr-10" required>
+                                        <button type="button" onclick="togglePasswordVisibility('password_confirmation', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-brand-teal transition-colors">
+                                            <i class="fas fa-eye text-sm"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -331,8 +341,9 @@
                 <!-- Modal Footer -->
                 <div class="p-6 border-t border-gray-100 flex justify-end gap-3 bg-brand-grey/10 rounded-b-2xl">
                     <button type="button" onclick="closeStaffModal()" class="px-4 py-2 text-gray-600 hover:text-brand-red font-medium transition-colors">Cancel</button>
-                    <button type="submit" form="staffForm" class="px-6 py-2 bg-brand-blue text-white font-bold rounded-xl hover:bg-brand-teal transition-all shadow-lg shadow-brand-blue/20">
-                        Add Staff
+                    <button type="submit" form="staffForm" id="submitButton" class="px-6 py-2 bg-brand-blue text-white font-bold rounded-xl hover:bg-brand-teal transition-all shadow-lg shadow-brand-blue/20 flex items-center gap-2">
+                        <span id="buttonText">Add Staff</span>
+                        <i id="buttonSpinner" class="fas fa-spinner fa-spin hidden"></i>
                     </button>
                 </div>
             </div>
@@ -422,7 +433,7 @@
                                         <i class="fas fa-paper-plane text-xs"></i>
                                     </button>
                                 @else
-                                    <button onclick="revokeAdmin('{{ $staff->id }}', '{{ $staff->fullname }}')" class="p-2 bg-brand-red/5 text-brand-red rounded-lg hover:bg-brand-red hover:text-white transition-all">
+                                    <button onclick="suspendStaff('{{ $staff->id }}', '{{ $staff->fullname }}')" class="p-2 bg-brand-red/5 text-brand-red rounded-lg hover:bg-brand-red hover:text-white transition-all">
                                         <i class="fas fa-user-slash text-xs"></i>
                                     </button>
                                 @endif
@@ -453,7 +464,7 @@
         const sidebar = document.getElementById('sidebar');
         const backdrop = document.getElementById('backdrop');
 
-        // --- Mock Action Functions ---
+        //Mock Action Functions
         function openAddAdminModal() {
             alertMessage('info', 'Opening the "Invite New Admin" form...');
             console.log("Add New Admin modal simulated.");
@@ -464,9 +475,24 @@
             console.log(`Edit Admin requested for ID: ${id}.`);
         }
         
-        function revokeAdmin(id, name) {
+        function suspendStaff(id, name) {
             alertMessage('warning', `Confirming access revocation for ${name} (${id}).`);
             console.log(`Revoke Admin requested for ID: ${id}.`);
+        }
+
+        function togglePasswordVisibility(inputId, button) {
+            const input = document.getElementById(inputId);
+            const icon = button.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
         }
 
         function reInviteAdmin(id, name) {
@@ -474,10 +500,15 @@
             console.log(`Re-Invite Admin requested for ID: ${id}.`);
         }
 
-        // Simple custom alert/toast simulation (since alert() is forbidden)
         function alertMessage(type, message) {
             const container = document.body;
+
+            // Remove existing toast (prevents stacking bug)
+            const existingToast = document.querySelector('.custom-toast');
+            if (existingToast) existingToast.remove();
+
             let bgColor, icon;
+
             if (type === 'success') {
                 bgColor = 'bg-brand-teal';
                 icon = '<i class="fas fa-check-circle"></i>';
@@ -490,25 +521,37 @@
             }
 
             const alertDiv = document.createElement('div');
-            alertDiv.className = `fixed top-4 right-4 p-4 rounded-xl text-white shadow-lg flex items-center space-x-3 transition-transform duration-500 transform translate-x-full ${bgColor}`;
-            alertDiv.innerHTML = `${icon} <span class="font-semibold">${message}</span>`;
-            
+
+            alertDiv.className = `
+                custom-toast fixed top-4 right-4 p-4 rounded-xl text-white shadow-lg
+                flex items-center space-x-3 transition-transform duration-500 transform translate-x-full
+                ${bgColor} z-50 max-w-sm break-words
+            `;
+
+            alertDiv.innerHTML = `
+                ${icon}
+                <span class="font-semibold text-sm">${message}</span>
+            `;
+
             container.appendChild(alertDiv);
-            
-            // Show the toast
+
+            // Slide in
             setTimeout(() => {
                 alertDiv.classList.remove('translate-x-full');
             }, 50);
 
-            // Hide and remove the toast
+            // Slide out
             setTimeout(() => {
                 alertDiv.classList.add('translate-x-full');
-                alertDiv.addEventListener('transitionend', () => alertDiv.remove());
+
+                alertDiv.addEventListener('transitionend', () => {
+                    alertDiv.remove();
+                });
             }, 3000);
         }
 
 
-        // --- Sidebar Toggle Functions ---
+        //Sidebar Toggle Functions
         function toggleSidebar() {
             const isOpen = sidebar.classList.toggle('open');
             backdrop.classList.toggle('hidden', !isOpen);
@@ -529,7 +572,63 @@
             });
         });
 
-        // --- Staff Modal Functions ---
+        //Staff Form Submission
+        document.getElementById('staffForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const form = this;
+            const submitBtn = document.getElementById('submitButton');
+            const buttonText = document.getElementById('buttonText');
+            const buttonSpinner = document.getElementById('buttonSpinner');
+            
+            // Start Processing State
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
+            buttonText.textContent = 'Processing...';
+            buttonSpinner.classList.remove('hidden');
+            
+            const formData = new FormData(form);
+            
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === "success") {
+                    alertMessage('success', result.message || 'Staff member added successfully!');
+                    form.reset();
+                    closeStaffModal();
+                    // Reload
+                    setTimeout(() => window.location.reload(), 2000);
+                } else {
+                    // Handle Validation Errors
+                    if (result.errors) {
+                        const errorMsg = Object.values(result.errors).flat()[0];
+                        alertMessage('warning', errorMsg);
+                    } else {
+                        alertMessage('warning', result.message || 'An unexpected error occurred.');
+                    }
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                alertMessage('warning', 'Network error. Please try again.');
+            } finally {
+                // End Processing State
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+                buttonText.textContent = 'Add Staff';
+                buttonSpinner.classList.add('hidden');
+            }
+        });
+
+        //Staff Modal Functions
         function openStaffModal() {
             const modal = document.getElementById('newStaffModal');
             modal.classList.remove('hidden');
@@ -547,10 +646,7 @@
             setTimeout(() => {
                 modal.classList.remove('flex');
                 modal.classList.add('hidden');
-            }, 3000); // Match transition speed or just hide
-            // Fast hide for better UX
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
+            }, 300); // Improved transition speed
         }
     </script>
 </body>

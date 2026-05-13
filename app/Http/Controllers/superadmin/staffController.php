@@ -33,6 +33,9 @@ class staffController extends Controller
             'status' => 'active',
         ]);
 
-        return redirect()->back()->with('success', 'New staff member added successfully!');
+        return response()->json([
+            'status' => 'success',
+            'message' => 'New staff member added successfully!'
+        ]);
     }
 }
