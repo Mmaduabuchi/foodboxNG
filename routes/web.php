@@ -37,6 +37,7 @@ use App\Http\Controllers\superadmin\orderManagementController;
 use App\Http\Controllers\superadmin\reportsController;
 use App\Http\Controllers\superadmin\supportController;
 use App\Http\Controllers\superadmin\managePackagesController;
+use App\Http\Controllers\superadmin\staffController;
 
 
 
@@ -200,4 +201,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     //update password
     Route::post('/admin/password/update', [systemSettingsController::class, 'updatePassword'])->name('admin.password.update');
 
+    //staff management
+    Route::post('/admin/staffManagement', [staffController::class, 'store'])->name('admin.staffManagement');
 });

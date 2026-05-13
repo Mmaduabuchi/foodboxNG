@@ -133,7 +133,7 @@
                     <p class="text-sm font-semibold text-gray-500">Highest Access</p>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Super Admins</p>
-                <p class="text-2xl font-extrabold text-brand-blue">1</p>
+                <p class="text-2xl font-extrabold text-brand-blue">{{ $adminCount }}</p>
             </div>
 
             <!-- Card 2: Editors / Content Managers -->
@@ -143,7 +143,7 @@
                     <p class="text-sm font-semibold text-gray-500">Edit Products</p>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Content Editors</p>
-                <p class="text-2xl font-extrabold text-brand-blue">3</p>
+                <p class="text-2xl font-extrabold text-brand-blue">{{ $editorCount }}</p>
             </div>
 
             <!-- Card 3: Dispatch & Logistics -->
@@ -153,7 +153,7 @@
                     <p class="text-sm font-semibold text-gray-500">Manage Deliveries</p>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Dispatch Staff</p>
-                <p class="text-2xl font-extrabold text-brand-blue">8</p>
+                <p class="text-2xl font-extrabold text-brand-blue">{{ $dispatcherCount }}</p>
             </div>
 
             <!-- Card 4: Customer Support -->
@@ -163,17 +163,17 @@
                     <p class="text-sm font-semibold text-gray-500">View Orders</p>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Support Agents</p>
-                <p class="text-2xl font-extrabold text-brand-blue">5</p>
+                <p class="text-2xl font-extrabold text-brand-blue">{{ $supportCount }}</p>
             </div>
         </div>
 
         <!-- Staff Directory Table -->
         <div class="bg-white p-6 rounded-2xl shadow-soft overflow-x-auto">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-semibold text-brand-blue">Active Staff Directory</h3>
-                <button class="text-brand-blue hover:text-brand-teal text-sm font-semibold" onclick="alertMessage('info', 'Searching for a specific admin...')">
+                <h3 class="text-xl font-semibold text-brand-blue">Active Admin Directory</h3>
+                <!-- <button class="text-brand-blue hover:text-brand-teal text-sm font-semibold" onclick="alertMessage('info', 'Searching for a specific admin...')">
                     <i class="fas fa-search mr-1"></i> Quick Search
-                </button>
+                </button> -->
             </div>
             
             <table class="min-w-full divide-y divide-gray-200 responsive-table">
@@ -190,116 +190,257 @@
                 <tbody class="divide-y divide-gray-200">
                     
                     <!-- Row 1: Current User (Super Admin) -->
-                    <tr class="hover:bg-brand-grey transition-colors bg-brand-gold/10">
-                        <td class="px-6 py-4 whitespace-nowrap" data-label="Name & ID">
-                            <div class="flex items-center gap-3">
-                                <img src="https://placehold.co/32x32/E76F51/FFFFFF?text=SA" onerror="this.onerror=null; this.src='https://placehold.co/32x32/E76F51/FFFFFF?text=SA';" class="w-8 h-8 rounded-full" />
-                                <div>
-                                    <p class="text-sm font-bold text-brand-blue">Admin J. Okoro (You)</p>
-                                    <p class="text-xs text-gray-500">ID: A_SA001</p>
+                    @foreach ($admins as $admin)
+                        <tr class="hover:bg-brand-grey transition-colors {{ $admin->id == auth()->id() ? 'bg-brand-gold/10 font-semibold' : '' }}">
+                            <td class="px-6 py-4 whitespace-nowrap" data-label="Name & ID">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-brand-red flex items-center justify-center text-white text-xs font-bold shadow-sm">
+                                        {{ strtoupper(substr($admin->name, 0, 2)) }}
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-brand-blue">{{ $admin->name }} {{ $admin->id == auth()->id() ? '(You)' : '' }}</p>
+                                        <p class="text-xs text-gray-500 font-mono">ID: ADMIN_{{ str_pad($admin->id, 3, '0', STR_PAD_LEFT) }}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Email">john.okoro@fbng.com</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Role">
-                            <span class="font-semibold text-brand-red">Super Admin</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Last Login">Online Now</td>
-                        <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Actions">
-                            <button class="text-gray-400 cursor-not-allowed text-sm font-semibold">Self-Manage</button>
-                        </td>
-                    </tr>
-
-                    <!-- Row 2: Content Editor -->
-                    <tr class="hover:bg-brand-grey transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap" data-label="Name & ID">
-                            <div class="flex items-center gap-3">
-                                <img src="https://placehold.co/32x32/2A9D8F/FFFFFF?text=OE" onerror="this.onerror=null; this.src='https://placehold.co/32x32/2A9D8F/FFFFFF?text=OE';" class="w-8 h-8 rounded-full" />
-                                <div>
-                                    <p class="text-sm font-medium text-gray-900">Olaide Ekundayo</p>
-                                    <p class="text-xs text-gray-500">ID: A_CM012</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Email">o.ekundayo@fbng.com</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Role">
-                            <span class="font-semibold text-brand-teal">Content Editor</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Last Login">1 hour ago</td>
-                        <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex space-x-2" data-label="Actions">
-                            <button onclick="editAdmin('A_CM012')" class="text-brand-blue hover:text-brand-teal transition-colors text-sm font-semibold"><i class="fas fa-edit"></i></button>
-                            <button onclick="revokeAdmin('A_CM012', 'Olaide Ekundayo')" class="text-brand-red hover:text-brand-red/70 transition-colors text-sm font-semibold"><i class="fas fa-user-slash"></i></button>
-                        </td>
-                    </tr>
-
-                    <!-- Row 3: Dispatch Staff (Inactive) -->
-                    <tr class="hover:bg-brand-grey transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap" data-label="Name & ID">
-                            <div class="flex items-center gap-3">
-                                <img src="https://placehold.co/32x32/264653/FFFFFF?text=KU" onerror="this.onerror=null; this.src='https://placehold.co/32x32/264653/FFFFFF?text=KU';" class="w-8 h-8 rounded-full" />
-                                <div>
-                                    <p class="text-sm font-medium text-gray-900">Kolawole Ugo</p>
-                                    <p class="text-xs text-gray-500">ID: A_DM045</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Email">k.ugo@fbng.com</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Role">
-                            <span class="font-semibold text-brand-orange">Dispatch Manager</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Last Login">3 days ago</td>
-                        <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Inactive</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex space-x-2" data-label="Actions">
-                            <button onclick="editAdmin('A_DM045')" class="text-brand-blue hover:text-brand-teal transition-colors text-sm font-semibold"><i class="fas fa-edit"></i></button>
-                            <button onclick="reInviteAdmin('A_DM045', 'Kolawole Ugo')" class="text-brand-gold hover:text-brand-gold/70 transition-colors text-sm font-semibold"><i class="fas fa-paper-plane"></i></button>
-                        </td>
-                    </tr>
-                    
-                    <!-- Row 4: Support Agent (Active) -->
-                    <tr class="hover:bg-brand-grey transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap" data-label="Name & ID">
-                            <div class="flex items-center gap-3">
-                                <img src="https://placehold.co/32x32/E9C46A/FFFFFF?text=IO" onerror="this.onerror=null; this.src='https://placehold.co/32x32/E9C46A/FFFFFF?text=IO';" class="w-8 h-8 rounded-full" />
-                                <div>
-                                    <p class="text-sm font-medium text-gray-900">Ifunanya Okeke</p>
-                                    <p class="text-xs text-gray-500">ID: A_CS101</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Email">i.okeke@fbng.com</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Role">
-                            <span class="font-semibold text-brand-blue">Support Agent</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Last Login">4 hours ago</td>
-                        <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex space-x-2" data-label="Actions">
-                            <button onclick="editAdmin('A_CS101')" class="text-brand-blue hover:text-brand-teal transition-colors text-sm font-semibold"><i class="fas fa-edit"></i></button>
-                            <button onclick="revokeAdmin('A_CS101', 'Ifunanya Okeke')" class="text-brand-red hover:text-brand-red/70 transition-colors text-sm font-semibold"><i class="fas fa-user-slash"></i></button>
-                        </td>
-                    </tr>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Email">{{ $admin->email }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Role">
+                                <span class="px-2 py-1 bg-brand-red/10 text-brand-red rounded-lg text-xs font-bold uppercase tracking-wider">Super Admin</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Last Login">
+                                {{ $admin->id == auth()->id() ? 'Online Now' : ($admin->last_login ? $admin->last_login->diffForHumans() : 'Never') }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
+                                <span class="px-3 py-1 inline-flex text-[10px] leading-5 font-bold uppercase rounded-full bg-green-100 text-green-800 ring-1 ring-green-600/20">Active</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Actions">
+                                @if($admin->id == auth()->id())
+                                    <button class="text-gray-400 cursor-not-allowed text-xs font-bold italic">Self-Manage Only</button>
+                                @else
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="editAdmin('{{ $admin->id }}')" class="p-2 bg-brand-blue/5 text-brand-blue rounded-lg hover:bg-brand-blue hover:text-white transition-all">
+                                            <i class="fas fa-edit text-xs"></i>
+                                        </button>
+                                        <button onclick="revokeAdmin('{{ $admin->id }}', '{{ $admin->name }}')" class="p-2 bg-brand-red/5 text-brand-red rounded-lg hover:bg-brand-red hover:text-white transition-all">
+                                            <i class="fas fa-user-slash text-xs"></i>
+                                        </button>
+                                    </div>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
 
                 </tbody>
             </table>
 
-            <div class="mt-6 flex justify-between items-center">
-                <p class="text-sm text-gray-600">Showing 1 to 4 of 17 active staff</p>
-                <div class="flex space-x-2">
-                    <button class="px-3 py-1 rounded-lg bg-brand-grey text-brand-blue font-medium hover:bg-gray-300 transition-colors"><i class="fas fa-chevron-left text-xs"></i></button>
-                    <span class="px-3 py-1 rounded-lg bg-brand-blue text-white font-medium">1</span>
-                    <button class="px-3 py-1 rounded-lg bg-brand-grey text-brand-blue font-medium hover:bg-gray-300 transition-colors">2</button>
-                    <button class="px-3 py-1 rounded-lg bg-brand-grey text-brand-blue font-medium hover:bg-gray-300 transition-colors">3</button>
-                    <button class="px-3 py-1 rounded-lg bg-brand-grey text-brand-blue font-medium hover:bg-gray-300 transition-colors"><i class="fas fa-chevron-right text-xs"></i></button>
+            <div class="mt-6 flex justify-between items-center text-sm border-t pt-4">
+                <p class="text-gray-600">Total Super Admins: <span class="font-bold text-brand-blue">{{ count($admins) }}</span></p>
+                <p class="text-gray-400 italic">Access is granted via secure backend only.</p>
+            </div>
+        </div>
+
+
+        <!-- Footer Spacer -->
+        <div class="h-12"></div>
+
+        <section class="flex justify-between items-center mb-4">
+            <div>
+                <h3 class="text-xl font-semibold text-brand-blue">Staff Management</h3>
+            </div>
+            <div>
+                <button onclick="openStaffModal()" class="px-4 py-2 bg-brand-blue text-white text-sm font-bold rounded-xl hover:bg-brand-teal transition-all shadow-lg shadow-brand-blue/20">
+                    <i class="fas fa-plus mr-1"></i> Add New Staff
+                </button>
+            </div>
+        </section>
+
+        <div class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 backdrop-blur-sm" id="newStaffModal">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all scale-95 opacity-0 m-4">
+                <!-- Modal Header -->
+                <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-brand-grey/30 rounded-t-2xl">
+                    <h3 class="text-xl font-semibold text-brand-blue">Add New Staff</h3>
+                    <button onclick="closeStaffModal()" class="text-gray-400 hover:text-brand-red transition-colors p-1">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
                 </div>
+
+                <!-- Modal Body (Scrollable) -->
+                <div class="p-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
+                    <form action="{{ route('admin.staffManagement') }}" method="POST" id="staffForm">
+                        @csrf
+                        <div class="space-y-4">
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                                <input type="text" name="fullname" id="name" placeholder="John Doe" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none transition-all" required>
+                            </div>
+
+                            <div>
+                                <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                                <input type="text" name="phone" id="phone" placeholder="0800 000 0000" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none transition-all" required>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-2">
+                                    <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                                    <input type="email" name="email" id="email" placeholder="john@foodbox.ng" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none transition-all" required>
+                                </div>
+                                <div class="space-y-2">
+                                    <label for="role" class="block text-sm font-medium text-gray-700">Staff Role</label>
+                                    <select name="role" id="role" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none bg-white cursor-pointer transition-all" required>
+                                        <option value="editor">Content Editor</option>
+                                        <option value="dispatcher">Dispatch Manager</option>
+                                        <option value="support">Support Agent</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="nin" class="block text-sm font-medium text-gray-700 mb-2">National ID Number (NIN)</label>
+                                <input type="text" name="nin" id="nin" placeholder="12345678901" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none transition-all" required>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-2">
+                                    <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+                                    <input type="text" name="address" id="address" placeholder="123 Main St" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none transition-all" required>
+                                </div>
+                                <div class="space-y-2">
+                                    <label for="state" class="block text-sm font-medium text-gray-700">State</label>
+                                    <select name="state" id="state" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none bg-white cursor-pointer transition-all" required>
+                                        <option value="Abuja">Abuja</option>
+                                        <option value="Lagos">Lagos</option>
+                                        <option value="Port Harcourt">Port Harcourt</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-2">
+                                    <label for="password" class="block text-sm font-medium text-gray-700">Initial Password</label>
+                                    <input type="password" name="password" id="password" placeholder="••••••••" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none transition-all" required>
+                                </div>
+                                <div class="space-y-2">
+                                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                                    <input type="password" name="password_confirmation" id="password_confirmation" placeholder="••••••••" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none transition-all" required>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="p-6 border-t border-gray-100 flex justify-end gap-3 bg-brand-grey/10 rounded-b-2xl">
+                    <button type="button" onclick="closeStaffModal()" class="px-4 py-2 text-gray-600 hover:text-brand-red font-medium transition-colors">Cancel</button>
+                    <button type="submit" form="staffForm" class="px-6 py-2 bg-brand-blue text-white font-bold rounded-xl hover:bg-brand-teal transition-all shadow-lg shadow-brand-blue/20">
+                        Add Staff
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer Spacer -->
+        <div class="h-12"></div>
+
+
+        <div class="bg-white p-6 rounded-2xl shadow-soft overflow-x-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold text-brand-blue">Active Staff Directory</h3>
+                <form action="{{ route('admin.adminManagement') }}" method="GET" class="relative group">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm group-focus-within:text-brand-teal transition-colors"></i>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Quick staff search..." 
+                        class="pl-10 pr-4 py-2 w-48 md:w-64 bg-brand-grey border border-transparent rounded-xl text-sm focus:bg-white focus:border-brand-teal focus:ring-4 focus:ring-brand-teal/10 transition-all outline-none"
+                    >
+                    @if(request('search'))
+                        <a href="{{ route('admin.adminManagement') }}" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-brand-red transition-colors">
+                            <i class="fas fa-times-circle"></i>
+                        </a>
+                    @endif
+                </form>
+            </div>
+            
+            <table class="min-w-full divide-y divide-gray-200 responsive-table">
+                <thead class="bg-brand-grey/50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name & ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Login</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    
+                    <!-- Row 1: Current User (Super Admin) -->
+                    @forelse ($staffs as $staff)
+                        @php
+                            $roleColor = match($staff->role) {
+                                'editor' => 'brand-teal',
+                                'dispatcher' => 'brand-orange',
+                                'support' => 'brand-blue',
+                                default => 'gray-500'
+                            };
+                            $statusColor = match($staff->status) {
+                                'active' => 'bg-green-100 text-green-800 ring-green-600/20',
+                                'inactive' => 'bg-gray-100 text-gray-800 ring-gray-600/20',
+                                'suspended' => 'bg-red-100 text-red-800 ring-red-600/20',
+                                default => 'bg-gray-100 text-gray-800 ring-gray-600/20'
+                            };
+                        @endphp
+                        <tr class="hover:bg-brand-grey transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap" data-label="Name & ID">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-{{ $roleColor }} flex items-center justify-center text-white text-[10px] font-bold shadow-sm">
+                                        {{ strtoupper(substr($staff->fullname, 0, 2)) }}
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-900">{{ $staff->fullname }}</p>
+                                        <p class="text-xs text-gray-500 font-mono italic">#STF_{{ str_pad($staff->id, 3, '0', STR_PAD_LEFT) }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Email">{{ $staff->email }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Role">
+                                <span class="px-2 py-1 bg-{{ $roleColor }}/10 text-{{ $roleColor }} rounded-lg text-[10px] font-bold uppercase tracking-wider">
+                                    {{ str_replace('_', ' ', $staff->role) }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Last Login">
+                                {{ $staff->last_login ? $staff->last_login->diffForHumans() : 'Never' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
+                                <span class="px-3 py-1 inline-flex text-[10px] leading-5 font-bold uppercase rounded-full {{ $statusColor }} ring-1">
+                                    {{ $staff->status }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex space-x-2" data-label="Actions">
+                                <button onclick="editAdmin('{{ $staff->id }}')" class="p-2 bg-brand-blue/5 text-brand-blue rounded-lg hover:bg-brand-blue hover:text-white transition-all">
+                                    <i class="fas fa-edit text-xs"></i>
+                                </button>
+                                @if($staff->status === 'inactive')
+                                    <button onclick="reInviteAdmin('{{ $staff->id }}', '{{ $staff->fullname }}')" class="p-2 bg-brand-gold/5 text-brand-gold rounded-lg hover:bg-brand-gold hover:text-white transition-all">
+                                        <i class="fas fa-paper-plane text-xs"></i>
+                                    </button>
+                                @else
+                                    <button onclick="revokeAdmin('{{ $staff->id }}', '{{ $staff->fullname }}')" class="p-2 bg-brand-red/5 text-brand-red rounded-lg hover:bg-brand-red hover:text-white transition-all">
+                                        <i class="fas fa-user-slash text-xs"></i>
+                                    </button>
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center text-gray-500 italic">
+                                <i class="fas fa-users-slash text-4xl mb-3 block text-gray-300"></i>
+                                No active staff members found in the directory.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+
+            <div class="mt-6">
+                {{ $staffs->links() }}
             </div>
         </div>
         
@@ -387,6 +528,30 @@
                 }
             });
         });
+
+        // --- Staff Modal Functions ---
+        function openStaffModal() {
+            const modal = document.getElementById('newStaffModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.querySelector('div').classList.remove('scale-95', 'opacity-0');
+                modal.querySelector('div').classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeStaffModal() {
+            const modal = document.getElementById('newStaffModal');
+            modal.querySelector('div').classList.remove('scale-100', 'opacity-100');
+            modal.querySelector('div').classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }, 3000); // Match transition speed or just hide
+            // Fast hide for better UX
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
     </script>
 </body>
 </html>
