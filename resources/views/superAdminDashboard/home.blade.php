@@ -286,41 +286,52 @@
                 </table>
             </div>
 
-            <!-- Inventory & Stock Alerts (1/3 width) -->
+            <!-- Latest Payments -->
             <div class="bg-white p-6 rounded-2xl shadow-soft">
-                <h3 class="text-xl font-semibold mb-4 text-brand-blue">Inventory Alerts</h3>
-                <div class="space-y-4">
-                    
-                    <!-- Alert 1 -->
-                    <div class="p-3 bg-brand-gold/10 border-l-4 border-brand-gold rounded-lg flex justify-between items-center">
-                        <div>
-                            <p class="font-semibold text-brand-blue">Palm Oil</p>
-                            <p class="text-sm text-gray-600">Low Stock: 45 Litres left</p>
+                <h3 class="text-xl font-semibold mb-4 text-brand-blue">Latest Payments</h3>
+                <div class="space-y-3">
+                    @forelse($latestPayments as $payment)
+                        @php
+                            $badge = match($payment->status) {
+                                'success' => 'bg-green-100 text-green-700',
+                                'failed' => 'bg-brand-red/10 text-brand-red',
+                                'refunded' => 'bg-gray-200 text-gray-600',
+                                'pending' => 'bg-brand-gold/20 text-brand-orange',
+                                default => 'bg-gray-100 text-gray-500',
+                            };
+                            $borderColor = match($payment->status) {
+                                'success' => 'border-brand-teal',
+                                'failed' => 'border-brand-red',
+                                'refunded' => 'border-gray-400',
+                                'pending' => 'border-brand-gold',
+                                default => 'border-gray-300',
+                            };
+                        @endphp
+                        <div class="p-3 bg-brand-grey/50 border-l-4 {{ $borderColor }} rounded-lg flex justify-between items-center">
+                            <div>
+                                <p class="font-semibold text-brand-blue text-sm">
+                                    {{ $payment->user->name ?? '—' }}
+                                </p>
+                                <p class="text-xs text-gray-500">
+                                    ₦ {{ number_format($payment->amount, 2) }}
+                                    &middot;
+                                    {{ ($payment->paid_at ?? $payment->created_at)->diffForHumans() }}
+                                </p>
+                            </div>
+                            <span class="text-xs font-semibold px-2 py-1 rounded-full {{ $badge }}">
+                                {{ ucfirst($payment->status) }}
+                            </span>
                         </div>
-                        <button class="text-xs text-white px-3 py-1 rounded-full bg-brand-teal hover:bg-brand-teal/90">Restock</button>
-                    </div>
-
-                    <!-- Alert 2 -->
-                    <div class="p-3 bg-brand-red/10 border-l-4 border-brand-red rounded-lg flex justify-between items-center">
-                        <div>
-                            <p class="font-semibold text-brand-blue">Semovita</p>
-                            <p class="text-sm text-gray-600">Out of Stock</p>
+                    @empty
+                        <div class="py-8 text-center text-gray-400">
+                            <i class="fas fa-receipt text-3xl mb-2 block"></i>
+                            <p class="text-sm">No payments yet.</p>
                         </div>
-                        <button class="text-xs text-white px-3 py-1 rounded-full bg-brand-red hover:bg-brand-red/90">Order</button>
-                    </div>
-
-                    <!-- Alert 3 -->
-                    <div class="p-3 bg-brand-gold/10 border-l-4 border-brand-gold rounded-lg flex justify-between items-center">
-                        <div>
-                            <p class="font-semibold text-brand-blue">Dried Fish</p>
-                            <p class="text-sm text-gray-600">Low Stock: 12kg left</p>
-                        </div>
-                        <button class="text-xs text-white px-3 py-1 rounded-full bg-brand-teal hover:bg-brand-teal/90">Restock</button>
-                    </div>
+                    @endforelse
                 </div>
-                <button class="w-full mt-4 text-sm text-brand-blue font-semibold hover:text-brand-teal transition-colors">
-                    View All Inventory <i class="fas fa-arrow-right ml-1 text-xs"></i>
-                </button>
+                <a href="{{ route('admin.paymentManagement') }}" class="block w-full mt-4 text-sm text-center text-brand-blue font-semibold hover:text-brand-teal transition-colors">
+                    View All Payments <i class="fas fa-arrow-right ml-1 text-xs"></i>
+                </a>
             </div>
         </div>
 

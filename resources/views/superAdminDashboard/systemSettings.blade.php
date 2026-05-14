@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>System Settings | FoodBox NG</title>
     
@@ -153,29 +154,26 @@
             <div class="bg-white p-6 md:p-8 rounded-2xl shadow-soft border-t-4 border-brand-blue">
                 <div class="flex items-center space-x-3 mb-6 border-b pb-4">
                     <i class="fas fa-cogs text-3xl text-brand-blue"></i>
-                    <h2 class="text-2xl font-bold text-brand-blue">1. Platform Configuration</h2>
+                    <h2 class="text-2xl font-bold text-brand-blue">1. Customer Support Information</h2>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- App Name -->
-                    <div class="space-y-2">
-                        <label for="appName" class="block text-sm font-medium text-gray-700">Application Name</label>
-                        <input type="text" disabled id="appName" value="FoodBox NG" class="w-full bg-brand-grey/50">
-                        <p class="text-xs text-gray-500">The primary display name for the platform.</p>
-                    </div>
-
-
                     <!-- Contact Email -->
                     <div class="space-y-2">
                         <label for="contactEmail" class="block text-sm font-medium text-gray-700">Support Contact Email</label>
-                        <input type="email" id="contactEmail" value="support@foodbox.ng" class="w-full bg-brand-grey/50">
+                        <input type="email" id="contactEmail" value="{{ $customerSupport->email ?? '' }}" placeholder="support@foodboxng.com" class="w-full bg-brand-grey/50">
                         <p class="text-xs text-gray-500">Used for automated support messages and communication.</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="contactPhone" class="block text-sm font-medium text-gray-700">Support Contact Phone</label>
+                        <input type="text" id="contactPhone" value="{{ $customerSupport->phone ?? '' }}" placeholder="+23400000000" class="w-full bg-brand-grey/50">
                     </div>
                 </div>
                 
                 <div class="mt-6 pt-6 border-t border-gray-100 flex justify-end">
-                    <button type="button" onclick="saveSection(1)" class="px-6 py-2 bg-brand-blue text-white font-semibold rounded-xl hover:bg-brand-blue/90 transition-colors">
-                        Save General Settings
+                    <button id="saveGeneralBtn" type="button" onclick="saveCustomerSupport()" class="px-6 py-2 bg-brand-blue text-white font-semibold rounded-xl hover:bg-brand-blue/90 transition-colors flex items-center gap-2">
+                        <span id="saveGeneralBtnText">Save General Settings</span>
                     </button>
                 </div>
             </div>
@@ -335,6 +333,49 @@
             console.log(`Section ${sectionNumber} settings saved.`);
         }
 
+        //Save Customer Support Info
+        async function saveCustomerSupport() {
+            const btn = document.getElementById('saveGeneralBtn');
+            const btnText = document.getElementById('saveGeneralBtnText');
+
+            // Processing state
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+            btnText.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Saving...';
+
+            const email = document.getElementById('contactEmail').value.trim();
+            const phone = document.getElementById('contactPhone').value.trim();
+
+            try {
+                const response = await fetch('{{ route("admin.updateCustomerSupport") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify({ contact_email: email, contact_phone: phone }),
+                });
+
+                const data = await response.json();
+
+                if (data.status === "success") {
+                    alertMessage('success', data.message || 'Customer support info saved successfully!');
+                } else {
+                    const errMsg = data.message || Object.values(data.errors || {}).flat().join(' ') || 'Failed to save settings.';
+                    alertMessage('error', errMsg);
+                }
+            } catch (err) {
+                alertMessage('error', 'A network error occurred. Please try again.');
+                console.error('saveCustomerSupport error:', err);
+            } finally {
+                // Reset button
+                btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                btnText.textContent = 'Save General Settings';
+            }
+        }
+
         function regenerateKey(name) {
             alertMessage('warning', `New ${name} key generated. Remember to update external services!`);
             console.log(`Regenerate key requested for ${name}.`);
@@ -351,6 +392,9 @@
             } else if (type === 'warning') {
                 bgColor = 'bg-brand-orange';
                 icon = '<i class="fas fa-exclamation-triangle"></i>';
+            } else if (type === 'error') {
+                bgColor = 'bg-brand-red';
+                icon = '<i class="fas fa-times-circle"></i>';
             } else {
                 bgColor = 'bg-brand-blue';
                 icon = '<i class="fas fa-info-circle"></i>';

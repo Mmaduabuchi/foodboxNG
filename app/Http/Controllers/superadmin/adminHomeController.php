@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Order;
 use App\Models\Subscription;
 use App\Models\Package;
+use App\Models\Payment;
 
 class adminHomeController extends Controller
 {
@@ -45,6 +46,12 @@ class adminHomeController extends Controller
             ->take(5)
             ->get();
 
+        // Latest 4 payments
+        $latestPayments = Payment::with('user')
+            ->latest()
+            ->take(4)
+            ->get();
+
         return view('superAdminDashboard.home', compact(
             'adminName',
             'totalUsers',
@@ -52,7 +59,8 @@ class adminHomeController extends Controller
             'activeSubscriptions',
             'recentOrders',
             'topPackages',
-            'recentUsers'
+            'recentUsers',
+            'latestPayments',
         ));
     }
 

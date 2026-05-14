@@ -126,87 +126,119 @@
         <!-- Financial Metrics Cards (Monthly Overview) -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
             
-            <!-- Card 1: Total Revenue (Teal/Green) -->
+            <!-- Card 1: Gross Revenue (Teal/Green) -->
             <div class="p-4 bg-white rounded-2xl shadow-soft border-t-4 border-brand-teal">
                 <div class="flex items-center justify-between">
                     <i class="fas fa-money-check-alt text-2xl text-brand-teal p-3 bg-brand-teal/10 rounded-xl"></i>
-                    <span class="text-sm font-semibold text-green-500 hidden md:block">+12.5% M/M</span>
+                    @if(!is_null($revenueMoM))
+                        <span class="text-sm font-semibold hidden md:block {{ $revenueMoM >= 0 ? 'text-green-500' : 'text-red-500' }}">
+                            {{ $revenueMoM >= 0 ? '+' : '' }}{{ $revenueMoM }}% M/M
+                        </span>
+                    @else
+                        <span class="text-sm font-semibold text-gray-400 hidden md:block">No prior data</span>
+                    @endif
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Gross Revenue (Mo)</p>
-                <p class="text-2xl font-extrabold text-brand-blue">₦ 12.8M</p>
+                <p class="text-2xl font-extrabold text-brand-blue">
+                    @if($grossRevenue >= 1_000_000)
+                        ₦ {{ number_format($grossRevenue / 1_000_000, 1) }}M
+                    @elseif($grossRevenue >= 1_000)
+                        ₦ {{ number_format($grossRevenue / 1_000, 1) }}k
+                    @else
+                        ₦ {{ number_format($grossRevenue, 2) }}
+                    @endif
+                </p>
             </div>
 
             <!-- Card 2: Refunds Issued (Red) -->
             <div class="p-4 bg-white rounded-2xl shadow-soft border-t-4 border-brand-red">
                 <div class="flex items-center justify-between">
                     <i class="fas fa-undo text-2xl text-brand-red p-3 bg-brand-red/10 rounded-xl"></i>
-                    <span class="text-sm font-semibold text-red-500 hidden md:block">Needs Review</span>
+                    <span class="text-sm font-semibold text-red-500 hidden md:block">{{ $totalRefunds > 0 ? 'Needs Review' : 'All Clear' }}</span>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Total Refunds (Mo)</p>
-                <p class="text-2xl font-extrabold text-brand-blue">₦ 185k</p>
+                <p class="text-2xl font-extrabold text-brand-blue">
+                    @if($totalRefunds >= 1_000_000)
+                        ₦ {{ number_format($totalRefunds / 1_000_000, 1) }}M
+                    @elseif($totalRefunds >= 1_000)
+                        ₦ {{ number_format($totalRefunds / 1_000, 1) }}k
+                    @else
+                        ₦ {{ number_format($totalRefunds, 2) }}
+                    @endif
+                </p>
             </div>
 
             <!-- Card 3: Failed Transactions (Orange) -->
             <div class="p-4 bg-white rounded-2xl shadow-soft border-t-4 border-brand-orange">
                 <div class="flex items-center justify-between">
                     <i class="fas fa-exclamation-circle text-2xl text-brand-orange p-3 bg-brand-orange/10 rounded-xl"></i>
-                    <span class="text-sm font-semibold text-brand-orange hidden md:block">4.5% Rate</span>
+                    <span class="text-sm font-semibold text-brand-orange hidden md:block">{{ $failureRate }}% Rate</span>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Failed Transactions</p>
-                <p class="text-2xl font-extrabold text-brand-blue">98</p>
+                <p class="text-2xl font-extrabold text-brand-blue">{{ number_format($failedCount) }}</p>
             </div>
 
             <!-- Card 4: Average Transaction Value (Blue) -->
             <div class="p-4 bg-white rounded-2xl shadow-soft border-t-4 border-brand-blue">
                 <div class="flex items-center justify-between">
                     <i class="fas fa-tag text-2xl text-brand-blue p-3 bg-brand-blue/10 rounded-xl"></i>
-                    <span class="text-sm font-semibold text-brand-blue hidden md:block">Stable</span>
+                    <span class="text-sm font-semibold text-brand-blue hidden md:block">This Month</span>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Avg. Transaction Value</p>
-                <p class="text-2xl font-extrabold text-brand-blue">₦ 12,050</p>
+                <p class="text-2xl font-extrabold text-brand-blue">₦ {{ number_format($avgTransactionValue, 0) }}</p>
             </div>
         </div>
 
         <!-- Filter & Search Bar -->
-        <div class="bg-white p-6 rounded-2xl shadow-soft mb-8">
-            <h3 class="text-lg font-semibold mb-4 text-brand-blue">Transaction Filters</h3>
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                
-                <!-- Search -->
-                <div class="md:col-span-2 relative">
-                    <i class="fas fa-receipt absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    <input type="search" placeholder="Search by Transaction ID, Customer, or Amount..."
-                        class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:border-brand-teal focus:ring-1 focus:ring-brand-teal/20 outline-none transition-all text-sm bg-brand-grey/50">
+        <form method="GET" action="{{ route('admin.paymentManagement') }}" id="filter-form">
+            <div class="bg-white p-6 rounded-2xl shadow-soft mb-8">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-brand-blue">Transaction Filters</h3>
+                    @if($search || $status || $type)
+                        <a href="{{ route('admin.paymentManagement') }}" class="text-sm text-brand-red hover:underline flex items-center gap-1">
+                            <i class="fas fa-times-circle"></i> Clear Filters
+                        </a>
+                    @endif
                 </div>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    
+                    <!-- Search -->
+                    <div class="md:col-span-2 relative">
+                        <i class="fas fa-receipt absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="search" name="search" value="{{ $search }}"
+                            placeholder="Search by Transaction ID, Customer, or Amount..."
+                            class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:border-brand-teal focus:ring-1 focus:ring-brand-teal/20 outline-none transition-all text-sm bg-brand-grey/50">
+                    </div>
 
-                <!-- Status Filter -->
-                <div>
-                    <select class="w-full py-3 px-4 border border-gray-200 rounded-xl text-sm bg-brand-grey/50 focus:border-brand-teal outline-none">
-                        <option>All Statuses</option>
-                        <option>Success</option>
-                        <option>Failed</option>
-                        <option>Pending</option>
-                        <option>Refunded</option>
-                    </select>
+                    <!-- Status Filter -->
+                    <div>
+                        <select name="status" onchange="this.form.submit()" class="w-full py-3 px-4 border border-gray-200 rounded-xl text-sm bg-brand-grey/50 focus:border-brand-teal outline-none">
+                            <option value="">All Statuses</option>
+                            <option value="success" {{ $status === 'success' ? 'selected' : '' }}>Success</option>
+                            <option value="failed" {{ $status === 'failed' ? 'selected' : '' }}>Failed</option>
+                            <option value="pending" {{ $status === 'pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="refunded" {{ $status === 'refunded' ? 'selected' : '' }}>Refunded</option>
+                        </select>
+                    </div>
+
+                    <!-- Transaction Type -->
+                    <div>
+                        <select name="type" onchange="this.form.submit()" class="w-full py-3 px-4 border border-gray-200 rounded-xl text-sm bg-brand-grey/50 focus:border-brand-teal outline-none">
+                            <option value="">All Types</option>
+                            <option value="subscription" {{ $type === 'subscription' ? 'selected' : '' }}>Subscription Renewal</option>
+                            <option value="order" {{ $type === 'order' ? 'selected' : '' }}>One-time Order</option>
+                            <option value="wallet" {{ $type === 'wallet' ? 'selected' : '' }}>Wallet Top-up</option>
+                        </select>
+                    </div>
+
+                    <!-- Search / Apply Button -->
+                    <button type="submit" class="w-full py-3 bg-brand-blue text-white font-semibold rounded-xl hover:bg-brand-blue/90 transition-colors flex items-center justify-center gap-2">
+                        <i class="fas fa-search"></i>
+                        <span class="hidden sm:inline">Search</span>
+                    </button>
                 </div>
-
-                <!-- Transaction Type -->
-                <div>
-                    <select class="w-full py-3 px-4 border border-gray-200 rounded-xl text-sm bg-brand-grey/50 focus:border-brand-teal outline-none">
-                        <option>All Types</option>
-                        <option>Subscription Renewal</option>
-                        <option>One-time Order</option>
-                        <option>Wallet Top-up</option>
-                    </select>
-                </div>
-
-                <!-- Date Range Button -->
-                <button class="w-full py-3 bg-brand-blue text-white font-semibold rounded-xl hover:bg-brand-blue/90 transition-colors flex items-center justify-center gap-2">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span class="hidden sm:inline">Filter by Date</span>
-                </button>
             </div>
-        </div>
+        </form>
 
         <!-- Transactions Table -->
         <div class="bg-white p-6 rounded-2xl shadow-soft overflow-x-auto">
@@ -230,74 +262,85 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
-                    <!-- Row 1: Success - Subscription Renewal -->
-                    <tr class="hover:bg-brand-grey transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Txn ID">TXN7001</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Customer">Ngozi Ezenwa</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Type">Subscription Renewal</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-green-700" data-label="Amount">₦ 18,500.00</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Date">2023-11-23 10:30</td>
-                        <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Success</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Actions">
-                            <button class="text-brand-blue hover:text-brand-teal transition-colors text-sm font-semibold">Details</button>
-                        </td>
-                    </tr>
-                     <!-- Row 2: Failed - Initial Order -->
-                    <tr class="hover:bg-brand-grey transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Txn ID">TXN7002</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Customer">Tunde Bello</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Type">One-time Order</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-brand-red" data-label="Amount">₦ 5,200.00</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Date">2023-11-23 09:15</td>
-                        <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-brand-red/10 text-brand-red">Failed</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Actions">
-                            <button class="text-brand-blue hover:text-brand-teal transition-colors text-sm font-semibold">Retry</button>
-                        </td>
-                    </tr>
-                     <!-- Row 3: Refunded - One-time Order -->
-                    <tr class="hover:bg-brand-grey transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Txn ID">TXN6999</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Customer">Chinedu Eze</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Type">One-time Order</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-700" data-label="Amount">₦ 7,850.00</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Date">2023-11-22 17:45</td>
-                        <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-200 text-gray-700">Refunded</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Actions">
-                            <button class="text-brand-blue hover:text-brand-teal transition-colors text-sm font-semibold">Audit</button>
-                        </td>
-                    </tr>
-                    <!-- Row 4: Success - Wallet Top-up -->
-                    <tr class="hover:bg-brand-grey transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Txn ID">TXN7000</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Customer">Amara Okoro</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Type">Wallet Top-up</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-green-700" data-label="Amount">₦ 5,000.00</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Date">2023-11-22 12:01</td>
-                        <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Success</span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Actions">
-                            <button class="text-brand-blue hover:text-brand-teal transition-colors text-sm font-semibold">Details</button>
-                        </td>
-                    </tr>
+                    @forelse($payments as $payment)
+                        @php
+                            // Determine transaction type
+                            if ($payment->subscription_id) {
+                                $type = 'Subscription Renewal';
+                            } elseif ($payment->order_id) {
+                                $type = 'One-time Order';
+                            } else {
+                                $type = ucfirst($payment->payment_method ?? 'Wallet Top-up');
+                            }
+
+                            // Status badge styles
+                            $badge = match($payment->status) {
+                                'success'  => 'bg-green-100 text-green-800',
+                                'failed'   => 'bg-brand-red/10 text-brand-red',
+                                'refunded' => 'bg-gray-200 text-gray-700',
+                                'pending'  => 'bg-brand-gold/20 text-brand-orange',
+                                default    => 'bg-gray-100 text-gray-600',
+                            };
+
+                            // Amount colour
+                            $amountClass = match($payment->status) {
+                                'success'  => 'text-green-700',
+                                'failed'   => 'text-brand-red',
+                                'refunded' => 'text-gray-700',
+                                default    => 'text-brand-orange',
+                            };
+
+                            // Action label
+                            $action = match($payment->status) {
+                                'failed'   => 'Retry',
+                                'refunded' => 'Audit',
+                                default    => 'Details',
+                            };
+                        @endphp
+                        <tr class="hover:bg-brand-grey transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Txn ID">
+                                {{ $payment->transaction_reference ?? 'TXN' . str_pad($payment->id, 4, '0', STR_PAD_LEFT) }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" data-label="Customer">
+                                {{ $payment->user->name ?? '—' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Type">{{ $type }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold {{ $amountClass }}" data-label="Amount">
+                                ₦ {{ number_format($payment->amount, 2) }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Date">
+                                {{ ($payment->paid_at ?? $payment->created_at)->format('Y-m-d H:i') }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $badge }}">
+                                    {{ ucfirst($payment->status) }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Actions">
+                                <button class="text-brand-blue hover:text-brand-teal transition-colors text-sm font-semibold">{{ $action }}</button>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="px-6 py-10 text-center text-gray-400">
+                                <i class="fas fa-receipt text-3xl mb-2 block"></i>
+                                No transactions found.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
 
             <div class="mt-6 flex justify-between items-center">
-                <p class="text-sm text-gray-600">Showing 1 to 4 of 25,600 results</p>
+                <p class="text-sm text-gray-600">
+                    @if($payments->total() > 0)
+                        Showing {{ $payments->firstItem() }} to {{ $payments->lastItem() }} of {{ number_format($payments->total()) }} results
+                    @else
+                        No results
+                    @endif
+                </p>
                 <div class="flex space-x-2">
-                    <button class="px-3 py-1 rounded-lg bg-brand-grey text-brand-blue font-medium hover:bg-gray-300 transition-colors"><i class="fas fa-chevron-left text-xs"></i></button>
-                    <span class="px-3 py-1 rounded-lg bg-brand-blue text-white font-medium">1</span>
-                    <button class="px-3 py-1 rounded-lg bg-brand-grey text-brand-blue font-medium hover:bg-gray-300 transition-colors">2</button>
-                    <button class="px-3 py-1 rounded-lg bg-brand-grey text-brand-blue font-medium hover:bg-gray-300 transition-colors">3</button>
-                    <button class="px-3 py-1 rounded-lg bg-brand-grey text-brand-blue font-medium hover:bg-gray-300 transition-colors">...</button>
-                    <button class="px-3 py-1 rounded-lg bg-brand-grey text-brand-blue font-medium hover:bg-gray-300 transition-colors"><i class="fas fa-chevron-right text-xs"></i></button>
+                    {{ $payments->links() }}
                 </div>
             </div>
         </div>
