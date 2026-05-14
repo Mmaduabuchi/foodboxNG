@@ -123,211 +123,281 @@
     <!-- Main Content Area -->
     <main class="mt-20 lg:ml-64 p-4 md:p-8 main-content max-w-full">
         
-        <!-- Inventory Quick-View Cards -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
-            
-            <!-- Card 1: Total Stock Keeping Units (SKUs) -->
-            <div class="p-4 bg-white rounded-2xl shadow-soft border-t-4 border-brand-teal">
-                <div class="flex items-center justify-between">
-                    <i class="fas fa-boxes text-2xl text-brand-teal p-3 bg-brand-teal/10 rounded-xl"></i>
-                    <p class="text-sm font-semibold text-gray-500">Active SKUs</p>
-                </div>
-                <p class="text-sm text-gray-500 mt-2">Total Unique Products</p>
-                <p class="text-2xl font-extrabold text-brand-blue">485</p>
+        <!-- Page Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <div>
+                <h1 class="text-2xl font-extrabold text-brand-blue">Package Items Management</h1>
+                <p class="text-sm text-gray-500 mt-0.5">Configure and manage food items contained within subscription packages.</p>
             </div>
-
-            <!-- Card 2: Low Stock Items -->
-            <div class="p-4 bg-white rounded-2xl shadow-soft border-t-4 border-brand-orange">
-                <div class="flex items-center justify-between">
-                    <i class="fas fa-exclamation-circle text-2xl text-brand-orange p-3 bg-brand-orange/10 rounded-xl"></i>
-                    <p class="text-sm font-semibold text-gray-500">Below Threshold</p>
-                </div>
-                <p class="text-sm text-gray-500 mt-2">Critical Restock Needed</p>
-                <p class="text-2xl font-extrabold text-brand-blue">14</p>
-            </div>
-
-            <!-- Card 3: Stock Value -->
-            <div class="p-4 bg-white rounded-2xl shadow-soft border-t-4 border-brand-gold">
-                <div class="flex items-center justify-between">
-                    <i class="fas fa-coins text-2xl text-brand-gold p-3 bg-brand-gold/10 rounded-xl"></i>
-                    <p class="text-sm font-semibold text-gray-500">Current Valuation</p>
-                </div>
-                <p class="text-sm text-gray-500 mt-2">Estimated Total Cost</p>
-                <p class="text-2xl font-extrabold text-brand-blue">₦12.4M</p>
-            </div>
-
-            <!-- Card 4: Expired/Wastage -->
-            <div class="p-4 bg-white rounded-2xl shadow-soft border-t-4 border-brand-red">
-                <div class="flex items-center justify-between">
-                    <i class="fas fa-trash-alt text-2xl text-brand-red p-3 bg-brand-red/10 rounded-xl"></i>
-                    <p class="text-sm font-semibold text-gray-500">Due/Expired (7 days)</p>
-                </div>
-                <p class="text-sm text-gray-500 mt-2">Immediate Disposal</p>
-                <p class="text-2xl font-extrabold text-brand-blue">4 items</p>
+            <div class="flex gap-3">
+                <button onclick="exportPackageList()" class="px-4 py-2 border border-brand-blue/20 text-brand-blue font-semibold rounded-xl hover:bg-brand-grey transition-colors flex items-center gap-2">
+                    <i class="fas fa-download"></i>
+                    <span>Export List</span>
+                </button>
             </div>
         </div>
 
-        <!-- Main Layout: Alerts & Stock Table -->
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            
-            <!-- Column 1: Stock Alerts Panel -->
-            <div class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-soft">
-                <h3 class="text-xl font-semibold text-brand-blue mb-4 flex items-center gap-2">
-                    <i class="fas fa-bell text-brand-orange"></i> Stock Alerts
-                </h3>
-                
-                <div class="space-y-3">
-                    
-                    <!-- Alert 1: Critical Low Stock -->
-                    <div class="p-3 border border-brand-red/50 rounded-xl bg-brand-red/10">
-                        <p class="font-semibold text-sm text-brand-red">Critical Low Stock</p>
-                        <p class="text-xs text-gray-700">SKU #1002 - Basmati Rice (5 units left)</p>
-                        <button onclick="restockItem('1002')" class="mt-1 text-xs font-semibold text-white bg-brand-red px-3 py-1 rounded-lg hover:bg-brand-red/90 transition-colors">
-                            <i class="fas fa-plus mr-1"></i> Restock
-                        </button>
-                    </div>
-
-                    <!-- Alert 2: Due to Expire -->
-                    <div class="p-3 border border-brand-orange/50 rounded-xl bg-brand-orange/10">
-                        <p class="font-semibold text-sm text-brand-orange">Due to Expire</p>
-                        <p class="text-xs text-gray-700">SKU #3045 - Fresh Milk (Expires in 3 days)</p>
-                        <button onclick="manageExpiry('3045')" class="mt-1 text-xs font-semibold text-white bg-brand-orange px-3 py-1 rounded-lg hover:bg-brand-orange/90 transition-colors">
-                            <i class="fas fa-tag mr-1"></i> Discount
-                        </button>
-                    </div>
-
-                    <!-- Alert 3: Overstocked Item -->
-                    <div class="p-3 border border-brand-teal/50 rounded-xl bg-brand-teal/10">
-                        <p class="font-semibold text-sm text-brand-teal">High Stock Warning</p>
-                        <p class="text-xs text-gray-700">SKU #5011 - Bottled Water (1,200 units)</p>
-                        <button onclick="checkSalesRate('5011')" class="mt-1 text-xs font-semibold text-white bg-brand-teal px-3 py-1 rounded-lg hover:bg-brand-teal/90 transition-colors">
-                            <i class="fas fa-chart-line mr-1"></i> Check Rate
-                        </button>
-                    </div>
-
+        <!-- Package Inventory Stats -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+            <div class="p-4 bg-white rounded-2xl shadow-soft border-t-4 border-brand-teal">
+                <div class="flex items-center justify-between">
+                    <i class="fas fa-cubes text-2xl text-brand-teal p-3 bg-brand-teal/10 rounded-xl"></i>
+                    <p class="text-sm font-semibold text-gray-500">Total Packages</p>
                 </div>
-                
-                <button onclick="viewAllAlerts()" class="w-full mt-4 py-2 text-brand-blue border border-brand-blue/30 font-bold rounded-xl hover:bg-brand-grey transition-colors text-sm">
-                    View All 18 Alerts
-                </button>
+                <p class="text-2xl font-extrabold text-brand-blue mt-2">{{ $packagesCount }}</p>
             </div>
 
-            <!-- Column 2: Inventory List and Management -->
-            <div class="lg:col-span-3 bg-white p-6 rounded-2xl shadow-soft">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
-                    <h3 class="text-xl font-semibold text-brand-blue">Product Stock List</h3>
+            <div class="p-4 bg-white rounded-2xl shadow-soft border-t-4 border-brand-gold">
+                <div class="flex items-center justify-between">
+                    <i class="fas fa-utensils text-2xl text-brand-gold p-3 bg-brand-gold/10 rounded-xl"></i>
+                    <p class="text-sm font-semibold text-gray-500">Unique Items</p>
+                </div>
+                <p class="text-2xl font-extrabold text-brand-blue mt-2">{{ $packageItems }}</p>
+            </div>
+
+            <div class="p-4 bg-white rounded-2xl shadow-soft border-t-4 border-brand-orange">
+                <div class="flex items-center justify-between">
+                    <i class="fas fa-exclamation-triangle text-2xl text-brand-orange p-3 bg-brand-orange/10 rounded-xl"></i>
+                    <p class="text-sm font-semibold text-gray-500">Out of Stock</p>
+                </div>
+                <p class="text-2xl font-extrabold text-brand-blue mt-2">3 Items</p>
+            </div>
+
+            <div class="p-4 bg-white rounded-2xl shadow-soft border-t-4 border-brand-blue">
+                <div class="flex items-center justify-between">
+                    <i class="fas fa-sync text-2xl text-brand-blue p-3 bg-brand-blue/10 rounded-xl"></i>
+                    <p class="text-sm font-semibold text-gray-500">Last Sync</p>
+                </div>
+                <p class="text-sm font-extrabold text-brand-blue mt-2">2 mins ago</p>
+            </div>
+        </div>
+
+        <!-- Main Workspace Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            
+            <!-- Left Column: Package Selection -->
+            <div class="lg:col-span-1 space-y-4">
+                <div class="bg-white p-5 rounded-2xl shadow-soft">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-brand-blue">Select Package</h3>
+                        <span class="text-xs font-semibold px-2 py-1 bg-brand-grey rounded-lg text-gray-500">{{ $packagesCount }} Total</span>
+                    </div>
                     
-                    <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                        <div class="relative w-full sm:w-64">
-                            <input type="text" id="searchInput" placeholder="Search by SKU or Name..." class="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-xl focus:border-brand-teal focus:ring-1 focus:ring-brand-teal text-sm">
-                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <!-- Search Packages -->
+                    <div class="relative mb-4">
+                        <input type="text" placeholder="Search packages..." class="w-full py-2 pl-9 pr-4 bg-brand-grey/50 border-none rounded-xl text-xs focus:ring-1 focus:ring-brand-teal">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                    </div>
+
+                    <!-- Package List -->
+                    <div class="space-y-2 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                        @foreach($packages as $index => $package)
+                            @php
+                                $category = strtolower($package->category);
+                                $colorClass = match($category) {
+                                    'family' => 'brand-teal',
+                                    'solo' => 'gray-400',
+                                    'premium' => 'brand-gold',
+                                    'budget' => 'brand-orange',
+                                    default => 'brand-blue'
+                                };
+                                $dotClass = match($category) {
+                                    'family' => 'bg-brand-teal',
+                                    'solo' => 'bg-gray-300',
+                                    'premium' => 'bg-brand-gold',
+                                    'budget' => 'bg-brand-orange',
+                                    default => 'bg-brand-blue'
+                                };
+                                $icon = match($category) {
+                                    'family' => 'fa-users',
+                                    'solo' => 'fa-user',
+                                    'premium' => 'fa-crown',
+                                    'budget' => 'fa-wallet',
+                                    default => 'fa-box'
+                                };
+                                $isActive = $index === 0; // Mark first as active for layout demo
+                            @endphp
+                            
+                            <button onclick="selectPackage('{{ $package->id }}')" 
+                                class="w-full text-left p-3 rounded-xl border-2 transition-all group {{ $isActive ? 'border-brand-teal bg-brand-teal/5' : 'border-transparent hover:border-brand-grey hover:bg-brand-grey/30' }}">
+                                <div class="flex justify-between items-start">
+                                    <span class="text-xs font-bold text-{{ $colorClass }} uppercase tracking-wider">{{ $package->category ?? 'General' }}</span>
+                                    <span class="w-2 h-2 rounded-full {{ $dotClass }}"></span>
+                                </div>
+                                <h4 class="font-bold text-brand-blue text-sm mt-1 {{ !$isActive ? 'group-hover:text-brand-teal' : '' }} transition-colors">{{ $package->name }}</h4>
+                                <p class="text-[10px] text-gray-500 mt-1 flex items-center gap-1">
+                                    <i class="fas {{ $icon }}"></i> {{ number_format($package->subscriptions_count) }} Subscribers
+                                </p>
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Package Content Management -->
+            <div class="lg:col-span-3 space-y-6">
+                
+                <!-- Package Details Card -->
+                <div class="bg-white rounded-2xl shadow-soft overflow-hidden">
+                    <div class="p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-brand-blue text-white">
+                        <div>
+                            @if($packages->isNotEmpty())
+                                @php $firstPackage = $packages->first(); @endphp
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="px-2 py-0.5 bg-brand-teal/20 text-brand-teal text-[10px] font-bold rounded uppercase">Active Package</span>
+                                    <span class="text-xs text-brand-gold font-semibold">PKG-{{ str_pad($firstPackage->id, 3, '0', STR_PAD_LEFT) }}</span>
+                                </div>
+                                <h2 class="text-xl font-bold">{{ $firstPackage->name }}</h2>
+                                <p class="text-xs text-gray-300 mt-1">Manage items included in this subscription tier.</p>
+                            @else
+                                <h2 class="text-xl font-bold">No Packages Found</h2>
+                                <p class="text-xs text-gray-300 mt-1">Please create a package to manage its items.</p>
+                            @endif
                         </div>
-                        <button onclick="addItem()" class="px-4 py-2 bg-brand-gold text-brand-blue font-semibold rounded-xl hover:bg-brand-gold/80 transition-colors shadow-sm flex items-center justify-center gap-2">
-                            <i class="fas fa-cart-plus"></i>
+                        <button onclick="addItemToPackage()" class="px-5 py-2.5 bg-brand-gold text-brand-blue font-bold rounded-xl hover:bg-brand-gold/90 transition-colors shadow-lg flex items-center gap-2 text-sm">
+                            <i class="fas fa-plus-circle"></i>
                             <span>Add New Item</span>
                         </button>
                     </div>
+
+                    <div class="p-6">
+                        <!-- Filters & View Options -->
+                        <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+                            <div class="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 w-full sm:w-auto">
+                                <button class="px-4 py-1.5 text-xs font-bold rounded-lg bg-brand-blue text-white whitespace-nowrap">All Items ({{ $packageItems }})</button>
+                            </div>
+                            <div class="relative w-full sm:w-64">
+                                <input type="text" placeholder="Search items in package..." class="w-full py-2 pl-10 pr-4 border border-gray-200 rounded-xl text-xs focus:border-brand-teal focus:ring-1 focus:ring-brand-teal">
+                                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                        </div>
+
+                        <!-- Items Table -->
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-100">
+                                <thead class="bg-brand-grey/30">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">Item Name</th>
+                                        <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">Unit</th>
+                                        <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">Quantity</th>
+                                        <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">Estimated Price</th>
+                                        <th class="px-6 py-3 text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest">Last Modified</th>
+                                        <th class="px-6 py-3 text-right text-[10px] font-bold text-gray-400 uppercase tracking-widest">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    <!-- Item 1 -->
+                                    <tr class="hover:bg-brand-grey/20 transition-colors group">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-10 h-10 rounded-lg bg-brand-teal/10 flex items-center justify-center text-brand-teal font-bold text-sm">BR</div>
+                                                <div>
+                                                    <p class="text-sm font-bold text-brand-blue">Basmati Rice (5kg)</p>
+                                                    <p class="text-[10px] text-gray-400">SKU: #1002</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold rounded">Carbs</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold rounded">20</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-brand-teal"></span>
+                                                <span class="text-xs font-semibold text-brand-teal">₦245</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-500">24 Oct, 2024</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right">
+                                            <button onclick="removeItemFromPackage('1002')" class="p-2 text-brand-red hover:bg-brand-red/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100" title="Remove from package">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Item 2 -->
+                                    <tr class="hover:bg-brand-grey/20 transition-colors group">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-10 h-10 rounded-lg bg-brand-orange/10 flex items-center justify-center text-brand-orange font-bold text-sm">CH</div>
+                                                <div>
+                                                    <p class="text-sm font-bold text-brand-blue">Grilled Chicken Breast</p>
+                                                    <p class="text-[10px] text-gray-400">SKU: #3045</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 py-1 bg-orange-50 text-orange-600 text-[10px] font-bold rounded">Protein</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 py-1 bg-orange-50 text-orange-600 text-[10px] font-bold rounded">2</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-brand-orange"></span>
+                                                <span class="text-xs font-semibold text-brand-orange">₦150</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-500">22 Oct, 2024</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right">
+                                            <button onclick="removeItemFromPackage('3045')" class="p-2 text-brand-red hover:bg-brand-red/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100" title="Remove from package">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Item 3 -->
+                                    <tr class="hover:bg-brand-grey/20 transition-colors group">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-10 h-10 rounded-lg bg-brand-gold/10 flex items-center justify-center text-brand-gold font-bold text-sm">SM</div>
+                                                <div>
+                                                    <p class="text-sm font-bold text-brand-blue">Fresh Full Cream Milk</p>
+                                                    <p class="text-[10px] text-gray-400">SKU: #2040</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 py-1 bg-yellow-50 text-yellow-600 text-[10px] font-bold rounded">Dairy</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 py-1 bg-yellow-50 text-yellow-600 text-[10px] font-bold rounded">10</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-brand-red"></span>
+                                                <span class="text-xs font-semibold text-brand-red">₦150</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-500">20 Oct, 2024</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right">
+                                            <button onclick="removeItemFromPackage('2040')" class="p-2 text-brand-red hover:bg-brand-red/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100" title="Remove from package">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Table Footer -->
+                        <div class="mt-6 flex justify-between items-center pt-6 border-t border-gray-100">
+                            <p class="text-xs text-gray-400">Showing 3 of 14 items in this package</p>
+                            <button class="text-xs font-bold text-brand-teal hover:underline">View All Items <i class="fas fa-arrow-right ml-1"></i></button>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 responsive-table">
-                        <thead class="bg-brand-grey/50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SKU</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product Name</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Stock</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Restock</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            
-                            <!-- Product 1 (Good Stock) -->
-                            <tr class="hover:bg-brand-grey transition-colors">
-                                <td class="px-6 py-4 whitespace-nowrap" data-label="SKU">1001</td>
-                                <td class="px-6 py-4 whitespace-nowrap" data-label="Product Name">Premium Groundnuts (5kg)</td>
-                                <td class="px-6 py-4 whitespace-nowrap" data-label="Current Stock">
-                                    <span class="font-bold text-brand-teal">245 units</span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Last Restock">2024-10-20</td>
-                                <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">In Stock</span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex space-x-2" data-label="Actions">
-                                    <button onclick="editStock('1001')" class="text-brand-blue hover:text-brand-teal transition-colors text-sm font-semibold"><i class="fas fa-edit"></i> Edit</button>
-                                    <button onclick="requestRestock('1001')" class="text-brand-gold hover:text-brand-gold/70 transition-colors text-sm font-semibold"><i class="fas fa-plus-square"></i> Order</button>
-                                </td>
-                            </tr>
 
-                            <!-- Product 2 (Low Stock) -->
-                            <tr class="hover:bg-brand-grey transition-colors bg-brand-orange/5">
-                                <td class="px-6 py-4 whitespace-nowrap" data-label="SKU">1002</td>
-                                <td class="px-6 py-4 whitespace-nowrap" data-label="Product Name">Imported Basmati Rice (10kg)</td>
-                                <td class="px-6 py-4 whitespace-nowrap" data-label="Current Stock">
-                                    <span class="font-bold text-brand-orange">5 units</span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Last Restock">2024-08-15</td>
-                                <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">Low Stock</span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex space-x-2" data-label="Actions">
-                                    <button onclick="editStock('1002')" class="text-brand-blue hover:text-brand-teal transition-colors text-sm font-semibold"><i class="fas fa-edit"></i> Edit</button>
-                                    <button onclick="requestRestock('1002')" class="text-brand-red hover:text-brand-red/70 transition-colors text-sm font-semibold"><i class="fas fa-exclamation-triangle"></i> URGENT Order</button>
-                                </td>
-                            </tr>
-                            
-                            <!-- Product 3 (Out of Stock) -->
-                            <tr class="hover:bg-brand-grey transition-colors bg-brand-red/5">
-                                <td class="px-6 py-4 whitespace-nowrap" data-label="SKU">2040</td>
-                                <td class="px-6 py-4 whitespace-nowrap" data-label="Product Name">Frozen Tilapia Fillets (1kg)</td>
-                                <td class="px-6 py-4 whitespace-nowrap" data-label="Current Stock">
-                                    <span class="font-bold text-brand-red">0 units</span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Last Restock">2024-10-01</td>
-                                <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Out of Stock</span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex space-x-2" data-label="Actions">
-                                    <button onclick="editStock('2040')" class="text-gray-400 cursor-not-allowed transition-colors text-sm font-semibold"><i class="fas fa-edit"></i> Edit</button>
-                                    <button onclick="requestRestock('2040')" class="text-brand-teal hover:text-brand-teal/70 transition-colors text-sm font-semibold"><i class="fas fa-plus-square"></i> Re-Order</button>
-                                </td>
-                            </tr>
-
-                            <!-- Product 4 (Near Expiry) -->
-                            <tr class="hover:bg-brand-grey transition-colors">
-                                <td class="px-6 py-4 whitespace-nowrap" data-label="SKU">3045</td>
-                                <td class="px-6 py-4 whitespace-nowrap" data-label="Product Name">Fresh Full Cream Milk (1L)</td>
-                                <td class="px-6 py-4 whitespace-nowrap" data-label="Current Stock">
-                                    <span class="font-bold text-brand-blue">80 units</span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="Last Restock">2024-11-10</td>
-                                <td class="px-6 py-4 whitespace-nowrap" data-label="Status">
-                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Near Exp.</span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium flex space-x-2" data-label="Actions">
-                                    <button onclick="editStock('3045')" class="text-brand-blue hover:text-brand-teal transition-colors text-sm font-semibold"><i class="fas fa-edit"></i> Edit</button>
-                                    <button onclick="manageExpiry('3045')" class="text-brand-orange hover:text-brand-orange/70 transition-colors text-sm font-semibold"><i class="fas fa-percent"></i> Promote</button>
-                                </td>
-                            </tr>
-
-                        </tbody>
-                    </table>
-                </div>
-                
-                <!-- Pagination Mockup -->
-                <div class="flex justify-end items-center mt-4">
-                    <p class="text-sm text-gray-600 mr-4 hidden sm:block">Showing 1 to 4 of 485 items</p>
-                    <div class="flex space-x-1">
-                        <button class="px-3 py-1 text-sm rounded-lg border border-gray-300 text-gray-600 hover:bg-brand-grey transition-colors cursor-not-allowed">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <button class="px-3 py-1 text-sm rounded-lg bg-brand-blue text-white font-semibold">1</button>
-                        <button class="px-3 py-1 text-sm rounded-lg border border-gray-300 text-gray-600 hover:bg-brand-grey transition-colors">2</button>
-                        <button class="px-3 py-1 text-sm rounded-lg border border-gray-300 text-gray-600 hover:bg-brand-grey transition-colors">...</button>
-                        <button class="px-3 py-1 text-sm rounded-lg border border-gray-300 text-gray-600 hover:bg-brand-grey transition-colors">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
+                <!-- Bulk Actions / Tips -->
+                <div class="bg-brand-teal/5 border border-brand-teal/10 p-4 rounded-2xl flex items-start gap-4">
+                    <div class="w-10 h-10 bg-brand-teal/10 rounded-xl flex items-center justify-center shrink-0">
+                        <i class="fas fa-lightbulb text-brand-teal"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-brand-blue text-sm">Quick Pro-Tip</h4>
+                        <p class="text-xs text-gray-600 mt-1">You can drag and drop items between packages in the list to quickly re-assign them, or use the bulk editor for seasonal menu changes.</p>
                     </div>
                 </div>
             </div>
@@ -342,42 +412,39 @@
         const sidebar = document.getElementById('sidebar');
         const backdrop = document.getElementById('backdrop');
 
-        // --- Mock Action Functions ---
-        function quickAudit() {
-            alertMessage('success', 'Full inventory count requested. Status update expected in 15 minutes.');
-            console.log("Quick Audit requested.");
+        // --- Package Item Management Actions ---
+        function selectPackage(pkgId) {
+            // Mock switching packages
+            const pkgNames = {
+                'family-feast': 'Family Feast Weekly',
+                'solo-standard': 'Solo Standard Monthly',
+                'premium-gold': 'Premium Gold Weekend',
+                'budget-basic': 'Budget Basic Weekly'
+            };
+            
+            // In a real app, this would fetch the items for the package via AJAX
+            alertMessage('info', `Switching to ${pkgNames[pkgId]} configuration...`);
+            console.log(`Package selected: ${pkgId}`);
+            
+            // Visual feedback: would normally update the DOM with new data
         }
 
-        function addItem() {
-            alertMessage('info', 'Opening form to add a new product/SKU to the inventory list.');
-            console.log("Add New Item requested.");
+        function addItemToPackage() {
+            alertMessage('info', 'Opening product catalog to select items for this package.');
+            console.log("Add Item to Package requested.");
         }
 
-        function editStock(sku) {
-            alertMessage('info', `Opening modal to adjust stock quantity and details for SKU #${sku}.`);
-            console.log(`Edit Stock requested for SKU: ${sku}.`);
+        function removeItemFromPackage(sku) {
+            if(confirm(`Are you sure you want to remove SKU #${sku} from this package?`)) {
+                alertMessage('warning', `Item #${sku} removed from package.`);
+                console.log(`Item removed: ${sku}`);
+            }
         }
 
-        function requestRestock(sku) {
-            alertMessage('info', `Restock request placed for SKU #${sku}. Dispatching purchase order.`);
-            console.log(`Restock requested for SKU: ${sku}.`);
+        function exportPackageList() {
+            alertMessage('success', 'Preparing package inventory manifest for download...');
+            console.log("Export requested.");
         }
-        
-        function manageExpiry(sku) {
-             alertMessage('warning', `Actioning expiry management (e.g., promotional pricing) for SKU #${sku}.`);
-            console.log(`Expiry Management requested for SKU: ${sku}.`);
-        }
-        
-        function viewAllAlerts() {
-            alertMessage('info', 'Redirecting to detailed Inventory Alerts Report page.');
-            console.log("View All Alerts requested.");
-        }
-        
-        function checkSalesRate(sku) {
-            alertMessage('info', `Analyzing recent sales velocity for SKU #${sku} to determine optimal stock level.`);
-            console.log(`Sales Rate Check requested for SKU: ${sku}.`);
-        }
-
 
         // Simple custom alert/toast simulation (since alert() is forbidden)
         function alertMessage(type, message) {
@@ -398,7 +465,7 @@
             }
 
             const alertDiv = document.createElement('div');
-            alertDiv.className = `fixed top-4 right-4 p-4 rounded-xl text-white shadow-lg flex items-center space-x-3 transition-transform duration-500 transform translate-x-full ${bgColor}`;
+            alertDiv.className = `fixed top-4 right-4 z-[100] p-4 rounded-xl text-white shadow-lg flex items-center space-x-3 transition-transform duration-500 transform translate-x-full ${bgColor}`;
             alertDiv.innerHTML = `${icon} <span class="font-semibold">${message}</span>`;
             
             container.appendChild(alertDiv);
