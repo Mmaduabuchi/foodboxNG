@@ -44,10 +44,9 @@ class Package extends Model
         return $this->hasMany(Order::class);
     }
 
-    // One package can have many items
-    public function items()
-    {
-        return $this->hasMany(PackageItem::class);
+    // One package can have many sub packages
+    public function subPackages() {
+        return $this->hasMany(SubPackages::class);
     }
 
     //Scopes

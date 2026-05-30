@@ -16,9 +16,9 @@ class PackageItem extends Model
         'estimated_price',
     ];
 
-    // One package item belongs to one package
-    public function package()
+    // One or more sub package item belongs to one sub package
+    public function subPackages()
     {
-        return $this->belongsTo(Package::class);
+        return $this->belongsTo(SubPackages::class);
     }
 }
