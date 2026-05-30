@@ -185,7 +185,7 @@
                     
                     <!-- Search Packages -->
                     <div class="relative mb-4">
-                        <input type="text" placeholder="Search packages..." class="w-full py-2 pl-9 pr-4 bg-brand-grey/50 border-none rounded-xl text-xs focus:ring-1 focus:ring-brand-teal">
+                        <input type="text" id="packageSearch" onkeyup="searchPackageSidebar()" placeholder="Search packages..." class="w-full py-2 pl-9 pr-4 bg-brand-grey/50 border-none rounded-xl text-xs focus:ring-1 focus:ring-brand-teal">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
                     </div>
 
@@ -219,7 +219,8 @@
                             @endphp
                             
                             <button onclick="selectPackage('{{ $package->id }}')" 
-                                class="w-full text-left p-3 rounded-xl border-2 transition-all group {{ $isActive ? 'border-brand-teal bg-brand-teal/5' : 'border-transparent hover:border-brand-grey hover:bg-brand-grey/30' }}">
+                                class="package-sidebar-item w-full text-left p-3 rounded-xl border-2 transition-all group {{ $isActive ? 'border-brand-teal bg-brand-teal/5' : 'border-transparent hover:border-brand-grey hover:bg-brand-grey/30' }}"
+                                data-name="{{ strtolower($package->name) }}">
                                 <div class="flex justify-between items-start">
                                     <span class="text-xs font-bold text-{{ $colorClass }} uppercase tracking-wider">{{ $package->category ?? 'General' }}</span>
                                     <span class="w-2 h-2 rounded-full {{ $dotClass }}"></span>
@@ -412,7 +413,21 @@
         const sidebar = document.getElementById('sidebar');
         const backdrop = document.getElementById('backdrop');
 
-        // --- Package Item Management Actions ---
+        //Package Item Management Actions
+        function searchPackageSidebar() {
+            const query = document.getElementById('packageSearch').value.toLowerCase();
+            const items = document.querySelectorAll('.package-sidebar-item');
+            
+            items.forEach(item => {
+                const name = item.getAttribute('data-name');
+                if (name.includes(query)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
         function selectPackage(pkgId) {
             // Mock switching packages
             const pkgNames = {
@@ -422,11 +437,9 @@
                 'budget-basic': 'Budget Basic Weekly'
             };
             
-            // In a real app, this would fetch the items for the package via AJAX
             alertMessage('info', `Switching to ${pkgNames[pkgId]} configuration...`);
             console.log(`Package selected: ${pkgId}`);
             
-            // Visual feedback: would normally update the DOM with new data
         }
 
         function addItemToPackage() {

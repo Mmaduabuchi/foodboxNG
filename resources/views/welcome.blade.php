@@ -130,7 +130,7 @@
                             </div>
                             <div>
                                 <p class="font-bold text-brand-blue">On the way!</p>
-                                <p class="text-xs text-gray-500">Order #2894 arriving in Lekki</p>
+                                <p class="text-xs text-gray-500">Order #2894 arriving in Gwarinpa</p>
                             </div>
                         </div>
                     </div>
@@ -146,13 +146,41 @@
     <!-- Brands/Social Proof -->
     <section class="py-10 border-y border-gray-200 bg-white">
         <div class="container mx-auto px-6">
-            <p class="text-center text-gray-400 text-sm font-semibold uppercase tracking-wider mb-6">Trusted by families in</p>
-            <div class="flex flex-wrap justify-center gap-8 md:gap-16 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-                <span class="text-xl font-bold text-gray-600">Lagos</span>
-                <span class="text-xl font-bold text-gray-600">Abuja</span>
-                <span class="text-xl font-bold text-gray-600">Port Harcourt</span>
-                <span class="text-xl font-bold text-gray-600">Ibadan</span>
-                <span class="text-xl font-bold text-gray-600">Enugu</span>
+            <p class="text-center text-gray-400 text-sm font-semibold uppercase tracking-wider mb-6">Where We Operate</p>
+            <div class="flex flex-wrap justify-center items-center gap-4 md:gap-8">
+
+                <!-- Abuja — Active -->
+                <div class="flex items-center gap-2 bg-brand-teal/10 border border-brand-teal text-brand-teal px-5 py-2 rounded-full font-bold text-sm">
+                    <span class="w-2 h-2 bg-brand-teal rounded-full animate-pulse"></span>
+                    Abuja
+                    <span class="text-xs font-medium bg-brand-teal text-white px-2 py-0.5 rounded-full">Active</span>
+                </div>
+
+                <!-- Coming Soon States -->
+                <div class="flex items-center gap-2 bg-gray-100 text-gray-400 px-5 py-2 rounded-full font-bold text-sm cursor-not-allowed">
+                    <span class="w-2 h-2 bg-gray-300 rounded-full"></span>
+                    Lagos
+                    <span class="text-xs font-medium bg-gray-200 text-gray-400 px-2 py-0.5 rounded-full">Soon</span>
+                </div>
+
+                <div class="flex items-center gap-2 bg-gray-100 text-gray-400 px-5 py-2 rounded-full font-bold text-sm cursor-not-allowed">
+                    <span class="w-2 h-2 bg-gray-300 rounded-full"></span>
+                    Port Harcourt
+                    <span class="text-xs font-medium bg-gray-200 text-gray-400 px-2 py-0.5 rounded-full">Soon</span>
+                </div>
+
+                <div class="flex items-center gap-2 bg-gray-100 text-gray-400 px-5 py-2 rounded-full font-bold text-sm cursor-not-allowed">
+                    <span class="w-2 h-2 bg-gray-300 rounded-full"></span>
+                    Anambra
+                    <span class="text-xs font-medium bg-gray-200 text-gray-400 px-2 py-0.5 rounded-full">Soon</span>
+                </div>
+
+                <div class="flex items-center gap-2 bg-gray-100 text-gray-400 px-5 py-2 rounded-full font-bold text-sm cursor-not-allowed">
+                    <span class="w-2 h-2 bg-gray-300 rounded-full"></span>
+                    Enugu
+                    <span class="text-xs font-medium bg-gray-200 text-gray-400 px-2 py-0.5 rounded-full">Soon</span>
+                </div>
+
             </div>
         </div>
     </section>
@@ -162,17 +190,17 @@
         <div class="container mx-auto px-6">
             <div class="text-center max-w-2xl mx-auto mb-16">
                 <h2 class="text-brand-blue text-3xl md:text-4xl font-bold mb-4">Why Nigerians Love FoodBox</h2>
-                <p class="text-gray-600">We take the hassle out of grocery shopping so you can focus on what really matters.</p>
+                <p class="text-gray-600">We take the stress out of restocking your home so you can focus on what really matters.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- Feature 1 -->
                 <div class="bg-white p-8 rounded-3xl shadow-soft hover:-translate-y-2 transition-transform duration-300 group">
                     <div class="w-14 h-14 bg-brand-teal/10 text-brand-teal rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:bg-brand-teal group-hover:text-white transition-colors">
-                        <i class="fas fa-leaf"></i>
+                        <i class="fas fa-box-open"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-brand-blue mb-3">Farm Fresh</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed">Sourced directly from local farms. No preservatives, just pure natural goodness delivered fresh.</p>
+                    <h3 class="text-xl font-bold text-brand-blue mb-3">Curated Packages</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">Choose a package that fits your lifestyle — Student, Bachelor, or Family. Everything you need, nothing you don't.</p>
                 </div>
 
                 <!-- Feature 2 -->
@@ -181,7 +209,7 @@
                         <i class="fas fa-wallet"></i>
                     </div>
                     <h3 class="text-xl font-bold text-brand-blue mb-3">Affordable</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed">Cheaper than open market prices. We buy in bulk and pass the savings directly to you.</p>
+                    <p class="text-gray-500 text-sm leading-relaxed">Better value than shopping item by item. We buy in bulk and pass the savings directly to you.</p>
                 </div>
 
                 <!-- Feature 3 -->
@@ -190,7 +218,7 @@
                         <i class="fas fa-motorcycle"></i>
                     </div>
                     <h3 class="text-xl font-bold text-brand-blue mb-3">Fast Delivery</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed">Order today, receive tomorrow. Our logistics network ensures your pot never runs dry.</p>
+                    <p class="text-gray-500 text-sm leading-relaxed">Order today, receive tomorrow. Our delivery network ensures your home never runs out of essentials.</p>
                 </div>
 
                 <!-- Feature 4 -->
@@ -199,7 +227,7 @@
                         <i class="fas fa-mobile-alt"></i>
                     </div>
                     <h3 class="text-xl font-bold text-brand-blue mb-3">Easy Ordering</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed">Subscribe monthly or buy one-off. Manage your subscription easily from your dashboard.</p>
+                    <p class="text-gray-500 text-sm leading-relaxed">Create an account, pick your package, and check out in minutes. Managing your orders is simple from your dashboard.</p>
                 </div>
             </div>
         </div>

@@ -100,7 +100,7 @@
                                 </div>
                                 <div>
                                     <h4 class="font-bold text-brand-blue">Head Office</h4>
-                                    <p class="text-gray-500 text-sm leading-relaxed">12 Admiralty Way, Lekki Phase 1,<br>Lagos, Nigeria.</p>
+                                    <p class="text-gray-500 text-sm leading-relaxed">12 Guzape hills,<br>Abuja, FCT.</p>
                                 </div>
                             </div>
 
@@ -123,6 +123,7 @@
                                     <h4 class="font-bold text-brand-blue">Email Us</h4>
                                     <p class="text-gray-500 text-sm">hello@foodbox.ng</p>
                                     <p class="text-gray-500 text-sm">support@foodbox.ng</p>
+                                    <p class="text-gray-500 text-sm">legal@foodbox.ng</p>
                                 </div>
                             </div>
                         </div>

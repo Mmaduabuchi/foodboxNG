@@ -44,19 +44,10 @@
 
     <style>
         /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #F4F6F8;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #2A9D8F;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #264653;
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #F4F6F8; }
+        ::-webkit-scrollbar-thumb { background: #2A9D8F; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #264653; }
         
         .pattern-grid {
             background-image: radial-gradient(#E9C46A 1px, transparent 1px);
@@ -80,9 +71,9 @@
 
         <div class="container mx-auto px-6 relative z-10 text-center">
             <span class="text-brand-gold font-bold tracking-wider uppercase text-sm mb-4 block">Who We Are</span>
-            <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">Feeding the Nation,<br> One Box at a Time.</h1>
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">Stocking Your Home,<br> One Box at a Time.</h1>
             <p class="text-gray-300 text-lg max-w-2xl mx-auto leading-relaxed">
-                We are on a mission to simplify food shopping for Nigerians. No more market stress, no more price haggling—just fresh food delivered home.
+                We are on a mission to simplify household shopping for Nigerians. No more supermarket runs, no more last-minute stress — just the essentials you need, packed and delivered right to your door.
             </p>
         </div>
     </section>
@@ -94,17 +85,17 @@
                 <!-- Image Grid -->
                 <div class="lg:w-1/2 grid grid-cols-2 gap-4">
                     <img src="https://images.unsplash.com/photo-1595853035070-59a39fe84de3?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="rounded-2xl shadow-lg w-full h-64 object-cover transform translate-y-8">
-                    <img src="https://images.unsplash.com/photo-1609139003551-ee404a8b72af?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="rounded-2xl shadow-lg w-full h-64 object-cover">
+                    <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="rounded-2xl shadow-lg w-full h-64 object-cover">
                 </div>
 
                 <!-- Content -->
                 <div class="lg:w-1/2">
-                    <h2 class="text-3xl md:text-4xl font-bold text-brand-blue mb-6">It started in a Traffic Jam...</h2>
+                    <h2 class="text-3xl md:text-4xl font-bold text-brand-blue mb-6">It started with an Empty Shelf...</h2>
                     <p class="text-gray-600 leading-relaxed mb-6">
-                        In 2021, our founder, Pinnacle, was stuck in Lagos traffic for 4 hours after a stressful trip to Mile 12 market. The tomatoes were crushed, the oil had spilled, and he was exhausted. He thought, <span class="italic text-brand-blue font-semibold">"There has to be a better way."</span>
+                        Our founder, Pinnacle, was a student living alone in ABUJA. Every few weeks, the same exhausting routine — hopping from one store to another just to stock up on rice, seasoning, toiletries, and other basics. One evening, after a long day, he opened his kitchen cabinet and found it completely empty. He thought, <span class="italic text-brand-blue font-semibold">"Why isn't there a simpler way to do this?"</span>
                     </p>
                     <p class="text-gray-600 leading-relaxed mb-8">
-                        FoodBox NG was born out of that frustration. We realized that while Nigerians love fresh food, the process of getting it is broken. We built a bridge between local farmers and city households, ensuring farmers get fair pay and you get fresh food without the headache.
+                        That question became FoodBox NG. We built a service that curates and delivers essential household and food items — dry goods, pantry staples, and everyday necessities — in tailored packages designed for students, bachelors, and families. No market runs. No cart abandonment. Just what you need, when you need it.
                     </p>
                     
                     <div class="flex gap-8">
@@ -113,8 +104,8 @@
                             <p class="text-sm text-gray-500">Boxes Delivered</p>
                         </div>
                         <div>
-                            <h4 class="text-3xl font-bold text-brand-teal">50+</h4>
-                            <p class="text-sm text-gray-500">Partner Farms</p>
+                            <h4 class="text-3xl font-bold text-brand-teal">3</h4>
+                            <p class="text-sm text-gray-500">Package Plans</p>
                         </div>
                         <div>
                             <h4 class="text-3xl font-bold text-brand-teal">5</h4>
@@ -137,7 +128,7 @@
                     </div>
                     <h3 class="text-2xl font-bold text-brand-blue mb-4">Our Mission</h3>
                     <p class="text-gray-600 leading-relaxed">
-                        To provide affordable, high-quality food items to every Nigerian household through a seamless, technology-driven supply chain that eliminates waste and empowers local farmers.
+                        To make household restocking stress-free and affordable for every Nigerian — from students in hostels to families at home — by delivering curated boxes of essential pantry and household items right to their doorstep.
                     </p>
                 </div>
 
@@ -148,7 +139,7 @@
                     </div>
                     <h3 class="text-2xl font-bold text-brand-blue mb-4">Our Vision</h3>
                     <p class="text-gray-600 leading-relaxed">
-                        To become the leading food logistics platform in West Africa, ensuring that no family has to worry about the availability or affordability of their next meal.
+                        To become Nigeria's most trusted household supply platform — a name every home reaches for when it's time to restock, with plans designed to fit every lifestyle and budget across West Africa.
                     </p>
                 </div>
             </div>
@@ -164,36 +155,40 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Value 1 -->
                 <div class="text-center p-6 rounded-2xl hover:bg-brand-grey transition-colors">
                     <div class="w-16 h-16 mx-auto bg-green-100 text-green-600 rounded-full flex items-center justify-center text-2xl mb-4">
-                        <i class="fas fa-carrot"></i>
+                        <i class="fas fa-box-open"></i>
                     </div>
-                    <h4 class="text-xl font-bold text-brand-blue mb-2">Freshness First</h4>
-                    <p class="text-sm text-gray-500">If it's not fresh enough for our own mothers, we don't sell it.</p>
+                    <h4 class="text-xl font-bold text-brand-blue mb-2">Quality Always</h4>
+                    <p class="text-sm text-gray-500">Every item in your box meets our quality standard — no expired, substandard, or second-rate products.</p>
                 </div>
 
+                <!-- Value 2 -->
                 <div class="text-center p-6 rounded-2xl hover:bg-brand-grey transition-colors">
                     <div class="w-16 h-16 mx-auto bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-2xl mb-4">
                         <i class="fas fa-users"></i>
                     </div>
                     <h4 class="text-xl font-bold text-brand-blue mb-2">Community</h4>
-                    <p class="text-sm text-gray-500">We build relationships, not just transactions. We care about our customers.</p>
+                    <p class="text-sm text-gray-500">We build relationships, not just transactions. Every customer matters to us personally.</p>
                 </div>
 
+                <!-- Value 3 -->
                 <div class="text-center p-6 rounded-2xl hover:bg-brand-grey transition-colors">
                     <div class="w-16 h-16 mx-auto bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center text-2xl mb-4">
                         <i class="fas fa-check-double"></i>
                     </div>
                     <h4 class="text-xl font-bold text-brand-blue mb-2">Integrity</h4>
-                    <p class="text-sm text-gray-500">No hidden fees. What you see on the site is exactly what you get.</p>
+                    <p class="text-sm text-gray-500">No hidden fees. What you see on the site is exactly what you get — every single time.</p>
                 </div>
 
+                <!-- Value 4 -->
                 <div class="text-center p-6 rounded-2xl hover:bg-brand-grey transition-colors">
                     <div class="w-16 h-16 mx-auto bg-red-100 text-red-600 rounded-full flex items-center justify-center text-2xl mb-4">
                         <i class="fas fa-bolt"></i>
                     </div>
                     <h4 class="text-xl font-bold text-brand-blue mb-2">Speed</h4>
-                    <p class="text-sm text-gray-500">We value your time. Our logistics are optimized for 24-hour delivery.</p>
+                    <p class="text-sm text-gray-500">We value your time. Our logistics are optimized so your box arrives at your door without delay.</p>
                 </div>
             </div>
         </div>
@@ -201,23 +196,23 @@
 
     <!-- Meet The Team -->
     <section class="py-20 bg-brand-grey relative overflow-hidden">
-         <!-- Decorative Background -->
-         <div class="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
-            <i class="fas fa-leaf absolute top-10 left-10 text-6xl rotate-12"></i>
-            <i class="fas fa-apple-alt absolute bottom-20 right-20 text-8xl -rotate-12"></i>
+        <!-- Decorative Background -->
+        <div class="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
+            <i class="fas fa-box absolute top-10 left-10 text-6xl rotate-12"></i>
+            <i class="fas fa-shopping-basket absolute bottom-20 right-20 text-8xl -rotate-12"></i>
         </div>
 
         <div class="container mx-auto px-6 relative z-10">
             <div class="text-center mb-16">
                 <h2 class="text-3xl md:text-4xl font-bold text-brand-blue mb-4">Meet the Minds</h2>
-                <p class="text-gray-600">The team working behind the scenes to keep your kitchen stocked.</p>
+                <p class="text-gray-600">The team working behind the scenes to keep your home stocked and running smoothly.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- Team Member 1 -->
                 <div class="bg-white rounded-3xl overflow-hidden shadow-soft group">
                     <div class="h-64 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1531384441138-2736e62e0919?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Tobi" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <img src="{{ asset('assets/images/0AA.jpeg') }}" alt="Pinnacle Emmanuel" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
                     <div class="p-6 text-center">
                         <h4 class="text-xl font-bold text-brand-blue">Pinnacle Emmanuel</h4>
@@ -231,11 +226,11 @@
 
                 <!-- Team Member 2 -->
                 <div class="bg-white rounded-3xl overflow-hidden shadow-soft group">
-                    <div class="h-64 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Nneka" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="h-64 overflow-hidden bg-brand-grey flex items-center justify-center">
+                        <img src="{{ asset('assets/images/0BB.jpeg') }}" alt="Position Open" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
                     <div class="p-6 text-center">
-                        <h4 class="text-xl font-bold text-brand-blue">Nneka Obi</h4>
+                        <h4 class="text-xl font-bold text-brand-blue">Position Open</h4>
                         <p class="text-brand-teal font-medium text-sm mb-4">Head of Operations</p>
                         <div class="flex justify-center gap-3">
                             <a href="#" class="text-gray-400 hover:text-brand-blue"><i class="fab fa-linkedin"></i></a>
@@ -247,10 +242,10 @@
                 <!-- Team Member 3 -->
                 <div class="bg-white rounded-3xl overflow-hidden shadow-soft group">
                     <div class="h-64 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Ahmed" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <img src="{{ asset('assets/images/0BB.jpeg') }}" alt="Position Open" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
                     <div class="p-6 text-center">
-                        <h4 class="text-xl font-bold text-brand-blue">Ahmed Musa</h4>
+                        <h4 class="text-xl font-bold text-brand-blue">Position Open</h4>
                         <p class="text-brand-teal font-medium text-sm mb-4">Logistics Lead</p>
                         <div class="flex justify-center gap-3">
                             <a href="#" class="text-gray-400 hover:text-brand-blue"><i class="fab fa-linkedin"></i></a>
@@ -262,11 +257,11 @@
                 <!-- Team Member 4 -->
                 <div class="bg-white rounded-3xl overflow-hidden shadow-soft group">
                     <div class="h-64 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1589156280159-27698a70f29e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Zainab" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <img src="{{ asset('assets/images/0BB.jpeg') }}" alt="Position Open" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     </div>
                     <div class="p-6 text-center">
-                        <h4 class="text-xl font-bold text-brand-blue">Zainab Yusuf</h4>
-                        <p class="text-brand-teal font-medium text-sm mb-4">Customer Success</p>
+                        <h4 class="text-xl font-bold text-brand-blue">Position Open</h4>
+                        <p class="text-brand-teal font-medium text-sm mb-4">Customer Service</p>
                         <div class="flex justify-center gap-3">
                             <a href="#" class="text-gray-400 hover:text-brand-blue"><i class="fab fa-linkedin"></i></a>
                             <a href="#" class="text-gray-400 hover:text-brand-blue"><i class="fab fa-twitter"></i></a>
@@ -277,7 +272,7 @@
         </div>
     </section>
 
-    <!-- Footer (Same as Landing Page) -->
+    <!-- Footer -->
     @include('layouts.footer')
 
     <!-- Scripts -->

@@ -31,7 +31,7 @@
                 <ul class="space-y-4 text-gray-400 text-sm">
                     <li><a href="{{ route('about_us') }}" class="hover:text-white transition-colors">About Us</a></li>
                     <li><a href="{{ route('careers') }}" class="hover:text-white transition-colors">Careers</a></li>
-                    <li><a href="{{ route('blog') }}" class="hover:text-white transition-colors">Blog</a></li>
+                    <!-- <li><a href="{{ route('blog') }}" class="hover:text-white transition-colors">Blog</a></li> -->
                     <li><a href="{{ route('contact_us') }}" class="hover:text-white transition-colors">Contact</a></li>
                 </ul>
             </div>

@@ -17,8 +17,8 @@
             <div class="hidden md:flex items-center gap-8 font-medium text-gray-600">
                 <a href="{{ route('home') }}" class="hover:text-brand-teal transition-colors">Home</a>
                 <a href="{{ route('packages') }}" class="hover:text-brand-teal transition-colors">Packages</a>
-                <a href="#features" class="hover:text-brand-teal transition-colors">Why Us</a>
-                <a href="#testimonials" class="hover:text-brand-teal transition-colors">Reviews</a>
+                <a href="{{ route('home') }}#features" class="hover:text-brand-teal transition-colors">Why Us</a>
+                <a href="{{ route('contact_us') }}" class="hover:text-brand-teal transition-colors">Contact Us</a>
             </div>
 
             <!-- CTA Button -->

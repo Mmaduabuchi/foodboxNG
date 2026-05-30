@@ -87,99 +87,59 @@
         <div class="container mx-auto px-6 max-w-6xl">
             <div class="text-center mb-12">
                 <h3 class="text-2xl font-bold text-brand-blue">Where We Deliver</h3>
-                <p class="text-gray-600 mt-2">Select your city to see delivery estimates.</p>
+                <p class="text-gray-600 mt-2">We currently deliver within Abuja (FCT). More cities coming soon!</p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8">
-                
-                <!-- Zone 1: Lagos -->
+            <div class="max-w-2xl mx-auto">
+
+                <!-- Zone: Abuja -->
                 <div class="bg-white rounded-3xl shadow-soft overflow-hidden border-t-8 border-brand-teal">
                     <div class="p-8">
                         <div class="flex justify-between items-start mb-4">
-                            <h4 class="text-xl font-bold text-brand-blue">Lagos State</h4>
-                            <i class="fas fa-city text-brand-teal/20 text-3xl"></i>
-                        </div>
-                        <p class="text-gray-500 text-sm mb-6">Covering all Island and Mainland axes.</p>
-                        
-                        <div class="space-y-4">
-                            <div class="flex justify-between items-center border-b border-gray-100 pb-2">
-                                <span class="text-gray-600 font-medium">Island Delivery</span>
-                                <span class="font-bold text-brand-blue">₦1,500</span>
+                            <div>
+                                <h4 class="text-2xl font-bold text-brand-blue">Abuja (FCT)</h4>
+                                <p class="text-gray-500 text-sm mt-1">Covering major districts and satellite towns.</p>
                             </div>
-                            <div class="flex justify-between items-center border-b border-gray-100 pb-2">
-                                <span class="text-gray-600 font-medium">Mainland Delivery</span>
+                            <i class="fas fa-landmark text-brand-teal/20 text-4xl"></i>
+                        </div>
+
+                        <div class="space-y-4 mt-6">
+                            <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+                                <span class="text-gray-600 font-medium">Central Business District</span>
                                 <span class="font-bold text-brand-blue">₦2,000</span>
                             </div>
+                            <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+                                <span class="text-gray-600 font-medium">Gwarinpa / Kubwa</span>
+                                <span class="font-bold text-brand-blue">₦2,500</span>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+                                <span class="text-gray-600 font-medium">Airport Road</span>
+                                <span class="font-bold text-brand-blue">₦3,000</span>
+                            </div>
                             <div class="flex justify-between items-center">
-                                <span class="text-gray-600 font-medium">Outskirts (Epe/Badagry)</span>
-                                <span class="font-bold text-brand-blue">₦3,500</span>
+                                <span class="text-gray-600 font-medium">Other Areas <span class="text-xs text-gray-400">(Kuje, Bwari, Kwali etc.)</span></span>
+                                <span class="font-bold text-brand-blue">Contact Us</span>
                             </div>
                         </div>
                     </div>
                     <div class="bg-brand-teal/10 p-4 text-center text-brand-teal font-bold text-sm">
-                        <i class="fas fa-clock mr-2"></i> 24-Hour Delivery
-                    </div>
-                </div>
-
-                <!-- Zone 2: Abuja -->
-                <div class="bg-white rounded-3xl shadow-soft overflow-hidden border-t-8 border-brand-gold">
-                    <div class="p-8">
-                        <div class="flex justify-between items-start mb-4">
-                            <h4 class="text-xl font-bold text-brand-blue">Abuja (FCT)</h4>
-                            <i class="fas fa-landmark text-brand-gold/20 text-3xl"></i>
-                        </div>
-                        <p class="text-gray-500 text-sm mb-6">Central Area and Satellite Towns.</p>
-                        
-                        <div class="space-y-4">
-                            <div class="flex justify-between items-center border-b border-gray-100 pb-2">
-                                <span class="text-gray-600 font-medium">Central Business Dist.</span>
-                                <span class="font-bold text-brand-blue">₦2,000</span>
-                            </div>
-                            <div class="flex justify-between items-center border-b border-gray-100 pb-2">
-                                <span class="text-gray-600 font-medium">Gwarinpa / Kubwa</span>
-                                <span class="font-bold text-brand-blue">₦2,500</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-600 font-medium">Airport Road</span>
-                                <span class="font-bold text-brand-blue">₦3,000</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-brand-gold/20 p-4 text-center text-brand-orange font-bold text-sm">
-                        <i class="fas fa-clock mr-2"></i> Next Day Delivery
-                    </div>
-                </div>
-
-                <!-- Zone 3: Other Cities -->
-                <div class="bg-white rounded-3xl shadow-soft overflow-hidden border-t-8 border-brand-blue">
-                    <div class="p-8">
-                        <div class="flex justify-between items-start mb-4">
-                            <h4 class="text-xl font-bold text-brand-blue">Interstate</h4>
-                            <i class="fas fa-truck text-brand-blue/20 text-3xl"></i>
-                        </div>
-                        <p class="text-gray-500 text-sm mb-6">Ibadan, Port Harcourt & Enugu.</p>
-                        
-                        <div class="space-y-4">
-                            <div class="flex justify-between items-center border-b border-gray-100 pb-2">
-                                <span class="text-gray-600 font-medium">Ibadan</span>
-                                <span class="font-bold text-brand-blue">₦3,000</span>
-                            </div>
-                            <div class="flex justify-between items-center border-b border-gray-100 pb-2">
-                                <span class="text-gray-600 font-medium">Port Harcourt</span>
-                                <span class="font-bold text-brand-blue">₦4,500</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-600 font-medium">Enugu</span>
-                                <span class="font-bold text-brand-blue">₦4,500</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-brand-blue/10 p-4 text-center text-brand-blue font-bold text-sm">
-                        <i class="fas fa-clock mr-2"></i> 2 - 3 Working Days
+                        <i class="fas fa-clock mr-2"></i> Next Day Delivery within Abuja
                     </div>
                 </div>
 
             </div>
+
+            <!-- Coming Soon Banner -->
+            <div class="mt-10 max-w-2xl mx-auto bg-brand-blue text-white rounded-2xl p-6 flex items-center gap-6">
+                <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center shrink-0">
+                    <i class="fas fa-map-marker-alt text-brand-gold text-xl"></i>
+                </div>
+                <div>
+                    <h5 class="font-bold text-lg mb-1">More Cities Coming Soon</h5>
+                    <p class="text-gray-300 text-sm">We are expanding to Lagos, Port Harcourt, Enugu and more. Drop your city below to get notified when we arrive!</p>
+                </div>
+            </div>
+
         </div>
     </section>
 
@@ -289,7 +249,7 @@
                         <i class="fas fa-chevron-down text-gray-400 transition-transform group-hover:text-brand-teal"></i>
                     </button>
                     <div class="hidden p-6 pt-0 text-gray-600 text-sm leading-relaxed border-t border-gray-100 mt-2">
-                        Currently, our standard delivery days are Monday to Saturday. Sunday deliveries are only available for "Emergency/Express" orders in Lagos and attract an extra fee.
+                        Currently, our standard delivery days are Monday to Saturday. Sunday deliveries are only available for "Emergency/Express" orders in Abuja and attract an extra fee.
                     </div>
                 </div>
 
