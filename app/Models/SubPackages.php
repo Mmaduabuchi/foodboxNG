@@ -29,10 +29,17 @@ class SubPackages extends Model
         'is_available' => 'boolean',
     ];
 
+
+    // One package can have many subscriptions
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class, 'sub_package_id');
+    }
+
     // One package can have many items
     public function items()
     {
-        return $this->hasMany(PackageItem::class);
+        return $this->hasMany(PackageItem::class, 'sub_package_id');
     }
 
     public function package()

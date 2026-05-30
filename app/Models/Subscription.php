@@ -20,6 +20,7 @@ class Subscription extends Model
     protected $fillable = [
         'user_id',
         'package_id',
+        'sub_package_id',
         'status',
         'delivery_frequency',
         'delivery_zone',
@@ -49,6 +50,11 @@ class Subscription extends Model
     public function package()
     {
         return $this->belongsTo(Package::class);
+    }
+
+    public function subPackage()
+    {
+        return $this->belongsTo(SubPackages::class, 'sub_package_id');
     }
 
     //scopes

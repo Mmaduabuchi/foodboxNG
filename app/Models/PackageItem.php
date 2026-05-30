@@ -19,6 +19,6 @@ class PackageItem extends Model
     // One or more sub package item belongs to one sub package
     public function subPackages()
     {
-        return $this->belongsTo(SubPackages::class);
+        return $this->belongsTo(SubPackages::class, 'sub_package_id');
     }
 }

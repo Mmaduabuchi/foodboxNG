@@ -149,10 +149,10 @@
 
             <div class="p-4 bg-white rounded-2xl shadow-soft border-t-4 border-brand-gold">
                 <div class="flex items-center justify-between">
-                    <i class="fas fa-utensils text-2xl text-brand-gold p-3 bg-brand-gold/10 rounded-xl"></i>
-                    <p class="text-sm font-semibold text-gray-500">Unique Items</p>
+                    <i class="fas fa-box text-2xl text-brand-gold p-3 bg-brand-gold/10 rounded-xl"></i>
+                    <p class="text-sm font-semibold text-gray-500">Sub Packages</p>
                 </div>
-                <p class="text-2xl font-extrabold text-brand-blue mt-2">{{ $packageItems }}</p>
+                <p class="text-2xl font-extrabold text-brand-blue mt-2">{{ $subpackages }}</p>
             </div>
 
             <div class="p-4 bg-white rounded-2xl shadow-soft border-t-4 border-brand-orange">
@@ -165,10 +165,10 @@
 
             <div class="p-4 bg-white rounded-2xl shadow-soft border-t-4 border-brand-blue">
                 <div class="flex items-center justify-between">
-                    <i class="fas fa-sync text-2xl text-brand-blue p-3 bg-brand-blue/10 rounded-xl"></i>
-                    <p class="text-sm font-semibold text-gray-500">Last Sync</p>
+                    <i class="fas fa-box text-2xl text-brand-blue p-3 bg-brand-blue/10 rounded-xl"></i>
+                    <p class="text-sm font-semibold text-gray-500">Total Items</p>
                 </div>
-                <p class="text-sm font-extrabold text-brand-blue mt-2">2 mins ago</p>
+                <p class="text-2xl font-extrabold text-brand-blue mt-2">{{ $packageItems }}</p>
             </div>
         </div>
 
