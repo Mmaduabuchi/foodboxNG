@@ -14,40 +14,38 @@ class inventoryManagementController extends Controller
 {
     public function index()
     {
-        // Authenticated admin name
         $adminName = Auth::user()->name;
-
-        //all packages 
         $packagesCount = Package::count();
-
-        //all package items
         $packageItems = PackageItem::count();
-
-        //all package items
         $subpackages = SubPackages::count();
 
-        // packages with least items
         $leastItemsPackage = SubPackages::withCount('items')
             ->orderBy('items_count', 'asc')
             ->take(3)
             ->get();
 
-        // packages with most items
         $mostItemsPackage = SubPackages::withCount('items')
             ->orderBy('items_count', 'desc')
             ->take(3)
             ->get();
 
-        // Fetch all packages for the selection list
-        $packages = SubPackages::withCount(['items', 'subscriptions'])->get();
+        // Load packages with their subpackages and items
+        $packages = Package::with(['subPackages.items'])->withCount('subPackages')->get();
+
+        // Default: first package's sub packages
+        $activePackage = $packages->first();
+        $activeSubPackages = $activePackage ? $activePackage->subPackages : collect();
 
         return view('superAdminDashboard.inventoryStock', compact(
             'adminName',
             'packagesCount',
             'packageItems',
+            'subpackages',
             'leastItemsPackage',
+            'mostItemsPackage',
             'packages',
-            'subpackages'
+            'activePackage',
+            'activeSubPackages'
         ));
     }
 }

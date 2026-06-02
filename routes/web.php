@@ -211,4 +211,20 @@ Route::middleware(['auth', 'admin'])->group(function () {
     //system settings
     Route::post('/admin/updateCustomerSupport', [systemSettingsController::class, 'updateCustomerSupport'])->name('admin.updateCustomerSupport');
 
+
+
+    // Inventory AJAX routes
+    Route::get('/admin/packages/{id}/subpackages', function ($id) {
+        $subPackages = \App\Models\SubPackages::where('package_id', $id)
+            ->withCount('items')
+            ->get();
+        return response()->json(['subPackages' => $subPackages]);
+    })->name('admin.packages.subpackages');
+
+    Route::get('/admin/subpackages/{id}/items', function ($id) {
+        $items = \App\Models\PackageItem::where('sub_package_id', $id)->get();
+        return response()->json(['items' => $items]);
+    })->name('admin.subpackages.items');
+
+    
 });
