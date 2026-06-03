@@ -38,6 +38,7 @@ use App\Http\Controllers\superadmin\reportsController;
 use App\Http\Controllers\superadmin\supportController;
 use App\Http\Controllers\superadmin\managePackagesController;
 use App\Http\Controllers\superadmin\staffController;
+use App\Http\Controllers\superadmin\PackageItemController;
 
 
 
@@ -226,5 +227,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
         return response()->json(['items' => $items]);
     })->name('admin.subpackages.items');
 
-    
+    // Store a new item in a sub package
+    Route::post('/admin/subpackages/items/store', [PackageItemController::class, 'store'])->name('admin.subpackages.items.store');
+
+    // Delete an item from a sub package
+    Route::delete('/admin/subpackages/items/{id}/delete', [PackageItemController::class, 'destroy'])->name('admin.subpackages.items.destroy');
+
 });

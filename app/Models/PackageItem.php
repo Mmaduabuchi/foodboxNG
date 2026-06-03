@@ -9,7 +9,7 @@ class PackageItem extends Model
     protected $table = 'package_items';
 
     protected $fillable = [
-        'package_id',
+        'sub_package_id',
         'item_name',
         'quantity',
         'unit',

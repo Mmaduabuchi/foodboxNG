@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Inventory & Stock | FoodBox NG</title>
     
     <!-- Google Fonts: Plus Jakarta Sans -->
@@ -350,6 +351,100 @@
         <div class="h-12"></div>
     </main>
 
+    <!-- Add Item Modal -->
+    <div id="addItemModal" class="fixed inset-0 z-[100] hidden">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closeAddItemModal()"></div>
+
+        <!-- Modal Content -->
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-3xl shadow-admin w-full max-w-lg overflow-hidden transform transition-all scale-95 opacity-0" id="addItemModalContent">
+                <!-- Modal Header -->
+                <div class="bg-brand-blue p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="px-2 py-0.5 bg-brand-teal/20 text-brand-teal text-[10px] font-bold rounded uppercase">New Item</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white">Add Item to Sub Package</h3>
+                            <p class="text-xs text-gray-300 mt-1" id="modal-subpackage-label">Select a sub package first</p>
+                        </div>
+                        <button onclick="closeAddItemModal()" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Modal Body -->
+                <form id="addItemForm" class="p-6 space-y-5">
+                    <input type="hidden" id="modal_sub_package_id" name="sub_package_id" value="">
+
+                    <!-- Item Name -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Item Name <span class="text-brand-red">*</span></label>
+                        <div class="relative">
+                            <i class="fas fa-tag absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                            <input type="text" name="item_name" id="modal_item_name" required placeholder="e.g. Rice, Beans, Chicken..."
+                                class="w-full pl-10 pr-4 py-3 bg-brand-grey/50 border-2 border-transparent rounded-xl text-sm font-semibold text-brand-blue placeholder-gray-400 focus:border-brand-teal focus:bg-white focus:outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Quantity & Unit Row -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Quantity <span class="text-brand-red">*</span></label>
+                            <div class="relative">
+                                <i class="fas fa-sort-numeric-up absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                                <input type="number" name="quantity" id="modal_quantity" required min="1" value="1" placeholder="1"
+                                    class="w-full pl-10 pr-4 py-3 bg-brand-grey/50 border-2 border-transparent rounded-xl text-sm font-semibold text-brand-blue placeholder-gray-400 focus:border-brand-teal focus:bg-white focus:outline-none transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Unit <span class="text-brand-red">*</span></label>
+                            <div class="relative">
+                                <i class="fas fa-balance-scale absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                                <select name="unit" id="modal_unit" required
+                                    class="w-full pl-10 pr-4 py-3 bg-brand-grey/50 border-2 border-transparent rounded-xl text-sm font-semibold text-brand-blue focus:border-brand-teal focus:bg-white focus:outline-none transition-all appearance-none">
+                                    <option value="" disabled selected>Select</option>
+                                    <option value="pcs">Pieces (pcs)</option>
+                                    <option value="kg">Kilograms (kg)</option>
+                                    <option value="litres">Litres</option>
+                                    <option value="packs">Packs</option>
+                                    <option value="bottles">Bottles</option>
+                                    <option value="bags">Bags</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estimated Price -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Estimated Price (₦) <span class="text-brand-red">*</span></label>
+                        <div class="relative">
+                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-bold">₦</span>
+                            <input type="number" name="estimated_price" id="modal_estimated_price" required min="0" step="0.01" placeholder="5000"
+                                class="w-full pl-10 pr-4 py-3 bg-brand-grey/50 border-2 border-transparent rounded-xl text-sm font-semibold text-brand-blue placeholder-gray-400 focus:border-brand-teal focus:bg-white focus:outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div id="modal-error" class="hidden p-3 bg-brand-red/10 border border-brand-red/20 rounded-xl text-brand-red text-xs font-semibold"></div>
+
+                    <!-- Actions -->
+                    <div class="flex items-center justify-end gap-3 pt-2">
+                        <button type="button" onclick="closeAddItemModal()" class="px-5 py-2.5 border-2 border-gray-200 text-gray-500 font-bold rounded-xl hover:bg-brand-grey transition-colors text-sm">
+                            Cancel
+                        </button>
+                        <button type="submit" id="modal-submit-btn" class="px-6 py-2.5 bg-brand-teal text-white font-bold rounded-xl hover:bg-brand-blue transition-colors text-sm flex items-center gap-2 shadow-lg">
+                            <i class="fas fa-plus"></i>
+                            <span>Add Item</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript for Mobile Sidebar Toggle and Mock Actions -->
     <script>
         // All packages data from blade (passed as JSON for JS use)
@@ -420,6 +515,10 @@
         }
 
         function selectSubPackage(subId, subName) {
+            // Track current selection for modal
+            currentSubPackageId = subId;
+            currentSubPackageName = subName;
+
             // Update active state on sub package cards
             document.querySelectorAll('.subpackage-card').forEach(card => {
                 const isActive = card.getAttribute('data-sub-id') == subId;
@@ -490,6 +589,86 @@
                     </tr>`;
             });
         }
+
+        // --- Currently selected sub package ID ---
+        let currentSubPackageId = null;
+        let currentSubPackageName = null;
+
+        // --- Add Item Modal Functions ---
+        function addItemToPackage() {
+            if (!currentSubPackageId) {
+                alert('Please select a sub package first.');
+                return;
+            }
+            document.getElementById('modal_sub_package_id').value = currentSubPackageId;
+            document.getElementById('modal-subpackage-label').textContent = 'Adding to: ' + currentSubPackageName;
+            document.getElementById('modal-error').classList.add('hidden');
+            document.getElementById('addItemForm').reset();
+            document.getElementById('modal_sub_package_id').value = currentSubPackageId;
+
+            const modal = document.getElementById('addItemModal');
+            const content = document.getElementById('addItemModalContent');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeAddItemModal() {
+            const content = document.getElementById('addItemModalContent');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                document.getElementById('addItemModal').classList.add('hidden');
+            }, 200);
+        }
+
+        // Handle form submission
+        document.getElementById('addItemForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('modal-submit-btn');
+            const errorDiv = document.getElementById('modal-error');
+            errorDiv.classList.add('hidden');
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Saving...</span>';
+
+            const formData = new FormData(this);
+
+            fetch('/admin/subpackages/items/store', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    closeAddItemModal();
+                    // Refresh items table
+                    selectSubPackage(currentSubPackageId, currentSubPackageName);
+                } else {
+                    errorDiv.textContent = data.message || 'Something went wrong.';
+                    errorDiv.classList.remove('hidden');
+                }
+            })
+            .catch(() => {
+                errorDiv.textContent = 'Network error. Please try again.';
+                errorDiv.classList.remove('hidden');
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-plus"></i> <span>Add Item</span>';
+            });
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeAddItemModal();
+        });
 
         // --- Sidebar Toggle Functions ---
         function toggleSidebar() {
