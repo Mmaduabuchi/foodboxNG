@@ -29,8 +29,14 @@
             </button>
             <!-- Quick Action Dropdown -->
             <div class="absolute right-0 mt-3 w-40 bg-white border border-gray-100 rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform scale-95 origin-top-right z-40">
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-brand-grey rounded-t-xl"><i class="fas fa-cube mr-2"></i> Add Package</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-brand-grey"><i class="fas fa-box-open mr-2"></i> Add Item</a>
+                <a href="{{ route('admin.managePackages') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-brand-grey rounded-t-xl">
+                    <i class="fas fa-cube mr-2"></i> 
+                    Add Package
+                </a>
+                <a href="{{ route('admin.inventoryManagement') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-brand-grey">
+                    <i class="fas fa-box-open mr-2"></i>
+                    Sub Package
+                </a>
                 <div class="border-t border-gray-100"></div>
                 <a href="{{ route("admin.adminManagement") }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-brand-grey rounded-b-xl"><i class="fas fa-user-plus mr-2"></i> Add Admin</a>
             </div>

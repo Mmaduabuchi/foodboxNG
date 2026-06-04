@@ -5,7 +5,6 @@ namespace App\Http\Controllers\superadmin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PackageItem;
-use App\Models\SubPackages;
 
 class PackageItemController extends Controller
 {
@@ -34,12 +33,13 @@ class PackageItemController extends Controller
         ], 201); 
     }
 
-    public function destroy(PackageItem $item) {
-        $item->delete();
+    public function destroy($id) {
+        $packageItem = PackageItem::findOrFail($id);
+        $packageItem->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Item removed successfully.'
+            'message' => 'Package item deleted successfully!',
         ]);
     }
 

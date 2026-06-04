@@ -14,6 +14,9 @@
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -262,7 +265,7 @@
                             </h2>
                             <p class="text-xs text-gray-300 mt-1">Select a sub-package below to view its items.</p>
                         </div>
-                        <a href="#" id="add-subpackage-btn" class="px-5 py-2.5 bg-brand-gold text-brand-blue font-bold rounded-xl hover:bg-brand-gold/90 transition-colors shadow-lg flex items-center gap-2 text-sm">
+                        <a href="#" id="add-subpackage-btn" onclick="openAddSubPackageModal(); return false;" class="px-5 py-2.5 bg-brand-gold text-brand-blue font-bold rounded-xl hover:bg-brand-gold/90 transition-colors shadow-lg flex items-center gap-2 text-sm">
                             <i class="fas fa-plus-circle"></i>
                             <span>Add Sub Package</span>
                         </a>
@@ -274,9 +277,15 @@
 
                         <div id="subpackages-container" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                             @forelse($activeSubPackages as $sub)
-                                <button onclick="selectSubPackage('{{ $sub->id }}', '{{ addslashes($sub->name) }}')"
-                                    class="subpackage-card text-left p-4 rounded-2xl border-2 border-gray-100 hover:border-brand-teal hover:bg-brand-teal/5 transition-all group"
-                                    data-sub-id="{{ $sub->id }}">
+                                <div class="subpackage-card relative text-left p-4 rounded-2xl border-2 border-gray-100 hover:border-brand-teal hover:bg-brand-teal/5 transition-all group cursor-pointer"
+                                    data-sub-id="{{ $sub->id }}"
+                                    onclick="selectSubPackage('{{ $sub->id }}', '{{ addslashes($sub->name) }}')">
+                                    <!-- Delete Button -->
+                                    <button onclick="event.stopPropagation(); deleteSubPackage('{{ $sub->id }}', '{{ addslashes($sub->name) }}')" 
+                                        class="absolute top-2.5 right-2.5 w-7 h-7 rounded-lg bg-brand-red/0 hover:bg-brand-red/10 text-gray-300 hover:text-brand-red flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 z-10" 
+                                        title="Delete sub package">
+                                        <i class="fas fa-trash-alt text-xs"></i>
+                                    </button>
                                     <div class="flex items-center justify-between mb-3">
                                         <div class="w-10 h-10 rounded-xl bg-brand-teal/10 text-brand-teal flex items-center justify-center font-bold text-sm">
                                             {{ strtoupper(substr($sub->name, 0, 2)) }}
@@ -287,7 +296,7 @@
                                     </div>
                                     <h5 class="font-bold text-brand-blue text-sm group-hover:text-brand-teal transition-colors">{{ $sub->name }}</h5>
                                     <p class="text-[10px] text-gray-400 mt-1">₦{{ number_format($sub->price) }} / {{ $sub->billing_cycle }}</p>
-                                </button>
+                                </div>
                             @empty
                                 <div id="empty-subpackages" class="col-span-3 py-10 text-center text-gray-400">
                                     <i class="fas fa-box-open text-3xl mb-3 block"></i>
@@ -445,6 +454,148 @@
         </div>
     </div>
 
+    <!-- Add Sub Package Modal -->
+    <div id="addSubPackageModal" class="fixed inset-0 z-[100] hidden">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closeAddSubPackageModal()"></div>
+
+        <!-- Modal Content -->
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-3xl shadow-admin w-full max-w-lg overflow-hidden transform transition-all scale-95 opacity-0" id="addSubPackageModalContent">
+                <!-- Modal Header -->
+                <div class="bg-brand-blue p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="px-2 py-0.5 bg-brand-gold/20 text-brand-gold text-[10px] font-bold rounded uppercase">New Sub Package</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white">Add Sub Package</h3>
+                            <p class="text-xs text-gray-300 mt-1" id="subpkg-modal-package-label">Adding to current package</p>
+                        </div>
+                        <button onclick="closeAddSubPackageModal()" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Modal Body -->
+                <form id="addSubPackageForm" class="p-6 space-y-5 max-h-[70vh] overflow-y-auto">
+                    <input type="hidden" id="subpkg_package_id" name="package_id" value="">
+
+                    <!-- Sub Package Name -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Sub Package Name <span class="text-brand-red">*</span></label>
+                        <div class="relative">
+                            <i class="fas fa-box absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                            <input type="text" name="name" id="subpkg_name" required placeholder="e.g. Basic Breakfast, Premium Lunch..."
+                                class="w-full pl-10 pr-4 py-3 bg-brand-grey/50 border-2 border-transparent rounded-xl text-sm font-semibold text-brand-blue placeholder-gray-400 focus:border-brand-teal focus:bg-white focus:outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Price & Billing Cycle Row -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Price (₦) <span class="text-brand-red">*</span></label>
+                            <div class="relative">
+                                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm font-bold">₦</span>
+                                <input type="number" name="price" id="subpkg_price" required min="0" step="0.01" placeholder="15000"
+                                    class="w-full pl-10 pr-4 py-3 bg-brand-grey/50 border-2 border-transparent rounded-xl text-sm font-semibold text-brand-blue placeholder-gray-400 focus:border-brand-teal focus:bg-white focus:outline-none transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Billing Cycle <span class="text-brand-red">*</span></label>
+                            <div class="relative">
+                                <i class="fas fa-calendar-alt absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                                <select name="billing_cycle" id="subpkg_billing_cycle" required
+                                    class="w-full pl-10 pr-4 py-3 bg-brand-grey/50 border-2 border-transparent rounded-xl text-sm font-semibold text-brand-blue focus:border-brand-teal focus:bg-white focus:outline-none transition-all appearance-none">
+                                    <option value="" disabled selected>Select</option>
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Short Description -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Short Description <span class="text-brand-red">*</span></label>
+                        <div class="relative">
+                            <i class="fas fa-align-left absolute left-3.5 top-3.5 text-gray-400 text-sm"></i>
+                            <input type="text" name="short_description" id="subpkg_short_desc" required placeholder="Brief tagline for this sub package" maxlength="150"
+                                class="w-full pl-10 pr-4 py-3 bg-brand-grey/50 border-2 border-transparent rounded-xl text-sm font-semibold text-brand-blue placeholder-gray-400 focus:border-brand-teal focus:bg-white focus:outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Full Description -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Full Description <span class="text-brand-red">*</span></label>
+                        <div class="relative">
+                            <i class="fas fa-file-alt absolute left-3.5 top-3.5 text-gray-400 text-sm"></i>
+                            <textarea name="description" id="subpkg_description" required rows="3" placeholder="Detailed description of what this sub package includes..."
+                                class="w-full pl-10 pr-4 py-3 bg-brand-grey/50 border-2 border-transparent rounded-xl text-sm font-semibold text-brand-blue placeholder-gray-400 focus:border-brand-teal focus:bg-white focus:outline-none transition-all resize-none"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Image Upload -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Image <span class="text-gray-400">(Optional)</span></label>
+                        <div class="relative">
+                            <label for="subpkg_image" class="flex items-center gap-3 w-full px-4 py-3 bg-brand-grey/50 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-brand-teal hover:bg-white transition-all">
+                                <i class="fas fa-cloud-upload-alt text-gray-400 text-lg"></i>
+                                <span class="text-sm text-gray-400 font-semibold" id="subpkg_image_label">Choose an image...</span>
+                            </label>
+                            <input type="file" name="image" id="subpkg_image" accept="image/*" class="hidden"
+                                onchange="document.getElementById('subpkg_image_label').textContent = this.files[0]?.name || 'Choose an image...'">
+                        </div>
+                    </div>
+
+                    <!-- Status -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Status</label>
+                        <div class="flex gap-3">
+                            <label class="flex-1 cursor-pointer">
+                                <input type="radio" name="status" value="active" checked class="hidden peer">
+                                <div class="peer-checked:border-brand-teal peer-checked:bg-brand-teal/5 peer-checked:text-brand-teal border-2 border-gray-200 rounded-xl py-2.5 text-center text-xs font-bold text-gray-400 transition-all">
+                                    <i class="fas fa-check-circle mr-1"></i> Active
+                                </div>
+                            </label>
+                            <label class="flex-1 cursor-pointer">
+                                <input type="radio" name="status" value="inactive" class="hidden peer">
+                                <div class="peer-checked:border-brand-orange peer-checked:bg-brand-orange/5 peer-checked:text-brand-orange border-2 border-gray-200 rounded-xl py-2.5 text-center text-xs font-bold text-gray-400 transition-all">
+                                    <i class="fas fa-pause-circle mr-1"></i> Inactive
+                                </div>
+                            </label>
+                            <label class="flex-1 cursor-pointer">
+                                <input type="radio" name="status" value="draft" class="hidden peer">
+                                <div class="peer-checked:border-brand-blue peer-checked:bg-brand-blue/5 peer-checked:text-brand-blue border-2 border-gray-200 rounded-xl py-2.5 text-center text-xs font-bold text-gray-400 transition-all">
+                                    <i class="fas fa-pencil-alt mr-1"></i> Draft
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div id="subpkg-modal-error" class="hidden p-3 bg-brand-red/10 border border-brand-red/20 rounded-xl text-brand-red text-xs font-semibold"></div>
+
+                    <!-- Success Message -->
+                    <div id="subpkg-modal-success" class="hidden p-3 bg-brand-teal/10 border border-brand-teal/20 rounded-xl text-brand-teal text-xs font-semibold"></div>
+
+                    <!-- Actions -->
+                    <div class="flex items-center justify-end gap-3 pt-2">
+                        <button type="button" onclick="closeAddSubPackageModal()" class="px-5 py-2.5 border-2 border-gray-200 text-gray-500 font-bold rounded-xl hover:bg-brand-grey transition-colors text-sm">
+                            Cancel
+                        </button>
+                        <button type="submit" id="subpkg-modal-submit-btn" class="px-6 py-2.5 bg-brand-gold text-brand-blue font-bold rounded-xl hover:bg-brand-gold/90 transition-colors text-sm flex items-center gap-2 shadow-lg">
+                            <i class="fas fa-plus"></i>
+                            <span>Create Sub Package</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript for Mobile Sidebar Toggle and Mock Actions -->
     <script>
         // All packages data from blade (passed as JSON for JS use)
@@ -497,9 +648,14 @@
 
             subPackages.forEach(sub => {
                 container.innerHTML += `
-                    <button onclick="selectSubPackage(${sub.id}, '${sub.name.replace(/'/g, "\\'")}')"
-                        class="subpackage-card text-left p-4 rounded-2xl border-2 border-gray-100 hover:border-brand-teal hover:bg-brand-teal/5 transition-all group"
-                        data-sub-id="${sub.id}">
+                    <div class="subpackage-card relative text-left p-4 rounded-2xl border-2 border-gray-100 hover:border-brand-teal hover:bg-brand-teal/5 transition-all group cursor-pointer"
+                        data-sub-id="${sub.id}"
+                        onclick="selectSubPackage(${sub.id}, '${sub.name.replace(/'/g, "\\\'")}')">
+                        <button onclick="event.stopPropagation(); deleteSubPackage(${sub.id}, '${sub.name.replace(/'/g, "\\\'")}')" 
+                            class="absolute top-2.5 right-2.5 w-7 h-7 rounded-lg bg-brand-red/0 hover:bg-brand-red/10 text-gray-300 hover:text-brand-red flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 z-10" 
+                            title="Delete sub package">
+                            <i class="fas fa-trash-alt text-xs"></i>
+                        </button>
                         <div class="flex items-center justify-between mb-3">
                             <div class="w-10 h-10 rounded-xl bg-brand-teal/10 text-brand-teal flex items-center justify-center font-bold text-sm">
                                 ${sub.name.substring(0, 2).toUpperCase()}
@@ -510,7 +666,7 @@
                         </div>
                         <h5 class="font-bold text-[#264653] text-sm group-hover:text-[#2A9D8F] transition-colors">${sub.name}</h5>
                         <p class="text-[10px] text-gray-400 mt-1">₦${Number(sub.price).toLocaleString()} / ${sub.billing_cycle}</p>
-                    </button>`;
+                    </div>`;
             });
         }
 
@@ -581,7 +737,7 @@
                             ${new Date(item.updated_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right">
-                            <button onclick="removeItemFromPackage(${item.id})" 
+                            <button onclick="removeItemFromPackage(this, ${item.id}, '${item.item_name.replace(/'/g, "\\\'")}')" 
                                 class="p-2 text-brand-red hover:bg-brand-red/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100" title="Remove item">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
@@ -667,8 +823,287 @@
 
         // Close modal on Escape key
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeAddItemModal();
+            if (e.key === 'Escape') {
+                closeAddItemModal();
+                closeAddSubPackageModal();
+            }
         });
+
+        // --- Add Sub Package Modal Functions ---
+        function getActivePackageId() {
+            const idText = document.getElementById('active-package-id').textContent.trim();
+            // Extract numeric ID from 'PKG-001' format
+            return parseInt(idText.replace('PKG-', ''), 10);
+        }
+
+        function openAddSubPackageModal() {
+            const packageId = getActivePackageId();
+            const packageName = document.getElementById('active-package-name').textContent.trim();
+
+            if (!packageId || isNaN(packageId)) {
+                alert('Please select a package first.');
+                return;
+            }
+
+            document.getElementById('subpkg_package_id').value = packageId;
+            document.getElementById('subpkg-modal-package-label').textContent = 'Adding to: ' + packageName;
+            document.getElementById('subpkg-modal-error').classList.add('hidden');
+            document.getElementById('subpkg-modal-success').classList.add('hidden');
+            document.getElementById('addSubPackageForm').reset();
+            document.getElementById('subpkg_package_id').value = packageId;
+            document.getElementById('subpkg_image_label').textContent = 'Choose an image...';
+
+            const modal = document.getElementById('addSubPackageModal');
+            const content = document.getElementById('addSubPackageModalContent');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeAddSubPackageModal() {
+            const content = document.getElementById('addSubPackageModalContent');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                document.getElementById('addSubPackageModal').classList.add('hidden');
+            }, 200);
+        }
+
+        // Handle sub package form submission
+        document.getElementById('addSubPackageForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('subpkg-modal-submit-btn');
+            const errorDiv = document.getElementById('subpkg-modal-error');
+            const successDiv = document.getElementById('subpkg-modal-success');
+            errorDiv.classList.add('hidden');
+            successDiv.classList.add('hidden');
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Creating...</span>';
+
+            const formData = new FormData(this);
+
+            fetch('/admin/subpackages/store', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    successDiv.textContent = data.message || 'Sub package created successfully!';
+                    successDiv.classList.remove('hidden');
+                    // Refresh sub packages after a brief delay
+                    const packageId = document.getElementById('subpkg_package_id').value;
+                    const packageName = document.getElementById('active-package-name').textContent.trim();
+                    setTimeout(() => {
+                        closeAddSubPackageModal();
+                        selectPackage(packageId, packageName);
+                    }, 800);
+                } else {
+                    // Handle validation errors
+                    if (data.errors) {
+                        const messages = Object.values(data.errors).flat().join(', ');
+                        errorDiv.textContent = messages;
+                    } else {
+                        errorDiv.textContent = data.message || 'Something went wrong.';
+                    }
+                    errorDiv.classList.remove('hidden');
+                }
+            })
+            .catch(() => {
+                errorDiv.textContent = 'Network error. Please try again.';
+                errorDiv.classList.remove('hidden');
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-plus"></i> <span>Create Sub Package</span>';
+            });
+        });
+
+        // --- Delete Sub Package ---
+        function deleteSubPackage(subId, subName) {
+            Swal.fire({
+                title: 'Delete Sub Package?',
+                html: `Are you sure you want to delete <strong>"${subName}"</strong>? This will also remove all items inside it.<br><br><span style="color: #E76F51; font-weight: 600;">This action cannot be undone.</span>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#E76F51',
+                cancelButtonColor: '#264653',
+                confirmButtonText: '<i class="fas fa-trash-alt mr-1"></i> Yes, delete it',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                focusCancel: true,
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+
+                // Find and animate the card being deleted
+                const card = document.querySelector(`.subpackage-card[data-sub-id="${subId}"]`);
+                if (card) {
+                    card.style.opacity = '0.5';
+                    card.style.pointerEvents = 'none';
+                }
+
+                fetch(`/admin/subpackages/${subId}/delete`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove card with animation
+                        if (card) {
+                            card.style.transition = 'all 0.3s ease';
+                            card.style.transform = 'scale(0.8)';
+                            card.style.opacity = '0';
+                            setTimeout(() => card.remove(), 300);
+                        }
+
+                        // If the deleted sub package was selected, hide items section
+                        if (currentSubPackageId == subId) {
+                            currentSubPackageId = null;
+                            currentSubPackageName = null;
+                            document.getElementById('items-section').classList.add('hidden');
+                        }
+
+                        // Check if container is now empty
+                        setTimeout(() => {
+                            const container = document.getElementById('subpackages-container');
+                            const remaining = container.querySelectorAll('.subpackage-card');
+                            if (remaining.length === 0) {
+                                container.innerHTML = `
+                                    <div class="col-span-3 py-10 text-center text-gray-400">
+                                        <i class="fas fa-box-open text-3xl mb-3 block"></i>
+                                        <p class="text-sm">No sub packages found for this package.</p>
+                                    </div>`;
+                            }
+                        }, 350);
+
+                        // Success toast
+                        Swal.fire({
+                            title: 'Deleted!',
+                            text: `"${subName}" has been removed successfully.`,
+                            icon: 'success',
+                            confirmButtonColor: '#2A9D8F',
+                            timer: 2500,
+                            timerProgressBar: true,
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: data.message || 'Failed to delete sub package.',
+                            icon: 'error',
+                            confirmButtonColor: '#264653',
+                        });
+                        if (card) {
+                            card.style.opacity = '1';
+                            card.style.pointerEvents = 'auto';
+                        }
+                    }
+                })
+                .catch(() => {
+                    Swal.fire({
+                        title: 'Network Error',
+                        text: 'Something went wrong. Please try again.',
+                        icon: 'error',
+                        confirmButtonColor: '#264653',
+                    });
+                    if (card) {
+                        card.style.opacity = '1';
+                        card.style.pointerEvents = 'auto';
+                    }
+                });
+            });
+        }
+
+        // --- Remove Item From Package ---
+        function removeItemFromPackage(button, itemId, itemName) {
+            Swal.fire({
+                title: 'Remove Item?',
+                html: `Are you sure you want to remove <strong>"${itemName}"</strong> from this sub package?<br><br><span style="color: #E76F51; font-weight: 600;">This action cannot be undone.</span>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#E76F51',
+                cancelButtonColor: '#264653',
+                confirmButtonText: '<i class="fas fa-trash-alt mr-1"></i> Yes, remove it',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                focusCancel: true,
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+
+                // Find and animate the row being deleted
+                const row = button.closest('tr');
+                if (row) {
+                    row.style.opacity = '0.5';
+                    row.style.pointerEvents = 'none';
+                }
+
+                fetch(`/admin/subpackages/items/${itemId}/delete`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        if (row) {
+                            row.style.transition = 'all 0.3s ease';
+                            row.style.transform = 'scale(0.95)';
+                            row.style.opacity = '0';
+                            setTimeout(() => {
+                                selectSubPackage(currentSubPackageId, currentSubPackageName);
+                            }, 300);
+                        } else {
+                            selectSubPackage(currentSubPackageId, currentSubPackageName);
+                        }
+
+                        // Success toast
+                        Swal.fire({
+                            title: 'Removed!',
+                            text: `"${itemName}" has been removed successfully.`,
+                            icon: 'success',
+                            confirmButtonColor: '#2A9D8F',
+                            timer: 2500,
+                            timerProgressBar: true,
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: data.message || 'Failed to remove item.',
+                            icon: 'error',
+                            confirmButtonColor: '#264653',
+                        });
+                        if (row) {
+                            row.style.opacity = '1';
+                            row.style.pointerEvents = 'auto';
+                        }
+                    }
+                })
+                .catch(() => {
+                    Swal.fire({
+                        title: 'Network Error',
+                        text: 'Something went wrong. Please try again.',
+                        icon: 'error',
+                        confirmButtonColor: '#264653',
+                    });
+                    if (row) {
+                        row.style.opacity = '1';
+                        row.style.pointerEvents = 'auto';
+                    }
+                });
+            });
+        }
 
         // --- Sidebar Toggle Functions ---
         function toggleSidebar() {
