@@ -5,11 +5,13 @@ namespace App\Http\Controllers\superadmin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Subscription;
 use App\Models\Package;
 use App\Models\Payment;
+use Carbon\Carbon;
 
 class adminHomeController extends Controller
 {
@@ -52,6 +54,15 @@ class adminHomeController extends Controller
             ->take(4)
             ->get();
 
+        // Revenue this month
+        $revenueThisMonth = Payment::successful()
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->sum('amount');
+
+        // Pending deliveries
+        $pendingDeliveries = Order::deliveryPending()->count();
+
         return view('superAdminDashboard.home', compact(
             'adminName',
             'totalUsers',
@@ -61,6 +72,8 @@ class adminHomeController extends Controller
             'topPackages',
             'recentUsers',
             'latestPayments',
+            'revenueThisMonth',
+            'pendingDeliveries',
         ));
     }
 

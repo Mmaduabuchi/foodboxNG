@@ -195,7 +195,7 @@
                     <i class="fas fa-money-bill-wave text-2xl text-brand-teal p-3 bg-brand-teal/10 rounded-xl"></i>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Rev. (This Month)</p>
-                <p class="text-2xl font-extrabold text-brand-blue">₦4.2M</p>
+                <p class="text-2xl font-extrabold text-brand-blue">₦{{ number_format($revenueThisMonth, 2) }}</p>
             </div>
             
             <!-- Card 5: Pending Deliveries -->
@@ -205,7 +205,7 @@
                     <span class="text-sm text-gray-500 hidden md:block">High Priority</span>
                 </div>
                 <p class="text-sm text-gray-500 mt-2">Pending Deliveries</p>
-                <p class="text-2xl font-extrabold text-brand-blue">84</p>
+                <p class="text-2xl font-extrabold text-brand-blue">{{ $pendingDeliveries }}</p>
             </div>
         </div>
 
