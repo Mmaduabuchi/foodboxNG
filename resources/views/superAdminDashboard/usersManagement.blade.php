@@ -13,6 +13,9 @@
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -207,13 +210,49 @@
             </form>
         </div>
 
+        @if(session('success'))
+        <script>
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: "{{ session('success') }}",
+                showConfirmButton: false,
+                timer: 2500, // 2.5 seconds
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                }
+            });
+        </script>
+        @endif
+
+        @if(session('error'))
+        <script>
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'error',
+                title: "{{ session('error') }}",
+                showConfirmButton: false,
+                timer: 2500, // 2.5 seconds
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                }
+            });
+        </script>
+        @endif
+
         <!-- User List Table -->
         <div class="bg-white p-6 rounded-2xl shadow-soft overflow-x-auto">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-semibold text-brand-blue">Registered User Accounts</h3>
-                <button class="text-brand-teal hover:text-brand-blue text-sm font-semibold">
+                <a href="{{ route('admin.userManagement.export', request()->query()) }}" class="text-brand-teal hover:text-brand-blue text-sm font-semibold">
                     <i class="fas fa-download mr-1"></i> Export Users
-                </button>
+                </a>
             </div>
             
             <table class="min-w-full divide-y divide-gray-200 responsive-table">
@@ -258,9 +297,21 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Actions">
                             <button class="text-brand-blue hover:text-brand-teal transition-colors text-sm font-semibold mr-3">Edit</button>
                             @if($user->is_suspended)
-                                <button class="text-brand-teal hover:text-brand-blue transition-colors text-sm font-semibold">Activate</button>
+                                <form action="{{ route('admin.userManagement.toggle-suspend', $user->id) }}" method="POST" class="toggle-suspend-form" style="display:inline;" data-user-name="{{ $user->name }}" data-action="activate">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="text-brand-teal hover:text-brand-blue transition-colors text-sm font-semibold">
+                                        Activate
+                                    </button>
+                                </form>
                             @else
-                                <button class="text-brand-red hover:text-brand-red/80 transition-colors text-sm font-semibold">Deactivate</button>
+                                <form action="{{ route('admin.userManagement.toggle-suspend', $user->id) }}" method="POST" class="toggle-suspend-form" style="display:inline;" data-user-name="{{ $user->name }}" data-action="deactivate">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="text-brand-red hover:text-brand-red/80 transition-colors text-sm font-semibold">
+                                        Deactivate
+                                    </button>
+                                </form>
                             @endif
                         </td>
                     </tr>
@@ -349,6 +400,39 @@
                 if (window.innerWidth < 1024) { 
                     setTimeout(() => toggleSidebar(), 150);
                 }
+            });
+        });
+
+        // SweetAlert Confirmation for Suspension Toggle
+        document.querySelectorAll('.toggle-suspend-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const userName = this.getAttribute('data-user-name');
+                const action = this.getAttribute('data-action');
+                const isActivate = action === 'activate';
+                const title = isActivate ? 'Activate User Account?' : 'Deactivate User Account?';
+                const htmlText = isActivate 
+                    ? `Are you sure you want to activate the account for <strong>"${userName}"</strong>?` 
+                    : `Are you sure you want to deactivate the account for <strong>"${userName}"</strong>?<br><br><span style="color: #E76F51; font-weight: 600;">They will not be able to log in or use the platform.</span>`;
+                const confirmButtonText = isActivate ? '<i class="fas fa-user-check mr-1"></i> Yes, Activate' : '<i class="fas fa-user-slash mr-1"></i> Yes, Deactivate';
+                const confirmButtonColor = isActivate ? '#2A9D8F' : '#E76F51';
+
+                Swal.fire({
+                    title: title,
+                    html: htmlText,
+                    icon: isActivate ? 'info' : 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: confirmButtonColor,
+                    cancelButtonColor: '#264653',
+                    confirmButtonText: confirmButtonText,
+                    cancelButtonText: 'Cancel',
+                    reverseButtons: true,
+                    focusCancel: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
             });
         });
     </script>

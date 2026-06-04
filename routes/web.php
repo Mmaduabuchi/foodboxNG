@@ -188,10 +188,23 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/subscriptionManagement', [subscriptionManagementController::class, 'index'])->name('admin.subscriptionManagement');
     Route::get('/admin/paymentManagement', [paymentManagementController::class, 'index'])->name('admin.paymentManagement');
     Route::get('/admin/systemSettings', [systemSettingsController::class, 'index'])->name('admin.systemSettings');
+    
+    //users management
     Route::get('/admin/userManagement', [userManagementController::class, 'index'])->name('admin.userManagement');
+    Route::patch('/admin/userManagement/toggle-suspend/{id}', [userManagementController::class, 'toggleSuspend'])->name('admin.userManagement.toggle-suspend');
+    Route::get('/admin/userManagement/export', [userManagementController::class, 'export'])->name('admin.userManagement.export');
+    
+    
+    //inventory management
     Route::get('/admin/inventoryManagement', [inventoryManagementController::class, 'index'])->name('admin.inventoryManagement');
+    
+    //orders management
     Route::get('/admin/orderManagement', [orderManagementController::class, 'index'])->name('admin.orderManagement');
+    
+    //reports
     Route::get('/admin/reports', [reportsController::class, 'index'])->name('admin.reports');
+    
+    //support
     Route::get('/admin/support', [supportController::class, 'index'])->name('admin.support');
 
     //manage packages
