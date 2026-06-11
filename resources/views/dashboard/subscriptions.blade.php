@@ -184,7 +184,9 @@
                                 </div>
 
                                 <div class="flex flex-col sm:flex-row gap-2 mt-4 pt-4 border-t border-brand-grey">
-                                    <button class="flex-1 bg-brand-blue text-white py-2 rounded-xl text-sm font-semibold hover:bg-brand-blue/90 transition-colors">Modify Package</button>
+                                    <a href="{{ route('manage_subscription', $subscription->subscription_code) }}" class="flex-1 flex items-center justify-center bg-brand-blue text-white py-2 rounded-xl text-sm font-semibold hover:bg-brand-blue/90 transition-colors">
+                                        Manage Package
+                                    </a>
                                     <button class="flex-1 bg-brand-orange/10 text-brand-orange py-2 rounded-xl text-sm font-semibold hover:bg-brand-orange/20 transition-colors">Pause Subscription</button>
                                 </div>
                             </div>
@@ -278,9 +280,9 @@
                 </h3>
                 <p class="text-white/80">Discover new weekly, bi-weekly, or monthly food subscription plans.</p>
             </div>
-            <button class="w-full md:w-auto bg-brand-teal text-white px-6 py-3 rounded-xl font-bold shadow-md shadow-brand-teal/50 hover:bg-brand-teal/90 transition-colors flex items-center justify-center gap-2">
+            <a href="{{ route('packages') }}" class="w-full md:w-auto bg-brand-teal text-white px-6 py-3 rounded-xl font-bold shadow-md shadow-brand-teal/50 hover:bg-brand-teal/90 transition-colors flex items-center justify-center gap-2">
                 <i class="fas fa-arrow-right"></i> Browse All Packages
-            </button>
+            </a>
         </section>
         
         <!-- Footer Spacer -->

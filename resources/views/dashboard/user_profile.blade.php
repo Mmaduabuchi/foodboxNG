@@ -15,6 +15,8 @@
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <!-- Tailwind Config (Reused from Dashboard) -->
     <script>
@@ -122,6 +124,12 @@
 
     <!-- Main Content Area -->
     <main class="p-4 mt-20 md:p-8 lg:ml-64 main-content">
+        
+        <!-- Header Section -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-brand-blue mb-1">Profile & Account Settings</h1>
+            <p class="text-gray-600">Manage your personal information, security preferences, and communication settings.</p>
+        </div>
 
         @if(session('success'))
             <div class="mb-4 p-4 bg-green-100 text-green-700 rounded-lg">
@@ -129,11 +137,51 @@
             </div>
         @endif
         
-        <!-- Header Section -->
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-brand-blue mb-1">Profile & Account Settings</h1>
-            <p class="text-gray-600">Manage your personal information, security preferences, and communication settings.</p>
-        </div>
+        @if(session('profile_success_image'))
+            <div id="successAlert" class="mb-4 p-4 mt-4 bg-green-100 text-green-700 rounded-lg">
+                {{ session('profile_success_image') }}
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div id="errorAlert" class="mb-4 p-4 mt-4 bg-red-100 text-red-700 rounded-lg">
+                <ul class="list-disc list-inside">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+
+        @if(session('notification_success'))
+            <script>
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: '{{ session('notification_success') }}',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+            </script>
+        @endif
+
+        @if(session('notification_error'))
+            <script>
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: '{{ session('notification_error') }}',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+            </script>
+        @endif
+
 
         <!-- Main Settings Grid -->
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
@@ -143,12 +191,22 @@
                 
                 <!-- Profile Summary Card -->
                 <div class="bg-white p-6 rounded-3xl shadow-soft text-center">
-                    <div class="relative w-24 h-24 mx-auto mb-4">
-                        <img src="https://placehold.co/100x100/E9C46A/264653?text=JO" onerror="this.onerror=null; this.src='https://placehold.co/100x100/E9C46A/264653?text=JO';" alt="Profile Avatar" class="w-full h-full rounded-full object-cover border-4 border-brand-teal/20">
-                        <button class="absolute bottom-0 right-0 p-2 bg-brand-teal text-white rounded-full border-2 border-white shadow-md hover:bg-brand-teal/90 transition-colors">
-                            <i class="fas fa-camera text-sm"></i>
-                        </button>
-                    </div>
+                    <form id="profileImageForm" action="{{ route('userprofile.upload-image') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="relative w-24 h-24 mx-auto mb-4">
+                            @if($user->profile_image)
+                                <img id="profilePreview" src="{{ asset('storage/' . $user->profile_image) }}" alt="Profile Avatar" class="w-full h-full rounded-full object-cover border-4 border-brand-teal/20">
+                            @else
+                                <img id="profilePreview" src="https://placehold.co/100x100/E9C46A/264653?text={{ strtoupper(substr($user->name, 0, 2)) }}" alt="Profile Avatar" class="w-full h-full rounded-full object-cover border-4 border-brand-teal/20">
+                            @endif
+                            <!-- Hidden File Input -->
+                            <input type="file" id="profileImageInput" name="profile_image" accept="image/*" class="hidden">
+                            <!-- Camera Button -->
+                            <button type="button" id="cameraBtn" class="absolute bottom-0 right-0 p-2 bg-brand-teal text-white rounded-full border-2 border-white shadow-md hover:bg-brand-teal/90 transition-colors">
+                                <i class="fas fa-camera text-sm"></i>
+                            </button>
+                        </div>
+                    </form>
                     <h2 class="text-xl font-bold text-brand-blue">{{ $user->name }}</h2>
                     <p class="text-sm text-gray-500 mb-3">{{ $user->email }}</p>
                     <div class="inline-flex items-center text-xs font-semibold px-3 py-1 rounded-full bg-brand-gold/20 text-brand-gold">
@@ -161,7 +219,7 @@
                 <div class="bg-white p-6 rounded-3xl shadow-soft">
                     <h3 class="text-lg font-semibold text-brand-blue mb-4 flex items-center gap-2"><i class="fas fa-shield-alt text-brand-teal"></i> Account Status</h3>
                     <p class="text-sm text-gray-600 mb-4">Your account is active and protected. If you wish to leave, you can deactivate your account.</p>
-                    <form action="{{ route('account.deactivate') }}" method="POST" onsubmit="return confirm('Are you sure you want to deactivate your account?');">
+                    <form action="{{ route('account.deactivate') }}" method="POST" id="deactivateForm">
                         @csrf
 
                         <button type="submit" class="w-full py-2 border border-brand-red text-brand-red font-semibold rounded-xl hover:bg-brand-red/10 transition-colors">
@@ -318,51 +376,55 @@
                 <div id="notifications" class="bg-white p-6 md:p-8 rounded-3xl shadow-soft">
                     <h3 class="text-xl font-bold text-brand-blue mb-6 border-b border-brand-grey pb-3 flex items-center gap-3"><i class="fas fa-bell text-brand-teal"></i> Notification Preferences</h3>
                     
-                    <div class="space-y-4">
-                        <!-- Package Updates -->
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h4 class="font-semibold text-brand-blue">Package Delivery Updates</h4>
-                                <p class="text-sm text-gray-600">Get alerts on delivery, delays, and successful drop-offs.</p>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" value="" class="sr-only peer" checked>
-                                <div class="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-brand-teal transition-all"></div>
-                                <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-full"></span>
-                            </label>
-                        </div>
-                        
-                        <!-- Subscription Billing -->
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h4 class="font-semibold text-brand-blue">Billing and Payment Notifications</h4>
-                                <p class="text-sm text-gray-600">Receive receipts, subscription renewal reminders, and payment failure alerts.</p>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" value="" class="sr-only peer" checked>
-                                <div class="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-brand-teal transition-all"></div>
-                                <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-full"></span>
-                            </label>
-                        </div>
+                    <form action="{{ route('userprofile.notifications') }}" method="POST">
+                        @csrf
 
-                        <!-- Marketing Emails -->
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h4 class="font-semibold text-brand-blue">Special Offers and Promotions</h4>
-                                <p class="text-sm text-gray-600">Occasional emails about new boxes, discounts, and partnership offers.</p>
+                        <div class="space-y-4">
+                            <!-- Package Updates -->
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-semibold text-brand-blue">Package Delivery Updates</h4>
+                                    <p class="text-sm text-gray-600">Get alerts on delivery, delays, and successful drop-offs.</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="delivery_notifications" class="sr-only peer" {{ $user->delivery_notifications ? 'checked' : '' }}>
+                                    <div class="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-brand-teal transition-all"></div>
+                                    <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-full"></span>
+                                </label>
                             </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" value="" class="sr-only peer">
-                                <div class="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-brand-teal transition-all"></div>
-                                <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-full"></span>
-                            </label>
+                            
+                            <!-- Subscription Billing -->
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-semibold text-brand-blue">Billing and Payment Notifications</h4>
+                                    <p class="text-sm text-gray-600">Receive receipts, subscription renewal reminders, and payment failure alerts.</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="billing_notifications" class="sr-only peer" {{ $user->billing_notifications ? 'checked' : '' }}>
+                                    <div class="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-brand-teal transition-all"></div>
+                                    <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-full"></span>
+                                </label>
+                            </div>
+
+                            <!-- Marketing Emails -->
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-semibold text-brand-blue">Special Offers and Promotions</h4>
+                                    <p class="text-sm text-gray-600">Occasional emails about new boxes, discounts, and partnership offers.</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="marketing_notifications" class="sr-only peer" {{ $user->marketing_notifications ? 'checked' : '' }}>
+                                    <div class="w-11 h-6 bg-gray-200 rounded-full peer-checked:bg-brand-teal transition-all"></div>
+                                    <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-full"></span>
+                                </label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="mt-8 flex justify-end">
-                        <button type="submit" class="px-6 py-3 bg-brand-teal text-white font-semibold rounded-xl hover:bg-brand-teal/90 transition-colors shadow-sm-brand">
-                            Update Preferences
-                        </button>
-                    </div>
+                        <div class="mt-8 flex justify-end">
+                            <button type="submit" class="px-6 py-3 bg-brand-teal text-white font-semibold rounded-xl hover:bg-brand-teal/90 transition-colors shadow-sm-brand">
+                                Update Preferences
+                            </button>
+                        </div> 
+                    </form>
                 </div>
 
             </div>
@@ -371,6 +433,8 @@
         <!-- Footer Spacer -->
         <div class="h-12"></div>
     </main>
+
+
 
     <!-- JavaScript for Mobile Sidebar Toggle -->
     <script>
@@ -450,6 +514,68 @@
                 behavior: "smooth"
             });
         }
+
+
+        document.getElementById('deactivateForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const form = this;
+
+            Swal.fire({
+                title: 'Deactivate Account?',
+                text: 'Are you sure you want to deactivate your account? You can reactivate it later by contacting support.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Yes, Deactivate',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+
+
+        document.getElementById('cameraBtn').addEventListener('click', function () {
+            document.getElementById('profileImageInput').click();
+        });
+
+        // Preview uploaded image
+        document.getElementById('profileImageInput').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const preview = document.querySelector('.w-24.h-24 img');
+                    preview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+
+                //submit after short delay
+                setTimeout(() => {
+                    document.getElementById('profileImageForm').submit();
+                }, 300);
+            }
+        });
+
+
+        //Alert message auto hide after 2.5 seconds
+        document.addEventListener('DOMContentLoaded', function () {
+            const alert = document.getElementById('successAlert');
+
+            if (alert) {
+                setTimeout(() => {
+                    alert.style.transition = 'opacity 0.5s ease';
+                    alert.style.opacity = '0';
+
+                    setTimeout(() => {
+                        alert.remove();
+                    }, 300);
+                }, 2500);
+            }
+        });
     </script>
 </body>
 </html>

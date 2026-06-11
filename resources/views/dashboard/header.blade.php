@@ -23,7 +23,11 @@
 
         <!-- Profile Info -->
         <div class="flex items-center gap-3">
-            <img src="https://placehold.co/40x40/E9C46A/264653?text={{ strtoupper(substr($user->name, 0, 2)) }}" onerror="this.onerror=null; this.src='https://placehold.co/40x40/E9C46A/264653?text={{ strtoupper(substr($user->name, 0, 2)) }}';" alt="Profile Avatar" class="w-10 h-10 rounded-full border-2 border-brand-gold/50 object-cover flex-shrink-0">
+            @if($user->profile_image)
+                <img src="{{ asset('storage/' . $user->profile_image) }}" alt="Profile Avatar" class="w-10 h-10 rounded-full border-2 border-brand-gold/50 object-cover flex-shrink-0">
+            @else
+                <img src="https://placehold.co/40x40/E9C46A/264653?text={{ strtoupper(substr($user->name, 0, 2)) }}" alt="Profile Avatar" class="w-10 h-10 rounded-full border-2 border-brand-gold/50 object-cover flex-shrink-0">
+            @endif
             <div class="text-white min-w-0">
                 <p class="font-semibold text-sm leading-tight truncate">{{ $user->name }}</p>
                 <p class="text-[10px] uppercase font-bold tracking-wider text-brand-teal">Premium User</p>
@@ -113,7 +117,11 @@
         
         <!-- Profile Avatar Dropdown -->
         <div class="relative group cursor-pointer">
-            <img src="https://placehold.co/36x36/E9C46A/264653?text=JO" onerror="this.onerror=null; this.src='https://placehold.co/36x36/E9C46A/264653?text=JO';" alt="Profile Avatar" class="w-9 h-9 rounded-full object-cover ring-2 ring-brand-teal/50">
+            @if($user->profile_image)
+                <img src="{{ asset('storage/' . $user->profile_image) }}" alt="Profile Avatar" class="w-9 h-9 rounded-full object-cover ring-2 ring-brand-teal/50">
+            @else
+                <img src="https://placehold.co/40x40/E9C46A/264653?text={{ strtoupper(substr($user->name, 0, 2)) }}" alt="Profile Avatar" class="w-9 h-9 rounded-full object-cover ring-2 ring-brand-teal/50">
+            @endif
             <!-- Dropdown Menu (Hidden by default) -->
             <div class="absolute right-0 mt-3 w-48 bg-white border border-gray-100 rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform scale-95 group-hover:scale-100 origin-top-right">
                 <a href="{{ route('userprofile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-brand-grey rounded-t-xl"><i class="fas fa-user-circle mr-2"></i> View Profile</a>

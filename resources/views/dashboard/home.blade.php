@@ -246,7 +246,7 @@
 
                             </div>
 
-                            <a href="{{ route('manage_subscription') }}" type="button" class="w-full md:w-auto mt-4 md:mt-0 ml-0 md:ml-6 bg-brand-teal text-white font-medium py-2 px-4 rounded-full hover:bg-brand-blue transition-colors text-sm shadow-sm-brand">
+                            <a href="{{ route('manage_subscription', $activeSubscription->subscription_code) }}" type="button" class="w-full md:w-auto mt-4 md:mt-0 ml-0 md:ml-6 bg-brand-teal text-white font-medium py-2 px-4 rounded-full hover:bg-brand-blue transition-colors text-sm shadow-sm-brand">
                                 <i class="fas fa-cog mr-2"></i> Manage Subscription
                             </a>
 
@@ -348,7 +348,7 @@
                     </table>
 
                     <div class="mt-4 text-center">
-                        <a href="#" class="text-brand-teal font-semibold hover:text-brand-blue transition-colors text-sm">
+                        <a href="{{ route("myorders") }}" class="text-brand-teal font-semibold hover:text-brand-blue transition-colors text-sm">
                             View All Orders →
                         </a>
                     </div>
@@ -364,9 +364,9 @@
                     <h3 class="text-xl font-bold mb-4 text-brand-blue">Quick Actions</h3>
                     <div class="space-y-3">
                         
-                        <button class="w-full flex items-center justify-center gap-3 bg-brand-teal text-white font-semibold py-3 rounded-xl hover:bg-brand-blue transition-colors shadow-sm-brand">
+                        <a href="{{ route('packages') }}" class="w-full flex items-center justify-center gap-3 bg-brand-teal text-white font-semibold py-3 rounded-xl hover:bg-brand-blue transition-colors shadow-sm-brand">
                             <i class="fas fa-shopping-basket"></i> Buy a New Package
-                        </button>
+                        </a>
                         
                         <button class="w-full flex items-center justify-center gap-3 bg-brand-gold text-brand-blue font-semibold py-3 rounded-xl hover:bg-brand-orange transition-colors shadow-sm-brand">
                             <i class="fas fa-arrow-up"></i> Upgrade Subscription

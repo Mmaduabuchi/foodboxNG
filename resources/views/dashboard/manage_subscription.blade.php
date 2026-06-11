@@ -189,10 +189,10 @@
 
     @include('dashboard.header')
 
-    <!-- ═══════════════════════════════════  MAIN CONTENT  ═══════════════════════════════════ -->
+    <!--  MAIN CONTENT -->
     <main class="p-4 mt-20 md:p-8 lg:ml-64 main-content">
 
-        <!-- ── Page Header ── -->
+        <!-- Page Header -->
         <div class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
                 <h1 class="text-3xl font-bold text-brand-blue mb-1">Manage Subscription</h1>
@@ -203,7 +203,7 @@
             </a>
         </div>
 
-        <!-- ═══════════ SECTION 1: Active Plan Hero Card ═══════════ -->
+        <!-- SECTION 1: Active Plan Hero Card -->
         <div class="plan-card rounded-3xl p-6 md:p-8 mb-8 shadow-xl-heavy">
             <div class="relative z-10 flex flex-col lg:flex-row justify-between items-start gap-6">
 
@@ -277,7 +277,7 @@
             </div>
         </div>
 
-        <!-- ═══════════ SECTION 2: Quick Stats ═══════════ -->
+        <!-- SECTION 2: Quick Stats -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
 
             <div class="stat-card bg-white rounded-2xl p-5 shadow-soft flex items-center gap-4">
@@ -322,7 +322,7 @@
 
         </div>
 
-        <!-- ═══════════ SECTION 3: Plan Details + Actions Row ═══════════ -->
+        <!-- SECTION 3: Plan Details + Actions Row -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
 
             <!-- What's Included -->
@@ -392,29 +392,42 @@
                 <div class="bg-white rounded-2xl shadow-soft p-5 space-y-3">
                     <h4 class="font-bold text-brand-blue text-sm mb-3">Subscription Actions</h4>
 
-                    <button onclick="openModal('changeFreqModal')"
-                        class="action-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-teal/10 text-brand-teal font-semibold text-sm hover:bg-brand-teal/20 transition-colors">
-                        <i class="fas fa-calendar-alt w-4 text-center"></i>
-                        Change Delivery Frequency
-                    </button>
+                    @if($activeSubscription->cancelled_at === null)
+                        <button onclick="openModal('changeFreqModal')"
+                            class="action-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-teal/10 text-brand-teal font-semibold text-sm hover:bg-brand-teal/20 transition-colors">
+                            <i class="fas fa-calendar-alt w-4 text-center"></i>
+                            Change Delivery Frequency
+                        </button>
+                    @endif
 
-                    <button onclick="openModal('pauseModal')"
-                        class="action-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-orange/10 text-brand-orange font-semibold text-sm hover:bg-brand-orange/20 transition-colors">
-                        <i class="fas fa-pause-circle w-4 text-center"></i>
-                        Pause Subscription
-                    </button>
+                    @if($activeSubscription->cancelled_at === null)
+                        <button onclick="openModal('pauseModal')"
+                            class="action-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-orange/10 text-brand-orange font-semibold text-sm hover:bg-brand-orange/20 transition-colors">
+                            <i class="fas fa-pause-circle w-4 text-center"></i>
+                            Pause Subscription
+                        </button>
+                    @endif
 
-                    <button onclick="openModal('cancelModal')"
-                        class="action-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-red/10 text-brand-red font-semibold text-sm hover:bg-brand-red/20 transition-colors">
-                        <i class="fas fa-times-circle w-4 text-center"></i>
-                        Cancel Subscription
-                    </button>
+                    @if($activeSubscription->cancelled_at !== null)
+                        <button onclick="openModal('resumeModal')"
+                            class="action-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-teal/10 text-brand-green font-semibold text-sm hover:bg-brand-green/20 transition-colors">
+                            <i class="fas fa-play-circle w-4 text-center"></i>
+                            Resume Subscription
+                        </button>
+                    @endif
+
+                    @if($activeSubscription->cancelled_at === null)
+                        <button onclick="openModal('cancelModal')" class="action-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-red/10 text-brand-red font-semibold text-sm hover:bg-brand-red/20 transition-colors">
+                            <i class="fas fa-times-circle w-4 text-center"></i>
+                            Cancel Subscription
+                        </button>
+                    @endif
                 </div>
 
             </div>
         </div>
 
-        <!-- ═══════════ SECTION 4: Delivery Preferences Card ═══════════ -->
+        <!-- SECTION 4: Delivery Preferences Card -->
         <div class="bg-white rounded-3xl shadow-soft p-6 md:p-8 mb-8">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-3">
                 <h3 class="text-xl font-bold text-brand-blue flex items-center gap-2">
@@ -508,7 +521,7 @@
             </div>
         </div>
 
-        <!-- ═══════════ SECTION 5: Billing History Timeline ═══════════ -->
+        <!-- SECTION 5: Billing History Timeline -->
         <div class="bg-white rounded-3xl shadow-soft p-6 md:p-8 mb-8">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
                 <h3 class="text-xl font-bold text-brand-blue flex items-center gap-2">
@@ -555,29 +568,11 @@
             </div>
         </div>
 
-        <!-- ═══════════ SECTION 6: Explore Plans CTA ═══════════ -->
-        <!-- <section class="mb-8 p-6 md:p-8 bg-brand-blue rounded-3xl text-white flex flex-col md:flex-row items-center justify-between shadow-xl-heavy gap-6">
-            <div>
-                <h3 class="text-xl font-bold flex items-center gap-2 mb-1">
-                    <i class="fas fa-tag text-brand-gold"></i> Ready to Elevate Your Experience?
-                </h3>
-                <p class="text-white/70 text-sm">Upgrade to our Enterprise plan and unlock chef's specials, priority delivery, and more.</p>
-            </div>
-            <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                <button class="action-btn w-full md:w-auto bg-brand-teal text-white px-6 py-3 rounded-xl font-bold shadow-md shadow-brand-teal/40 hover:bg-brand-teal/90 transition-colors flex items-center justify-center gap-2">
-                    <i class="fas fa-crown text-brand-gold"></i> Upgrade to Enterprise
-                </button>
-                <button class="action-btn w-full md:w-auto border border-white/30 text-white/80 px-6 py-3 rounded-xl font-semibold text-sm hover:bg-white/10 transition-colors flex items-center justify-center gap-2">
-                    <i class="fas fa-info-circle"></i> Compare Plans
-                </button>
-            </div>
-        </section> -->
-
         <div class="h-12"></div>
     </main>
 
 
-    <!-- ══════════════════════  MODALS  ══════════════════════ -->
+    <!--  MODALS  -->
 
     <!-- Pause Modal -->
     <div id="pauseModal" class="modal-overlay hidden fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
@@ -605,6 +600,7 @@
                     <option value="indefinite">Until I resume manually</option>
                 </select>
             </div>
+            <input type="hidden" name="subscription_code" id="subscription_code" value="{{ $activeSubscription->subscription_code }}">
             <div class="flex gap-3">
                 <button onclick="closeModal('pauseModal')" class="flex-1 py-3 rounded-xl border-2 border-gray-200 text-brand-blue font-semibold text-sm hover:bg-brand-grey transition-colors">Cancel</button>
                 <button id="pauseBtn" onclick="submitPause()" class="flex-1 py-3 rounded-xl bg-brand-orange text-white font-semibold text-sm hover:bg-brand-orange/90 transition-colors shadow-md shadow-brand-orange/30">
@@ -645,6 +641,7 @@
                     <option value="Other reason">Other reason</option>
                 </select>
             </div>
+            <input type="hidden" name="subscription_code" id="subscription_code" value="{{ $activeSubscription->subscription_code }}">
             <div class="flex gap-3">
                 <button onclick="closeModal('cancelModal')" class="flex-1 py-3 rounded-xl border-2 border-gray-200 text-brand-blue font-semibold text-sm hover:bg-brand-grey transition-colors">Keep Plan</button>
                 <button id="cancelBtn" onclick="submitCancel()" class="flex-1 py-3 rounded-xl bg-brand-red text-white font-semibold text-sm hover:bg-brand-red/90 transition-colors shadow-md shadow-brand-red/30">
@@ -680,6 +677,7 @@
                 </label>
                 @endforeach
             </div>
+            <input type="hidden" name="subscription_code" id="subscription_code" value="{{ $activeSubscription->subscription_code }}">
             <div class="flex gap-3">
                 <button onclick="closeModal('changeFreqModal')" class="flex-1 py-3 rounded-xl border-2 border-gray-200 text-brand-blue font-semibold text-sm hover:bg-brand-grey transition-colors">Cancel</button>
                 <button id="applyFreqBtn" onclick="submitFrequency()" class="flex-1 py-3 rounded-xl bg-brand-teal text-white font-semibold text-sm hover:bg-brand-teal/90 transition-colors shadow-sm-brand">
@@ -689,10 +687,47 @@
         </div>
     </div>
 
+    <!-- Resume Modal -->
+    <div id="resumeModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden">
+            <div class="bg-brand-teal/20 p-6 text-white text-center">
+                <i class="fas fa-play-circle text-5xl mb-3 text-brand-blue"></i>
+                <h3 class="text-xl font-bold text-brand-blue">Resume Subscription</h3>
+                <p class="text-gray-200 text-sm mt-1 text-gray-500">Reactivate your subscription</p>
+            </div>
+            <div class="p-6 space-y-3">
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <h4 class="font-bold text-brand-blue text-sm mb-2">Plan Details</h4>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-600">Selected Plan:</span>
+                        <span class="font-semibold">{{ $activeSubscription->package->name ?? 'N/A' }}</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm mt-1">
+                        <span class="text-gray-600">Current Frequency:</span>
+                        <span class="font-semibold">{{ $currentFreqLabel ?? 'N/A' }}</span>
+                    </div>
+                </div>
+                <div class="text-sm text-gray-600 bg-yellow-50 rounded-xl p-3 border border-yellow-200">
+                    <i class="fas fa-info-circle mr-2 text-yellow-500"></i>
+                    Your subscription will resume immediately from today's date.
+                </div>
+            </div>
+            <input type="hidden" name="subscription_code" id="resume_subscription_code" value="{{ $activeSubscription->subscription_code }}">
+            <div class="flex gap-3 p-4 bg-gray-50">
+                <button onclick="closeModal('resumeModal')" class="flex-1 py-3 rounded-xl border-2 border-gray-200 text-brand-blue font-semibold text-sm hover:bg-gray-100 transition-colors">Cancel</button>
+                <button onclick="submitResume()" class="flex-1 py-3 rounded-xl bg-brand-teal text-white font-semibold text-sm hover:bg-brand-teal/90 transition-colors shadow-sm-brand">
+                    <i class="fas fa-check mr-2"></i> Resume Subscription
+                </button>
+            </div>
+        </div>
+    </div>
 
-    <!-- ══════════════════════  SCRIPTS  ══════════════════════ -->
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
-        // ── Sidebar Toggle ──
+        // Sidebar Toggle
         const sidebar     = document.getElementById('sidebar');
         const menuToggle  = document.getElementById('menu-toggle');
         const backdrop    = document.getElementById('backdrop');
@@ -717,7 +752,7 @@
             });
         });
 
-        // ── Modals ──
+        // Modals
         function openModal(id) {
             const el = document.getElementById(id);
             el.classList.remove('hidden');
@@ -734,12 +769,29 @@
             });
         });
 
-        // ── Toggle switches ──
+        // Toggle switches
         function toggleAutoRenew(btn) {
             btn.classList.toggle('on');
         }
 
-        // ── Delivery frequency radio — highlight label on click ──
+
+        function showToast(icon, message) {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: icon, // success, error, warning, info, question
+                title: message,
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                }
+            });
+        }
+
+        // Delivery frequency radio — highlight label on click
         document.querySelectorAll('.freq-option input[type="radio"]').forEach(radio => {
             radio.addEventListener('change', () => {
                 document.querySelectorAll('.freq-option label').forEach(lbl => {
@@ -781,7 +833,7 @@
             btn.innerHTML = 'Saving...';
             btn.disabled = true;
 
-            fetch("{{ route('subscription.preferences.update') }}", {
+            fetch("{{ route('subscription.preferences.update', $activeSubscription->subscription_code) }}", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -805,18 +857,21 @@
             })
             .catch(err => {
                 console.error(err);
-                alert("Something went wrong!");
+                showToast('error', 'Something went wrong!');
                 btn.innerHTML = '<i class="fas fa-save"></i> Save Preferences';
                 btn.disabled = false;
             });
         }
+
+
         function submitPause() {
             let btn = document.getElementById('pauseBtn');
             let duration = document.getElementById('pauseDurationVal').value;
+            let subscription_code = document.getElementById('subscription_code').value;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Pausing...';
             btn.disabled = true;
 
-            fetch("{{ route('subscription.pause') }}", {
+            fetch("{{ route('subscription.pause', $activeSubscription->subscription_code) }}", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -827,12 +882,14 @@
             .then(res => res.json())
             .then(res => {
                 closeModal('pauseModal');
-                alert(res.message);
-                location.reload();
+                showToast('success', res.message);
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
             })
             .catch(err => {
                 console.error(err);
-                alert("Something went wrong!");
+                showToast('error', 'Something went wrong!');
                 btn.innerHTML = '<i class="fas fa-pause mr-2"></i> Pause Now';
                 btn.disabled = false;
             });
@@ -841,10 +898,11 @@
         function submitCancel() {
             let btn = document.getElementById('cancelBtn');
             let reason = document.getElementById('cancelReasonVal').value;
+            let subscription_code = document.getElementById('subscription_code').value;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Cancelling...';
             btn.disabled = true;
 
-            fetch("{{ route('subscription.cancel') }}", {
+            fetch("{{ route('subscription.cancel', $activeSubscription->subscription_code) }}", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -855,12 +913,14 @@
             .then(res => res.json())
             .then(res => {
                 closeModal('cancelModal');
-                alert(res.message);
-                location.reload();
+                showToast('success', res.message);
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
             })
             .catch(err => {
                 console.error(err);
-                alert("Something went wrong!");
+                showToast('error', 'Something went wrong!');
                 btn.innerHTML = '<i class="fas fa-times mr-2"></i> Cancel Subscription';
                 btn.disabled = false;
             });
@@ -869,12 +929,13 @@
         function submitFrequency() {
             let btn = document.getElementById('applyFreqBtn');
             let frequency = document.querySelector('input[name="modal_freq"]:checked')?.value;
+            let subscription_code = document.getElementById('subscription_code').value;
             if (!frequency) return;
 
             btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Applying...';
             btn.disabled = true;
 
-            fetch("{{ route('subscription.frequency.update') }}", {
+            fetch("{{ route('subscription.frequency.update', $activeSubscription->subscription_code) }}", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -885,13 +946,46 @@
             .then(res => res.json())
             .then(res => {
                 closeModal('changeFreqModal');
-                // Could just update UI here, but reload guarantees a fresh state
-                location.reload();
+                showToast('success', res.message);
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
             })
             .catch(err => {
                 console.error(err);
-                alert("Something went wrong!");
+                showToast('error', 'Something went wrong!');
                 btn.innerHTML = '<i class="fas fa-check mr-2"></i> Apply Change';
+                btn.disabled = false;
+            });
+        }
+
+        //resubscribe
+        function submitResume() {
+            let btn = document.getElementById('resumeBtn');
+            let subscription_code = document.getElementById('subscription_code').value;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Resuming...';
+            btn.disabled = true;
+
+            fetch("{{ route('subscription.resume', $activeSubscription->subscription_code) }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({ subscription_code: subscription_code })
+            })
+            .then(res => res.json())
+            .then(res => {
+                closeModal('resumeModal');
+                showToast('success', res.message);
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            })
+            .catch(err => {
+                console.error(err);
+                showToast('error', 'Something went wrong!');
+                btn.innerHTML = '<i class="fas fa-check mr-2"></i> Resume Subscription';
                 btn.disabled = false;
             });
         }

@@ -18,6 +18,7 @@ class Subscription extends Model
     const STATUS_FAILED = 'failed';
     
     protected $fillable = [
+        'subscription_code',
         'user_id',
         'package_id',
         'sub_package_id',

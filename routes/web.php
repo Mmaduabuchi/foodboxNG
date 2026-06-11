@@ -139,7 +139,11 @@ Route::middleware(['auth', 'user'])->group(function () {
     Route::get('/userprofile', [userprofileController::class, 'index'])->name('userprofile');
     Route::post('/userprofile', [userprofileController::class, 'update'])->name('userprofile.update');
     Route::post('/password/update', [userprofileController::class, 'updatePassword'])->name('password.update');
+    Route::post('/userprofile/upload-image', [userprofileController::class, 'uploadProfileImage'])->name('userprofile.upload-image');
+    Route::post('/userprofile/notifications', [userprofileController::class, 'updateNotifications'])->name('userprofile.notifications');
 
+    
+    //subscriptions
     Route::get('/subscriptions', [subscriptionController::class, 'index'])->name('subscriptions');
 
     //delivery address
@@ -156,11 +160,12 @@ Route::middleware(['auth', 'user'])->group(function () {
     Route::get('/payment_history', [paymenthistoryController::class, 'index'])->name('payment_history');
 
     //manage subscription
-    Route::get('/manage_subscription', [managesubscriptionController::class, 'index'])->name('manage_subscription');
-    Route::post('/subscription/preferences', [managesubscriptionController::class, 'updatePreferences'])->name('subscription.preferences.update');
-    Route::post('/subscription/pause', [managesubscriptionController::class, 'pause'])->name('subscription.pause');
-    Route::post('/subscription/cancel', [managesubscriptionController::class, 'cancel'])->name('subscription.cancel');
-    Route::post('/subscription/frequency', [managesubscriptionController::class, 'updateFrequency'])->name('subscription.frequency.update');
+    Route::get('/manage_subscription/{code}', [managesubscriptionController::class, 'index'])->name('manage_subscription');
+    Route::post('/subscription/preferences/{code}', [managesubscriptionController::class, 'updatePreferences'])->name('subscription.preferences.update');
+    Route::post('/subscription/pause/{code}', [managesubscriptionController::class, 'pause'])->name('subscription.pause');
+    Route::post('/subscription/cancel/{code}', [managesubscriptionController::class, 'cancel'])->name('subscription.cancel');
+    Route::post('/subscription/frequency/{code}', [managesubscriptionController::class, 'updateFrequency'])->name('subscription.frequency.update');
+    Route::post('/subscription/resume/{code}', [managesubscriptionController::class, 'resume'])->name('subscription.resume');
 
     // 2FA routes
     Route::post('/2fa/toggle', [TwoFactorController::class, 'toggle'])->name('2fa.toggle');
