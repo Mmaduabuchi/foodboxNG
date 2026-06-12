@@ -218,55 +218,57 @@
                             $iconClass   = $isPaused ? 'fa-pause-circle text-brand-orange' : 'fa-times-circle text-brand-red';
                             $bgClass     = $isPaused ? 'bg-brand-orange/10' : 'bg-brand-red/10';
                         @endphp
-                        <div class="sub-card bg-white p-6 rounded-2xl shadow-soft flex flex-col sm:flex-row gap-4">
-                            <div class="w-full sm:w-24 h-24 sm:h-auto {{ $bgClass }} rounded-xl flex items-center justify-center flex-shrink-0">
-                                <i class="fas {{ $iconClass }} text-4xl"></i>
-                            </div>
-                            <div class="flex-grow">
-                                <div class="flex justify-between items-start mb-2">
-                                    <h3 class="text-xl font-bold text-brand-blue">
-                                        {{ $subscription->package->name ?? 'Package' }}
-                                    </h3>
-                                    <span class="px-3 py-1 {{ $badgeClass }} text-white text-xs font-semibold rounded-full shadow-sm capitalize">
-                                        {{ $subscription->status }}
-                                    </span>
+                        <a href="{{ route('manage_subscription', $subscription->subscription_code) }}">
+                            <div class="sub-card bg-white p-6 rounded-2xl shadow-soft flex flex-col sm:flex-row gap-4">
+                                <div class="w-full sm:w-24 h-24 sm:h-auto {{ $bgClass }} rounded-xl flex items-center justify-center flex-shrink-0">
+                                    <i class="fas {{ $iconClass }} text-4xl"></i>
                                 </div>
-
-                                <p class="text-2xl font-extrabold text-brand-teal mb-3">
-                                    ₦{{ number_format($subscription->package->price ?? 0, 2) }}
-                                    <span class="text-sm font-medium text-gray-500">/ {{ $subscription->package->billing_cycle ?? 'month' }}</span>
-                                </p>
-
-                                <div class="text-sm text-gray-600 space-y-1 mb-4">
-                                    <p>
-                                        <i class="fas fa-calendar-times text-brand-gold w-4"></i>
-                                        Last Renewal:
-                                        <span class="font-semibold text-brand-blue">
-                                            {{ $subscription->last_renewal_date ? \Carbon\Carbon::parse($subscription->last_renewal_date)->format('M d, Y') : 'N/A' }}
+                                <div class="flex-grow">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h3 class="text-xl font-bold text-brand-blue">
+                                            {{ $subscription->package->name ?? 'Package' }}
+                                        </h3>
+                                        <span class="px-3 py-1 {{ $badgeClass }} text-white text-xs font-semibold rounded-full shadow-sm capitalize">
+                                            {{ $subscription->status }}
                                         </span>
-                                    </p>
-                                    <p>
-                                        <i class="fas fa-truck text-brand-gold w-4"></i>
-                                        Delivery Frequency:
-                                        <span class="font-semibold text-brand-blue capitalize">{{ $subscription->delivery_frequency }}</span>
-                                    </p>
-                                    <p>
-                                        <i class="fas fa-info-circle text-brand-gold w-4"></i>
-                                        Status Info:
-                                        <span class="font-semibold text-brand-red capitalize">
-                                            {{ $isCancelled ? 'Cancelled permanently' : 'Paused by user' }}
-                                        </span>
-                                    </p>
-                                </div>
+                                    </div>
 
-                                <div class="flex flex-col sm:flex-row gap-2 mt-4 pt-4 border-t border-brand-grey">
-                                    @if($isPaused)
-                                        <button class="flex-1 bg-brand-teal text-white py-2 rounded-xl text-sm font-semibold hover:bg-brand-teal/90 transition-colors">Resume Subscription</button>
-                                    @endif
-                                    <button class="flex-1 bg-brand-red/10 text-brand-red py-2 rounded-xl text-sm font-semibold hover:bg-brand-red/20 transition-colors">Cancel Permanently</button>
+                                    <p class="text-2xl font-extrabold text-brand-teal mb-3">
+                                        ₦{{ number_format($subscription->package->price ?? 0, 2) }}
+                                        <span class="text-sm font-medium text-gray-500">/ {{ $subscription->package->billing_cycle ?? 'month' }}</span>
+                                    </p>
+
+                                    <div class="text-sm text-gray-600 space-y-1 mb-4">
+                                        <p>
+                                            <i class="fas fa-calendar-times text-brand-gold w-4"></i>
+                                            Last Renewal:
+                                            <span class="font-semibold text-brand-blue">
+                                                {{ $subscription->last_renewal_date ? \Carbon\Carbon::parse($subscription->last_renewal_date)->format('M d, Y') : 'N/A' }}
+                                            </span>
+                                        </p>
+                                        <p>
+                                            <i class="fas fa-truck text-brand-gold w-4"></i>
+                                            Delivery Frequency:
+                                            <span class="font-semibold text-brand-blue capitalize">{{ $subscription->delivery_frequency }}</span>
+                                        </p>
+                                        <p>
+                                            <i class="fas fa-info-circle text-brand-gold w-4"></i>
+                                            Status Info:
+                                            <span class="font-semibold text-brand-red capitalize">
+                                                {{ $isCancelled ? 'Cancelled permanently' : 'Paused by user' }}
+                                            </span>
+                                        </p>
+                                    </div>
+
+                                    <div class="flex flex-col sm:flex-row gap-2 mt-4 pt-4 border-t border-brand-grey">
+                                        @if($isPaused)
+                                            <button class="flex-1 bg-brand-teal text-white py-2 rounded-xl text-sm font-semibold hover:bg-brand-teal/90 transition-colors">Resume Subscription</button>
+                                        @endif
+                                        <button class="flex-1 bg-brand-red/10 text-brand-red py-2 rounded-xl text-sm font-semibold hover:bg-brand-red/20 transition-colors">Cancel Permanently</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                     @endforeach
                 </div>
             @endif

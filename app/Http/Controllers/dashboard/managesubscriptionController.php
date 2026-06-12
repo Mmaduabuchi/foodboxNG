@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Subscription;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class managesubscriptionController extends Controller
 {
@@ -42,7 +44,10 @@ class managesubscriptionController extends Controller
         $user = Auth::user();
 
         if (!$user) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 401);
         }
 
         $request->validate([
@@ -57,7 +62,10 @@ class managesubscriptionController extends Controller
             ->first();
 
         if (!$subscription) {
-            return response()->json(['message' => 'No active subscription found'], 404);
+            return response()->json([
+                'success' => false,
+                'message' => 'No active subscription found'
+            ], 404);
         }
 
         $subscription->update([
@@ -68,8 +76,9 @@ class managesubscriptionController extends Controller
         ]);
 
         return response()->json([
+            'success' => true,
             'message' => 'Subscription preferences updated successfully',
-            'subscription' => $subscription
+            //'subscription' => $subscription
         ]);
     }
 
@@ -78,22 +87,44 @@ class managesubscriptionController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'duration' => 'required|string',
+            'duration' => 'required|in:1_week,2_weeks,1_month,2_months,indefinite',
         ]);
 
         $subscription = $user->subscriptions()->where('subscription_code', $code)->first();
 
         if (!$subscription) {
-            return response()->json(['message' => 'No active subscription found to pause'], 404);
+            return response()->json([
+                'success' => false,
+                'message' => 'No active subscription found to pause'
+            ], 404);
         }
+
+        if ($subscription->status === Subscription::STATUS_PAUSED) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Subscription is already paused'
+            ], 400);
+        }
+
+        $pauseUntil = match ($request->duration) {
+            '1_week' => now()->addWeek(),
+            '2_weeks' => now()->addWeeks(2),
+            '1_month' => now()->addMonth(),
+            '2_months' => now()->addMonths(2),
+            'indefinite' => null,
+        };
 
         $subscription->update([
             'status' => Subscription::STATUS_PAUSED,
             'paused_at' => now(),
             'pause_duration' => $request->duration,
+            'pause_until' => $pauseUntil,
         ]);
 
+        $subscription->refresh();
+
         return response()->json([
+            'success' => true,
             'message' => 'Subscription paused successfully',
             'subscription' => $subscription
         ]);
@@ -110,7 +141,10 @@ class managesubscriptionController extends Controller
         $subscription = $user->subscriptions()->where('subscription_code', $code)->first();
 
         if (!$subscription) {
-            return response()->json(['message' => 'No active or paused subscription found to cancel'], 404);
+            return response()->json([
+                'success' => false,
+                'message' => 'No active or paused subscription found to cancel'
+            ], 404);
         }
 
         $subscription->update([
@@ -120,8 +154,9 @@ class managesubscriptionController extends Controller
         ]);
 
         return response()->json([
+            'success' => true,
             'message' => 'Subscription cancelled successfully',
-            'subscription' => $subscription
+            //'subscription' => $subscription
         ]);
     }
 
@@ -136,7 +171,10 @@ class managesubscriptionController extends Controller
         $subscription = $user->subscriptions()->where('subscription_code', $code)->first();
 
         if (!$subscription) {
-            return response()->json(['message' => 'No active subscription found'], 404);
+            return response()->json([
+                'success' => false,
+                'message' => 'No active subscription found'
+            ], 404);
         }
 
         $subscription->update([
@@ -144,8 +182,9 @@ class managesubscriptionController extends Controller
         ]);
 
         return response()->json([
+            'success' => true,
             'message' => 'Delivery frequency updated successfully',
-            'subscription' => $subscription
+            //'subscription' => $subscription
         ]);
     }
 
@@ -168,19 +207,37 @@ class managesubscriptionController extends Controller
         if ($subscription->status !== Subscription::STATUS_PAUSED) {
             return response()->json([
                 'success' => false,
-                'message' => 'Subscription is not paused'
+                'message' => 'Only paused subscriptions can be resumed'
             ], 400);
         }
 
-        $subscription->update([
-            'status' => Subscription::STATUS_ACTIVE,
-            'resumed_at' => now(),
-        ]);
+        try {
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Subscription resumed successfully',
-            'subscription' => $subscription
-        ]);
+            $pausedDays = now()->diffInDays($subscription->paused_at);
+
+            $subscription->update([
+                'status' => Subscription::STATUS_ACTIVE,
+                'next_renewal_date' => $subscription->next_renewal_date->addDays($pausedDays),
+                'last_renewal_date' => now(),
+                'paused_at' => null,
+                'pause_duration' => null,
+                'pause_until' => null,
+            ]);
+
+            // $subscription->refresh();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Subscription resumed successfully',
+                //'subscription' => $subscription
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Subscription resume error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }

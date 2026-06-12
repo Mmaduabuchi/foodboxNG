@@ -203,6 +203,29 @@
             </a>
         </div>
 
+        @if($activeSubscription->status === 'paused')
+            <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 mb-5">
+                <div class="flex items-center">
+                    <i class="fas fa-pause-circle text-amber-600 mr-2"></i>
+                    <span class="font-semibold text-amber-800">
+                        Subscription Paused
+                    </span>
+                </div>
+
+                @if($activeSubscription->pause_until)
+                    <p class="text-sm text-amber-700 mt-2">
+                        This subscription is paused until
+                        <strong>{{ $activeSubscription->pause_until->format('M d, Y') }}</strong>.
+                        No renewals or deliveries will occur during this period.
+                    </p>
+                @else
+                    <p class="text-sm text-amber-700 mt-2">
+                        This subscription is paused indefinitely and requires manual resumption.
+                    </p>
+                @endif
+            </div>
+        @endif
+
         <!-- SECTION 1: Active Plan Hero Card -->
         <div class="plan-card rounded-3xl p-6 md:p-8 mb-8 shadow-xl-heavy">
             <div class="relative z-10 flex flex-col lg:flex-row justify-between items-start gap-6">
@@ -400,7 +423,7 @@
                         </button>
                     @endif
 
-                    @if($activeSubscription->cancelled_at === null)
+                    @if($activeSubscription->cancelled_at === null && $activeSubscription->paused_at === null)
                         <button onclick="openModal('pauseModal')"
                             class="action-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-orange/10 text-brand-orange font-semibold text-sm hover:bg-brand-orange/20 transition-colors">
                             <i class="fas fa-pause-circle w-4 text-center"></i>
@@ -408,7 +431,7 @@
                         </button>
                     @endif
 
-                    @if($activeSubscription->cancelled_at !== null)
+                    @if($activeSubscription->cancelled_at !== null || $activeSubscription->paused_at !== null)
                         <button onclick="openModal('resumeModal')"
                             class="action-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-teal/10 text-brand-green font-semibold text-sm hover:bg-brand-green/20 transition-colors">
                             <i class="fas fa-play-circle w-4 text-center"></i>
@@ -593,10 +616,10 @@
             <div class="mb-5">
                 <label class="block text-sm font-semibold text-brand-blue mb-2">Pause Duration</label>
                 <select id="pauseDurationVal" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-brand-blue focus:border-brand-teal focus:outline-none transition-all text-sm">
-                    <option value="1 week">1 week</option>
-                    <option value="2 weeks">2 weeks</option>
-                    <option value="1 month" selected>1 month</option>
-                    <option value="2 months">2 months</option>
+                    <option value="1_week">1 week</option>
+                    <option value="2_weeks">2 weeks</option>
+                    <option value="1_month" selected>1 month</option>
+                    <option value="2_months">2 months</option>
                     <option value="indefinite">Until I resume manually</option>
                 </select>
             </div>
@@ -715,7 +738,7 @@
             <input type="hidden" name="subscription_code" id="resume_subscription_code" value="{{ $activeSubscription->subscription_code }}">
             <div class="flex gap-3 p-4 bg-gray-50">
                 <button onclick="closeModal('resumeModal')" class="flex-1 py-3 rounded-xl border-2 border-gray-200 text-brand-blue font-semibold text-sm hover:bg-gray-100 transition-colors">Cancel</button>
-                <button onclick="submitResume()" class="flex-1 py-3 rounded-xl bg-brand-teal text-white font-semibold text-sm hover:bg-brand-teal/90 transition-colors shadow-sm-brand">
+                <button id="resumeBtn" onclick="submitResume()" class="flex-1 py-3 rounded-xl bg-brand-teal text-white font-semibold text-sm hover:bg-brand-teal/90 transition-colors shadow-sm-brand">
                     <i class="fas fa-check mr-2"></i> Resume Subscription
                 </button>
             </div>
@@ -843,17 +866,23 @@
             })
             .then(res => res.json())
             .then(res => {
-                // alert(res.message);
-                btn.innerHTML = '<i class="fas fa-check mr-2"></i> Saved!';
-                btn.classList.remove('bg-brand-teal');
-                btn.classList.add('bg-green-500');
-                setTimeout(() => {
-                    btn.innerHTML = '<i class="fas fa-save mr-2"></i> Save Preferences';
-                    btn.classList.remove('bg-green-500');
-                    btn.classList.add('bg-brand-teal');
-                }, 2500);
-                // btn.innerHTML = '<i class="fas fa-save"></i> Save Preferences';
-                btn.disabled = false;
+                if (res.success) {
+                    // alert(res.message);
+                    btn.innerHTML = '<i class="fas fa-check mr-2"></i> Saved!';
+                    btn.classList.remove('bg-brand-teal');
+                    btn.classList.add('bg-green-500');
+                    setTimeout(() => {
+                        btn.innerHTML = '<i class="fas fa-save mr-2"></i> Save Preferences';
+                        btn.classList.remove('bg-green-500');
+                        btn.classList.add('bg-brand-teal');
+                    }, 2500);
+                    // btn.innerHTML = '<i class="fas fa-save"></i> Save Preferences';
+                    btn.disabled = false;
+                } else {
+                    showToast('error', res.message);
+                    btn.innerHTML = '<i class="fas fa-save"></i> Save Preferences';
+                    btn.disabled = false;
+                }
             })
             .catch(err => {
                 console.error(err);
@@ -881,11 +910,17 @@
             })
             .then(res => res.json())
             .then(res => {
-                closeModal('pauseModal');
-                showToast('success', res.message);
-                setTimeout(() => {
-                    location.reload();
-                }, 1500);
+                if(res.success) {
+                    closeModal('pauseModal');
+                    showToast('success', res.message);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showToast('error', res.message);
+                    btn.innerHTML = '<i class="fas fa-pause mr-2"></i> Pause Now';
+                    btn.disabled = false;
+                }
             })
             .catch(err => {
                 console.error(err);
@@ -912,11 +947,17 @@
             })
             .then(res => res.json())
             .then(res => {
-                closeModal('cancelModal');
-                showToast('success', res.message);
-                setTimeout(() => {
-                    location.reload();
-                }, 1500);
+                if(res.success) {
+                    closeModal('cancelModal');
+                    showToast('success', res.message);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showToast('error', res.message);
+                    btn.innerHTML = '<i class="fas fa-times mr-2"></i> Cancel Subscription';
+                    btn.disabled = false;
+                }
             })
             .catch(err => {
                 console.error(err);
@@ -945,11 +986,17 @@
             })
             .then(res => res.json())
             .then(res => {
-                closeModal('changeFreqModal');
-                showToast('success', res.message);
-                setTimeout(() => {
-                    location.reload();
-                }, 1500);
+                if(res.success) {
+                    closeModal('changeFreqModal');
+                    showToast('success', res.message);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showToast('error', res.message);
+                    btn.innerHTML = '<i class="fas fa-check mr-2"></i> Apply Change';
+                    btn.disabled = false;
+                }
             })
             .catch(err => {
                 console.error(err);
@@ -976,11 +1023,17 @@
             })
             .then(res => res.json())
             .then(res => {
-                closeModal('resumeModal');
-                showToast('success', res.message);
-                setTimeout(() => {
-                    location.reload();
-                }, 1500);
+                if(res.success){
+                    closeModal('resumeModal');
+                    showToast('success', res.message);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showToast('error', res.message);
+                    btn.innerHTML = '<i class="fas fa-check mr-2"></i> Resume Subscription';
+                    btn.disabled = false;
+                }
             })
             .catch(err => {
                 console.error(err);

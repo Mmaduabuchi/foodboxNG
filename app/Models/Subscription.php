@@ -31,6 +31,7 @@ class Subscription extends Model
         'last_renewal_date',
         'paused_at',
         'pause_duration',
+        'pause_until',
         'cancelled_at',
         'cancel_reason',
     ];
@@ -39,6 +40,7 @@ class Subscription extends Model
         'next_renewal_date' => 'datetime',
         'last_renewal_date' => 'datetime',
         'paused_at' => 'datetime',
+        'pause_until' => 'datetime',
         'cancelled_at' => 'datetime',
     ];
 
