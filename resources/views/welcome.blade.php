@@ -249,95 +249,62 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 
-                <!-- Card 1: Student -->
-                <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-300 group flex flex-col h-full">
-                    <div class="relative h-48 overflow-hidden">
-                        <div class="absolute top-4 right-4 z-10 bg-brand-gold text-brand-blue text-xs font-bold px-3 py-1 rounded-full">Best Value</div>
-                        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80" alt="Student Pack" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                        <h3 class="text-xl font-bold text-brand-blue">Student Starter</h3>
-                        <p class="text-gray-500 text-sm mt-2 mb-4">Perfect for heavy deadlines. Instant food & essentials.</p>
-                        
-                        <ul class="space-y-2 mb-6 text-sm text-gray-600">
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 1 Carton Noodles</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 2kg Garri Ijebu</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> Milk & Sugar Pack</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 1L Groundnut Oil</li>
-                        </ul>
-
-                        <div class="mt-auto pt-4 border-t border-gray-100">
-                            <!-- <div class="flex justify-between items-center mb-4">
-                                <span class="text-gray-400 text-sm">Monthly</span>
-                                <span class="text-2xl font-bold text-brand-blue">₦18,500</span>
-                            </div> -->
-                            <a href="{{ route('student_packages') }}">
-                                <button class="w-full py-3 rounded-xl border-2 border-brand-blue text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition-colors">Explore Packages</button>
-                            </a>
+                @foreach($packages as $package)
+                    @if(strtolower($package->category) == 'family')
+                        <!-- Family Standard (Featured) -->
+                        <div class="bg-brand-blue rounded-3xl overflow-hidden shadow-2xl hover:-translate-y-2 transition-all duration-300 transform md:-mt-4 md:mb-4 relative flex flex-col h-full">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-gold to-brand-teal"></div>
+                            <div class="relative h-48 overflow-hidden">
+                                <div class="absolute top-4 left-4 z-10 bg-brand-teal text-white text-xs font-bold px-3 py-1 rounded-full">Most Popular</div>
+                                <img src="{{ asset('assets/images/' . $package->image) }}" alt="{{ $package->name }}" class="w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-500">
+                            </div>
+                            <div class="p-6 flex-1 flex flex-col">
+                                <h3 class="text-xl font-bold text-white">{{ $package->name }}</h3>
+                                <p class="text-gray-300 text-sm mt-2 mb-4">{{ $package->description }}</p>
+                                
+                                <div class="mt-auto pt-4 border-t border-gray-600">
+                                    <a href="{{ route('family_packages') }}">
+                                        <button class="w-full py-3 rounded-xl bg-brand-gold text-brand-blue font-bold hover:bg-white transition-colors shadow-lg">Explore Packages</button>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    @else
+                        <!-- Other Packages -->
+                        <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-300 group flex flex-col h-full">
+                            <div class="relative h-48 overflow-hidden">
+                                @if(strtolower($package->category) == 'student')
+                                    <div class="absolute top-4 right-4 z-10 bg-brand-gold text-brand-blue text-xs font-bold px-3 py-1 rounded-full">Best Value</div>
+                                @endif
+                                <img src="{{ asset('assets/images/' . $package->image) }}" alt="{{ $package->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            </div>
+                            <div class="p-6 flex-1 flex flex-col">
+                                <h3 class="text-xl font-bold text-brand-blue">{{ $package->name }}</h3>
+                                <p class="text-gray-500 text-sm mt-2 mb-4">{{ $package->description }}</p>
 
-                <!-- Card 2: Family Standard (Featured) -->
-                <div class="bg-brand-blue rounded-3xl overflow-hidden shadow-2xl hover:-translate-y-2 transition-all duration-300 transform md:-mt-4 md:mb-4 relative flex flex-col h-full">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-gold to-brand-teal"></div>
-                    <div class="relative h-48 overflow-hidden">
-                        <div class="absolute top-4 left-4 z-10 bg-brand-teal text-white text-xs font-bold px-3 py-1 rounded-full">Most Popular</div>
-                        <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80" alt="Family Pack" class="w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-500">
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                        <h3 class="text-xl font-bold text-white">Family Standard</h3>
-                        <p class="text-gray-300 text-sm mt-2 mb-4">The monthly staple for a family of 3-4.</p>
-                        
-                        <ul class="space-y-2 mb-6 text-sm text-gray-300">
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-gold"></i> 25kg Rice (Premium)</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-gold"></i> 5kg Beans (Oloyin)</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-gold"></i> 5L Vegetable Oil</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-gold"></i> 1 Crate of Eggs</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-gold"></i> Spices Combo</li>
-                        </ul>
-
-                        <div class="mt-auto pt-4 border-t border-gray-600">
-                            <!-- <div class="flex justify-between items-center mb-4">
-                                <span class="text-gray-300 text-sm">Monthly</span>
-                                <span class="text-2xl font-bold text-brand-gold">₦65,000</span>
-                            </div> -->
-                            <a href="{{ route('family_packages') }}">
-                                <button class="w-full py-3 rounded-xl bg-brand-gold text-brand-blue font-bold hover:bg-white transition-colors shadow-lg">Explore Packages</button>
-                            </a>
+                                <ul class="space-y-2 mb-6 text-sm text-gray-600">
+                                    @foreach($package->subPackages as $subPackage)
+                                        <li class="flex items-center gap-2">
+                                            <i class="fas fa-check text-brand-teal"></i> 
+                                            {{ $subPackage->name }}
+                                        </li>
+                                    @endforeach
+                                </ul>
+                                
+                                <div class="mt-auto pt-4 border-t border-gray-100">
+                                    @php
+                                        $routeName = strtolower($package->category) . '_packages';
+                                    @endphp
+                                    <a href="{{ Route::has($routeName) ? route($routeName) : route('coming_soon') }}">
+                                        <button class="w-full py-3 rounded-xl border-2 border-brand-blue text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition-colors">Explore Packages</button>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    @endif
+                @endforeach
 
-                <!-- Card 3: Single Professional -->
-                <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-300 group flex flex-col h-full">
-                    <div class="relative h-48 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=600&q=80" alt="Single Pack" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                        <h3 class="text-xl font-bold text-brand-blue">The Bachelor</h3>
-                        <p class="text-gray-500 text-sm mt-2 mb-4">Quick meals for the busy working class.</p>
-                        
-                        <ul class="space-y-2 mb-6 text-sm text-gray-600">
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 5kg Rice</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 2kg Semovita</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 1 Carton Spaghetti</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> Tomato Paste Pack</li>
-                        </ul>
-
-                        <div class="mt-auto pt-4 border-t border-gray-100">
-                            <!-- <div class="flex justify-between items-center mb-4">
-                                <span class="text-gray-400 text-sm">Monthly</span>
-                                <span class="text-2xl font-bold text-brand-blue">₦32,000</span>
-                            </div> -->
-                            <a href="{{ route('bachelor_packages') }}">
-                                <button class="w-full py-3 rounded-xl border-2 border-brand-blue text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition-colors">Explore Packages</button>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                 <!-- Card 4: Custom Jumbo -->
+                 <!-- Card: Custom Jumbo -->
                  <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-300 group flex flex-col h-full">
                     <div class="relative h-48 overflow-hidden bg-brand-grey flex items-center justify-center">
                          <i class="fas fa-shopping-basket text-6xl text-gray-300 group-hover:text-brand-teal transition-colors"></i>

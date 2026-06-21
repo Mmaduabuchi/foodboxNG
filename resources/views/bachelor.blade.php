@@ -161,239 +161,98 @@
                    <span class="text-sm text-gray-500">Save 10% on monthly subscriptions!</span>
                 </div>
             </div>
+            
+            @php
+                $hasSubPackages = false;
+                foreach($bachelorPackages as $package) {
+                    if($package->subPackages->count() > 0) {
+                        $hasSubPackages = true;
+                        break;
+                    }
+                }
+            @endphp
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                
-                <!-- Card 1: Student -->
-                <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-300 group flex flex-col h-full">
-                    <div class="relative h-48 overflow-hidden">
-                        <div class="absolute top-4 right-4 z-10 bg-brand-gold text-brand-blue text-xs font-bold px-3 py-1 rounded-full">Best Value</div>
-                        <img src="https://images.unsplash.com/photo-1612929633738-8fe01f7c2725?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Student Pack" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+            @if(!$hasSubPackages)
+                <div class="py-20 text-center flex flex-col items-center justify-center bg-gray-50 rounded-3xl border border-gray-100">
+                    <div class="w-24 h-24 bg-white shadow-sm rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-box-open text-4xl text-gray-300"></i>
                     </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                        <h3 class="text-xl font-bold text-brand-blue">Student Starter</h3>
-                        <p class="text-gray-500 text-sm mt-2 mb-4">Perfect for heavy deadlines. Instant food & essentials.</p>
-                        
-                        <ul class="space-y-2 mb-6 text-sm text-gray-600">
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 1 Carton Noodles</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 2kg Garri Ijebu</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> Milk & Sugar Pack</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 1L Groundnut Oil</li>
-                        </ul>
-
-                        <div class="mt-auto pt-4 border-t border-gray-100">
-                            <div class="flex justify-between items-center mb-4">
-                                <span class="text-gray-400 text-sm">Monthly</span>
-                                <span class="text-2xl font-bold text-brand-blue">₦18,500</span>
-                            </div>
-                            <button class="w-full py-3 rounded-xl border-2 border-brand-blue text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition-colors">Add to Cart</button>
-                        </div>
-                    </div>
+                    <h3 class="text-2xl font-bold text-brand-blue mb-2">No Sub Packages Available</h3>
+                    <p class="text-gray-500 max-w-md mx-auto">There are no sub packages available at the moment. We are constantly updating our inventory, please check back later!</p>
                 </div>
+            @else
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    @foreach($bachelorPackages as $package)
+                        @foreach($package->subPackages as $index => $subPackage)
+                            @if($index == 1)
+                                <!-- Featured Card (Most Popular) -->
+                                <div class="bg-brand-blue rounded-3xl overflow-hidden shadow-2xl hover:-translate-y-2 transition-all duration-300 transform md:-mt-4 md:mb-4 relative flex flex-col h-full">
+                                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-gold to-brand-teal"></div>
+                                    <div class="relative h-48 overflow-hidden">
+                                        <div class="absolute top-4 left-4 z-10 bg-brand-teal text-white text-xs font-bold px-3 py-1 rounded-full">Most Popular</div>
+                                        <img src="{{ $subPackage->image ? asset('assets/images/' . $subPackage->image) : 'https://images.unsplash.com/photo-1586201375761-83865001e31c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' }}" alt="{{ $subPackage->name }}" class="w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-500">
+                                    </div>
+                                    <div class="p-6 flex-1 flex flex-col">
+                                        <h3 class="text-xl font-bold text-white">{{ $subPackage->name }}</h3>
+                                        <p class="text-gray-300 text-sm mt-2 mb-4">{{ $subPackage->description }}</p>
+                                        
+                                        <ul class="space-y-2 mb-6 text-sm text-gray-300">
+                                            @foreach($subPackage->items as $item)
+                                                <li class="flex items-center gap-2">
+                                                    <i class="fas fa-check text-brand-gold"></i> 
+                                                    {{ $item->quantity }} {{ $item->unit }} {{ $item->item_name }}
+                                                </li>
+                                            @endforeach
+                                        </ul>
 
-                <!-- Card 2: Semester Bulk Pack (Featured) -->
-                <div class="bg-brand-blue rounded-3xl overflow-hidden shadow-2xl hover:-translate-y-2 transition-all duration-300 transform md:-mt-4 md:mb-4 relative flex flex-col h-full">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-gold to-brand-teal"></div>
-                    <div class="relative h-48 overflow-hidden">
-                         <div class="absolute top-4 left-4 z-10 bg-brand-teal text-white text-xs font-bold px-3 py-1 rounded-full">Most Popular</div>
-                        <img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Semester Bulk Pack" class="w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-500">
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                        <h3 class="text-xl font-bold text-white">Semester Bulk Pack</h3>
-                        <p class="text-gray-300 text-sm mt-2 mb-4">The perfect bulk stash for the whole semester.</p>
-                        
-                        <ul class="space-y-2 mb-6 text-sm text-gray-300">
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-gold"></i> 25kg Rice (Premium)</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-gold"></i> 5kg Beans (Oloyin)</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-gold"></i> 5L Vegetable Oil</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-gold"></i> 1 Carton Spaghetti</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-gold"></i> Canned Sardines & Geisha</li>
-                        </ul>
+                                        <div class="mt-auto pt-4 border-t border-gray-600">
+                                            <div class="flex justify-between items-center mb-4">
+                                                <span class="text-gray-300 text-sm capitalize">{{ $subPackage->billing_cycle }}</span>
+                                                <span class="text-2xl font-bold text-brand-gold">₦{{ number_format($subPackage->price, 0) }}</span>
+                                            </div>
+                                            <button class="w-full py-3 rounded-xl bg-brand-gold text-brand-blue font-bold hover:bg-white transition-colors shadow-lg">Subscribe Now</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            @else
+                                <!-- Standard Card -->
+                                <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-300 group flex flex-col h-full">
+                                    <div class="relative h-48 overflow-hidden">
+                                        @if($index == 0)
+                                            <div class="absolute top-4 right-4 z-10 bg-brand-gold text-brand-blue text-xs font-bold px-3 py-1 rounded-full">Best Value</div>
+                                        @endif
+                                        <img src="{{ $subPackage->image ? asset('assets/images/' . $subPackage->image) : 'https://images.unsplash.com/photo-1612929633738-8fe01f7c2725?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' }}" alt="{{ $subPackage->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                    </div>
+                                    <div class="p-6 flex-1 flex flex-col">
+                                        <h3 class="text-xl font-bold text-brand-blue">{{ $subPackage->name }}</h3>
+                                        <p class="text-gray-500 text-sm mt-2 mb-4">{{ $subPackage->description }}</p>
+                                        
+                                        <ul class="space-y-2 mb-6 text-sm text-gray-600">
+                                            @foreach($subPackage->items as $item)
+                                                <li class="flex items-center gap-2">
+                                                    <i class="fas fa-check text-brand-teal"></i> 
+                                                    {{ $item->quantity }} {{ $item->unit }} {{ $item->item_name }}
+                                                </li>
+                                            @endforeach
+                                        </ul>
 
-                        <div class="mt-auto pt-4 border-t border-gray-600">
-                            <div class="flex justify-between items-center mb-4">
-                                <span class="text-gray-300 text-sm">Monthly</span>
-                                <span class="text-2xl font-bold text-brand-gold">₦65,000</span>
-                            </div>
-                            <button class="w-full py-3 rounded-xl bg-brand-gold text-brand-blue font-bold hover:bg-white transition-colors shadow-lg">Subscribe Now</button>
-                        </div>
-                    </div>
+                                        <div class="mt-auto pt-4 border-t border-gray-100">
+                                            <div class="flex justify-between items-center mb-4">
+                                                <span class="text-gray-400 text-sm capitalize">{{ $subPackage->billing_cycle }}</span>
+                                                <span class="text-2xl font-bold text-brand-blue">₦{{ number_format($subPackage->price, 0) }}</span>
+                                            </div>
+                                            <button class="w-full py-3 rounded-xl border-2 border-brand-blue text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition-colors">Add to Cart</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
+                    @endforeach
                 </div>
+            @endif   
 
-                <!-- Card 3: Hostel Essentials -->
-                <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-300 group flex flex-col h-full">
-                    <div class="relative h-48 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1596450514735-1151fcfa115c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Hostel Pack" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                        <h3 class="text-xl font-bold text-brand-blue">Hostel Essentials</h3>
-                        <p class="text-gray-500 text-sm mt-2 mb-4">Quick and easy non-perishable meals for daily survival.</p>
-                        
-                        <ul class="space-y-2 mb-6 text-sm text-gray-600">
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 5kg Rice</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 2kg Semovita</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 1/2 Carton Spaghetti</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> Tin Tomatoes Pack</li>
-                        </ul>
-
-                        <div class="mt-auto pt-4 border-t border-gray-100">
-                            <div class="flex justify-between items-center mb-4">
-                                <span class="text-gray-400 text-sm">Monthly</span>
-                                <span class="text-2xl font-bold text-brand-blue">₦32,000</span>
-                            </div>
-                            <button class="w-full py-3 rounded-xl border-2 border-brand-blue text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition-colors">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
-
-                 <!-- Card 4: Custom Jumbo -->
-                 <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-300 group flex flex-col h-full">
-                    <div class="relative h-48 overflow-hidden bg-brand-grey flex items-center justify-center">
-                         <i class="fas fa-shopping-basket text-6xl text-gray-300 group-hover:text-brand-teal transition-colors"></i>
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                        <h3 class="text-xl font-bold text-brand-blue">Campus Survival Pack</h3>
-                        <p class="text-gray-500 text-sm mt-2 mb-4">Quick and easy non-perishable meals for daily survival.</p>
-                        
-                        <ul class="space-y-2 mb-6 text-sm text-gray-600">
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 5kg Rice</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 2kg Semovita</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 1/2 Carton Spaghetti</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> Tin Tomatoes Pack</li>
-                        </ul>
-
-                        <div class="mt-auto pt-4 border-t border-gray-100">
-                            <div class="flex justify-between items-center mb-4">
-                                <span class="text-gray-400 text-sm">Monthly</span>
-                                <span class="text-2xl font-bold text-brand-blue">₦32,000</span>
-                            </div>
-                            <button class="w-full py-3 rounded-xl border-2 border-brand-blue text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition-colors">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
         </div>
     </section>
-
-
-
-
-    <section id="packages" class="py-20 bg-white relative">
-        <div class="container mx-auto px-6">
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                
-                <!-- Card 1: Student -->
-                <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-300 group flex flex-col h-full">
-                    <div class="relative h-48 overflow-hidden">
-                        <div class="absolute top-4 right-4 z-10 bg-brand-gold text-brand-blue text-xs font-bold px-3 py-1 rounded-full">Best Value</div>
-                        <img src="https://images.unsplash.com/photo-1612929633738-8fe01f7c2725?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Student Pack" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                        <h3 class="text-xl font-bold text-brand-blue">Campus Survival Pack</h3>
-                        <p class="text-gray-500 text-sm mt-2 mb-4">Perfect for heavy deadlines. Instant food & essentials.</p>
-                        
-                        <ul class="space-y-2 mb-6 text-sm text-gray-600">
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 1 Carton Noodles</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 2kg Garri Ijebu</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> Milk & Sugar Pack</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 1L Groundnut Oil</li>
-                        </ul>
-
-                        <div class="mt-auto pt-4 border-t border-gray-100">
-                            <div class="flex justify-between items-center mb-4">
-                                <span class="text-gray-400 text-sm">Monthly</span>
-                                <span class="text-2xl font-bold text-brand-blue">₦18,500</span>
-                            </div>
-                            <button class="w-full py-3 rounded-xl border-2 border-brand-blue text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition-colors">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 2: Semester Bulk Pack (Featured) -->
-                <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-300 group flex flex-col h-full">
-                    <div class="relative h-48 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Semester Bulk Pack" class="w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-500">
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                        <h3 class="text-xl font-bold text-brand-blue">Campus Survival Pack</h3>
-                        <p class="text-gray-500 text-sm mt-2 mb-4">The perfect bulk stash for the whole semester.</p>
-                        
-                        <ul class="space-y-2 mb-6 text-sm text-gray-600">
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 25kg Rice (Premium)</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 5kg Beans (Oloyin)</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 5L Vegetable Oil</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 1 Carton Spaghetti</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> Canned Sardines & Geisha</li>
-                        </ul>
-
-                        <div class="mt-auto pt-4 border-t border-gray-600">
-                            <div class="flex justify-between items-center mb-4">
-                                <span class="text-gray-300 text-sm">Monthly</span>
-                                <span class="text-2xl font-bold text-brand-blue">₦65,000</span>
-                            </div>
-                            <button class="w-full py-3 rounded-xl border-2 border-brand-blue text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition-colors">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 3: Hostel Essentials -->
-                <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-300 group flex flex-col h-full">
-                    <div class="relative h-48 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1596450514735-1151fcfa115c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Hostel Pack" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                        <h3 class="text-xl font-bold text-brand-blue">Student Value Bundle</h3>
-                        <p class="text-gray-500 text-sm mt-2 mb-4">Quick and easy non-perishable meals for daily survival.</p>
-                        
-                        <ul class="space-y-2 mb-6 text-sm text-gray-600">
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 5kg Rice</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 2kg Semovita</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> 1/2 Carton Spaghetti</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> Tin Tomatoes Pack</li>
-                        </ul>
-
-                        <div class="mt-auto pt-4 border-t border-gray-100">
-                            <div class="flex justify-between items-center mb-4">
-                                <span class="text-gray-400 text-sm">Monthly</span>
-                                <span class="text-2xl font-bold text-brand-blue">₦32,000</span>
-                            </div>
-                            <button class="w-full py-3 rounded-xl border-2 border-brand-blue text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition-colors">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
-
-                 <!-- Card 4: Custom Jumbo -->
-                 <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-300 group flex flex-col h-full">
-                    <div class="relative h-48 overflow-hidden bg-brand-grey flex items-center justify-center">
-                         <i class="fas fa-shopping-basket text-6xl text-gray-300 group-hover:text-brand-teal transition-colors"></i>
-                    </div>
-                    <div class="p-6 flex-1 flex flex-col">
-                        <h3 class="text-xl font-bold text-brand-blue">Build Your Own</h3>
-                        <p class="text-gray-500 text-sm mt-2 mb-4">Select exactly what you need for your hostel stash.</p>
-                        
-                        <ul class="space-y-2 mb-6 text-sm text-gray-600">
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> Full Customization</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> Flexible Quantities</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> Provisions (Beverages, Cereals)</li>
-                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> Canned Foods (Sardines, Tomatoes)</li>
-                        </ul>
-
-                        <div class="mt-auto pt-4 border-t border-gray-100">
-                            <div class="flex justify-between items-center mb-4">
-                                <span class="text-gray-400 text-sm">From</span>
-                                <span class="text-2xl font-bold text-brand-blue">₦10,000</span>
-                            </div>
-                            <button class="w-full py-3 rounded-xl border-2 border-brand-teal text-brand-teal font-bold hover:bg-brand-teal hover:text-white transition-colors">Customize</button>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
     
 
     <!-- Footer -->

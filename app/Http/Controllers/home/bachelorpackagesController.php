@@ -3,12 +3,23 @@
 namespace App\Http\Controllers\home;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\Package;
 
 class bachelorpackagesController extends Controller
 {
-    //
-    public function index(){
-        return view('bachelor');
+    public function index()
+    {
+        $bachelorPackages = Package::where('category', 'bachelor')
+            ->with([
+                'subPackages' => function ($query) {
+
+                    $query->where('status', 'active')
+                        ->where('is_available', 1)
+                        ->with('items');
+                }
+            ])
+            ->get();
+
+        return view('bachelor', compact('bachelorPackages'));
     }
 }

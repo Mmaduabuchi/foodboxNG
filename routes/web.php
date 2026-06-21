@@ -40,12 +40,10 @@ use App\Http\Controllers\superadmin\managePackagesController;
 use App\Http\Controllers\superadmin\staffController;
 use App\Http\Controllers\superadmin\PackageItemController;
 use App\Http\Controllers\superadmin\subpackagesController;
+use App\Http\Controllers\home\welcomeController;
 
 
-
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', [welcomeController::class, 'index'])->name('home');
 
 Route::get('/careers', function () {
     return view('careers');
