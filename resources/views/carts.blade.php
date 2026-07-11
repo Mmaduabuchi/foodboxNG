@@ -99,7 +99,7 @@
         </div>
     </div>
 
-    <!-- ===== CHECKOUT PROGRESS STEPS ===== -->
+    <!-- CHECKOUT PROGRESS STEPS -->
     <div class="bg-white border-b border-gray-100 py-5">
         <div class="container mx-auto px-6">
             <div class="flex items-center justify-center max-w-lg mx-auto">
@@ -133,7 +133,7 @@
         </div>
     </div>
 
-    <!-- ===== MAIN CART CONTENT ===== -->
+    <!-- MAIN CART CONTENT -->
     <section class="py-12">
         <div class="container mx-auto px-6">
 
@@ -142,7 +142,7 @@
                 <span id="cartBadge" class="bg-brand-teal text-white text-sm font-bold px-3 py-1 rounded-full">3 items</span>
             </div>
 
-            <!-- ===== CART ITEMS + SUMMARY GRID ===== -->
+            <!-- CART ITEMS + SUMMARY GRID -->
             <div class="flex flex-col lg:flex-row gap-8 items-start">
 
                 <!-- LEFT: Cart Items -->
@@ -354,7 +354,7 @@
                 </div>
             </div>
 
-            <!-- ===== EMPTY CART STATE (hidden by default) ===== -->
+            <!-- EMPTY CART STATE (hidden by default) -->
             <div id="emptyCart" class="hidden py-24 text-center">
                 <div class="cart-icon-empty inline-block mb-6">
                     <div class="w-28 h-28 rounded-full bg-brand-teal/10 flex items-center justify-center mx-auto">
@@ -370,7 +370,7 @@
         </div>
     </section>
 
-    <!-- ===== YOU MIGHT ALSO LIKE ===== -->
+    <!-- YOU MIGHT ALSO LIKE -->
     <section id="suggestionsSection" class="py-16 bg-white">
         <div class="container mx-auto px-6">
             <div class="flex items-center justify-between mb-10">
@@ -460,7 +460,7 @@
         </div>
     </section>
 
-    <!-- ===== TOAST NOTIFICATION ===== -->
+    <!-- TOAST NOTIFICATION -->
     <div id="cartToast" class="fixed bottom-8 right-8 bg-brand-blue text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 translate-y-24 opacity-0 transition-all duration-500 z-50 max-w-xs">
         <div class="w-10 h-10 rounded-xl bg-brand-teal flex items-center justify-center flex-shrink-0">
             <i class="fas fa-check text-white"></i>
@@ -477,13 +477,43 @@
     <!-- Footer -->
     @include('layouts.footer')
 
-    <!-- ===== SCRIPTS ===== -->
+    <!-- SCRIPTS -->
     <script>
-        /* ======== STATE ======== */
+        // Mobile Menu Toggle
+        function toggleMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const icon = document.getElementById('menuIcon');
+            
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                menu.classList.add('hidden');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        }
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('shadow-md');
+                navbar.classList.replace('py-4', 'py-2');
+            } else {
+                navbar.classList.remove('shadow-md');
+                navbar.classList.replace('py-2', 'py-4');
+            }
+        });
+
+
+
+        /* STATE */
         const PROMO_CODES = { 'FOODBOX10': 10, 'STUDENT5': 5 };
         let activePromo = null;
 
-        /* ======== UTILS ======== */
+        /* UTILS */
         function formatNaira(n) {
             return '₦' + n.toLocaleString('en-NG');
         }
@@ -534,7 +564,7 @@
             }
         }
 
-        /* ======== QTY CHANGE ======== */
+        /* QTY CHANGE */
         function changeQty(btn, delta) {
             const item = btn.closest('.cart-item');
             const display = item.querySelector('.qty-display');
@@ -545,7 +575,7 @@
             recalc();
         }
 
-        /* ======== REMOVE ITEM ======== */
+        /* REMOVE ITEM */
         function removeItem(btn) {
             const item = btn.closest('.cart-item');
             item.classList.add('removing');
@@ -556,7 +586,7 @@
             }, 400);
         }
 
-        /* ======== CLEAR CART ======== */
+        /* CLEAR CART */
         function clearCart() {
             if (!confirm('Are you sure you want to clear your cart?')) return;
             document.querySelectorAll('.cart-item').forEach(item => item.classList.add('removing'));
@@ -566,7 +596,7 @@
             }, 400);
         }
 
-        /* ======== PROMO CODE ======== */
+        /* PROMO CODE */
         function applyPromo() {
             const code = document.getElementById('promoInput').value.trim().toUpperCase();
             const msg = document.getElementById('promoMsg');
@@ -585,16 +615,16 @@
             recalc();
         }
 
-        /* ======== CHECKOUT ======== */
+        /* CHECKOUT */
         function proceedCheckout() {
             const btn = document.getElementById('checkoutBtn');
             btn.classList.add('opacity-70', 'cursor-not-allowed');
             btn.innerHTML = '<i class="fas fa-spinner fa-spin text-sm"></i> Processing...';
             // Redirect after brief delay (replace with actual route)
-            setTimeout(() => { window.location.href = '/checkout'; }, 1500);
+            setTimeout(() => { window.location.href = '/delivery_cart'; }, 1500);
         }
 
-        /* ======== QUICK ADD (suggestions) ======== */
+        /* QUICK ADD (suggestions) */
         function quickAddToCart(btn, name) {
             btn.innerHTML = '<i class="fas fa-check text-xs"></i> Added';
             btn.classList.remove('bg-brand-teal');
@@ -607,7 +637,7 @@
             }, 2000);
         }
 
-        /* ======== TOAST ======== */
+        /* TOAST */
         let toastTimer;
         function showToast(msg) {
             document.getElementById('toastMsg').textContent = msg;
@@ -623,7 +653,7 @@
             toast.classList.remove('translate-y-0', 'opacity-100');
         }
 
-        /* ======== NAVBAR SCROLL ======== */
+        /* NAVBAR SCROLL */
         window.addEventListener('scroll', function () {
             const navbar = document.getElementById('navbar');
             if (navbar) {
@@ -637,7 +667,7 @@
             }
         });
 
-        /* ======== INIT ======== */
+        /*INIT */
         recalc();
     </script>
 </body>

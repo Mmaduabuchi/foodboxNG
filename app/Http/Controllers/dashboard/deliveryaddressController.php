@@ -56,6 +56,14 @@ class deliveryaddressController extends Controller
             'is_default' => $request->is_default ?? false,
         ]);
 
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Address added successfully!',
+                'address' => $address
+            ]);
+        }
+
         return back()->with('success', 'Address added successfully!');
     }
 

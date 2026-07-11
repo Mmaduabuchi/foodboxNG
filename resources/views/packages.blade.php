@@ -93,10 +93,15 @@
         <div class="container mx-auto px-6">
             <div class="flex overflow-x-auto gap-4 md:justify-center pb-2 md:pb-0 no-scrollbar" id="filterTabs">
                 <button class="px-6 py-2 rounded-full bg-brand-teal text-white font-bold shadow-lg shadow-brand-teal/20 whitespace-nowrap active-tab">All Packages</button>
-                <button class="px-6 py-2 rounded-full bg-white text-gray-600 hover:bg-brand-teal/10 font-medium border border-gray-200 whitespace-nowrap transition-colors">Students</button>
-                <button class="px-6 py-2 rounded-full bg-white text-gray-600 hover:bg-brand-teal/10 font-medium border border-gray-200 whitespace-nowrap transition-colors">Families</button>
-                <!-- <button class="px-6 py-2 rounded-full bg-white text-gray-600 hover:bg-brand-teal/10 font-medium border border-gray-200 whitespace-nowrap transition-colors">Bulk / Business</button> -->
-                <button class="px-6 py-2 rounded-full bg-white text-gray-600 hover:bg-brand-teal/10 font-medium border border-gray-200 whitespace-nowrap transition-colors">Bachelor Only</button>
+                <a href="{{ route('student_packages') }}">
+                    <button class="px-6 py-2 rounded-full bg-white text-gray-600 hover:bg-brand-teal/10 font-medium border border-gray-200 whitespace-nowrap transition-colors">Students</button>
+                </a>
+                <a href="{{ route('family_packages') }}">
+                    <button class="px-6 py-2 rounded-full bg-white text-gray-600 hover:bg-brand-teal/10 font-medium border border-gray-200 whitespace-nowrap transition-colors">Families</button>
+                </a>
+                <a href="{{ route('bachelor_packages') }}">
+                    <button class="px-6 py-2 rounded-full bg-white text-gray-600 hover:bg-brand-teal/10 font-medium border border-gray-200 whitespace-nowrap transition-colors">Bachelor Only</button>
+                </a>
             </div>
         </div>
     </section>
@@ -235,126 +240,6 @@
                     </div>
                 </div>
 
-                <!-- Package 4: Soup Ingredients -->
-                <div class="bg-white rounded-3xl overflow-hidden hover:shadow-soft transition-all duration-300 group flex flex-col h-full border border-gray-100">
-                    <div class="relative h-56 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Soup Ingredients" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                    </div>
-                    <div class="p-8 flex-1 flex flex-col">
-                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold text-brand-blue">Soup Essentials</h3>
-                            <span class="bg-orange-50 text-brand-orange text-xs font-bold px-2 py-1 rounded">Add-on</span>
-                        </div>
-                        <p class="text-gray-500 text-sm mb-6">Everything you need for a rich pot of soup.</p>
-                        
-                        <div class="space-y-3 mb-8 flex-1">
-                            <div class="flex items-center gap-3 text-sm text-gray-600 border-b border-dashed border-gray-100 pb-2">
-                                <i class="fas fa-check-circle text-brand-teal"></i> <span>2kg Egusi / Ogbono</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm text-gray-600 border-b border-dashed border-gray-100 pb-2">
-                                <i class="fas fa-check-circle text-brand-teal"></i> <span>1L Palm Oil</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm text-gray-600 border-b border-dashed border-gray-100 pb-2">
-                                <i class="fas fa-check-circle text-brand-teal"></i> <span>Dry Fish & Crayfish Pack</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm text-gray-600">
-                                <i class="fas fa-plus text-gray-400"></i> <span>Stockfish Pieces</span>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between mt-auto pt-4">
-                            <div>
-                                <p class="text-xs text-gray-400 font-medium">Price</p>
-                                <p class="text-2xl font-bold text-brand-blue">₦25,000</p>
-                            </div>
-                            <button class="bg-brand-blue text-white px-6 py-3 rounded-xl font-bold hover:bg-brand-teal transition-colors shadow-lg shadow-brand-blue/20">
-                                Add to Cart
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Package 5: Mega Jumbo -->
-                <div class="bg-white rounded-3xl overflow-hidden hover:shadow-soft transition-all duration-300 group flex flex-col h-full border border-gray-100">
-                    <div class="relative h-56 overflow-hidden">
-                        <div class="absolute top-4 right-4 bg-brand-blue text-white text-xs font-bold px-3 py-1 rounded-full z-10">Bulk Deal</div>
-                        <img src="https://images.unsplash.com/photo-1506484381205-f7945653044d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Mega Jumbo" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                    </div>
-                    <div class="p-8 flex-1 flex flex-col">
-                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold text-brand-blue">Mega Jumbo</h3>
-                            <span class="bg-blue-50 text-brand-blue text-xs font-bold px-2 py-1 rounded">6+ People</span>
-                        </div>
-                        <p class="text-gray-500 text-sm mb-6">Stock up for a large family or small restaurant.</p>
-                        
-                        <div class="space-y-3 mb-8 flex-1">
-                            <div class="flex items-center gap-3 text-sm text-gray-600 border-b border-dashed border-gray-100 pb-2">
-                                <i class="fas fa-check-circle text-brand-teal"></i> <span>50kg Rice (Premium)</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm text-gray-600 border-b border-dashed border-gray-100 pb-2">
-                                <i class="fas fa-check-circle text-brand-teal"></i> <span>10kg Beans + 10kg Garri</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm text-gray-600 border-b border-dashed border-gray-100 pb-2">
-                                <i class="fas fa-check-circle text-brand-teal"></i> <span>10L Vegetable Oil</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm text-gray-600 border-b border-dashed border-gray-100 pb-2">
-                                <i class="fas fa-check-circle text-brand-teal"></i> <span>1 Carton Tomato Paste</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm text-gray-600">
-                                <i class="fas fa-plus text-gray-400"></i> <span>Tubers of Yam (5pcs)</span>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between mt-auto pt-4">
-                            <div>
-                                <p class="text-xs text-gray-400 font-medium">Price</p>
-                                <p class="text-2xl font-bold text-brand-blue">₦120,000</p>
-                            </div>
-                            <button class="bg-brand-blue text-white px-6 py-3 rounded-xl font-bold hover:bg-brand-teal transition-colors shadow-lg shadow-brand-blue/20">
-                                Add to Cart
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Package 6: Breakfast Bundle -->
-                <div class="bg-white rounded-3xl overflow-hidden hover:shadow-soft transition-all duration-300 group flex flex-col h-full border border-gray-100">
-                    <div class="relative h-56 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80" alt="Student Pack" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    </div>
-                    <div class="p-8 flex-1 flex flex-col">
-                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold text-brand-blue">Breakfast Bundle</h3>
-                            <span class="bg-blue-50 text-brand-blue text-xs font-bold px-2 py-1 rounded">Kids Love It</span>
-                        </div>
-                        <p class="text-gray-500 text-sm mb-6">Essentials for a great morning start.</p>
-                        
-                        <div class="space-y-3 mb-8 flex-1">
-                            <div class="flex items-center gap-3 text-sm text-gray-600 border-b border-dashed border-gray-100 pb-2">
-                                <i class="fas fa-check-circle text-brand-teal"></i> <span>2 Packs Cornflakes / Oats</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm text-gray-600 border-b border-dashed border-gray-100 pb-2">
-                                <i class="fas fa-check-circle text-brand-teal"></i> <span>1kg Powdered Milk</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm text-gray-600 border-b border-dashed border-gray-100 pb-2">
-                                <i class="fas fa-check-circle text-brand-teal"></i> <span>1kg Milo / Chocolate Drink</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm text-gray-600">
-                                <i class="fas fa-plus text-gray-400"></i> <span>Sugar & Bread Spread</span>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between mt-auto pt-4">
-                            <div>
-                                <p class="text-xs text-gray-400 font-medium">Price</p>
-                                <p class="text-2xl font-bold text-brand-blue">₦15,000</p>
-                            </div>
-                            <button class="bg-brand-blue text-white px-6 py-3 rounded-xl font-bold hover:bg-brand-teal transition-colors shadow-lg shadow-brand-blue/20">
-                                Add to Cart
-                            </button>
-                        </div>
-                    </div>
-                </div>
 
             </div>
         </div>

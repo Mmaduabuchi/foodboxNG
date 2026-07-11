@@ -307,7 +307,7 @@
                  <!-- Card: Custom Jumbo -->
                  <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-300 group flex flex-col h-full">
                     <div class="relative h-48 overflow-hidden bg-brand-grey flex items-center justify-center">
-                         <i class="fas fa-shopping-basket text-6xl text-gray-300 group-hover:text-brand-teal transition-colors"></i>
+                        <i class="fas fa-shopping-basket text-6xl text-gray-300 group-hover:text-brand-teal transition-colors"></i>
                     </div>
                     <div class="p-6 flex-1 flex flex-col">
                         <h3 class="text-xl font-bold text-brand-blue">Build Your Own</h3>

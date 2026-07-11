@@ -171,6 +171,10 @@ Route::middleware(['auth', 'user'])->group(function () {
     // Account deactivation
     Route::post('/account/deactivate', [userprofileController::class, 'deactivate'])->name('account.deactivate');
 
+
+    // cart delivery
+    Route::get('/delivery_cart', [cartsController::class, 'delivery_cart'])->name('delivery_cart');
+
 });
 
 

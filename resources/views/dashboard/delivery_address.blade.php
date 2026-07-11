@@ -257,6 +257,7 @@
                         <option value="Work Office">Work</option>
                         <option value="Mum's Place">Mum's Place</option>
                         <option value="Dad's Place">Dad's Place</option>
+                        <option value="Hostel">Hostel</option>
                         <option value="Friend's Place">Friend's Place</option>
                         <option value="Other">Other</option>
                      </select>
