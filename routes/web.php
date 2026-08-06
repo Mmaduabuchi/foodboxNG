@@ -44,6 +44,7 @@ use App\Http\Controllers\home\welcomeController;
 use App\Http\Controllers\home\packagesController;
 use App\Http\Controllers\home\contactusController;
 use App\Http\Controllers\dashboard\usersupportController;
+use App\Http\Controllers\dashboard\trackordersController;
 
 
 Route::get('/', [welcomeController::class, 'index'])->name('home');
@@ -143,6 +144,9 @@ Route::middleware(['auth', 'user'])->group(function () {
     //support
     Route::get('/support', [usersupportController::class, 'index'])->name('support');
     Route::post('/support', [usersupportController::class, 'store'])->name('support.store');
+
+    //track orders
+    Route::get('/track_orders', [trackordersController::class, 'index'])->name('track_orders');
     
     //subscriptions
     Route::get('/subscriptions', [subscriptionController::class, 'index'])->name('subscriptions');
