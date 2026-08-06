@@ -43,6 +43,7 @@ use App\Http\Controllers\superadmin\subpackagesController;
 use App\Http\Controllers\home\welcomeController;
 use App\Http\Controllers\home\packagesController;
 use App\Http\Controllers\home\contactusController;
+use App\Http\Controllers\dashboard\usersupportController;
 
 
 Route::get('/', [welcomeController::class, 'index'])->name('home');
@@ -139,6 +140,9 @@ Route::middleware(['auth', 'user'])->group(function () {
     Route::post('/userprofile/upload-image', [userprofileController::class, 'uploadProfileImage'])->name('userprofile.upload-image');
     Route::post('/userprofile/notifications', [userprofileController::class, 'updateNotifications'])->name('userprofile.notifications');
 
+    //support
+    Route::get('/support', [usersupportController::class, 'index'])->name('support');
+    Route::post('/support', [usersupportController::class, 'store'])->name('support.store');
     
     //subscriptions
     Route::get('/subscriptions', [subscriptionController::class, 'index'])->name('subscriptions');

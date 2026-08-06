@@ -65,6 +65,10 @@
             <i class="fas fa-cog text-lg w-6 text-center {{ request()->routeIs('userprofile') ? 'text-brand-gold' : '' }}"></i>
             <span>Profile Settings</span>
         </a>
+        <a href="{{ route('support') }}" class="nav-link flex items-center gap-4 font-medium p-3 rounded-xl transition-all {{ request()->routeIs('support') ? 'bg-brand-teal text-white shadow-lg shadow-brand-teal/20' : 'text-white/80 hover:bg-brand-teal hover:text-white' }}">
+            <i class="fas fa-headset text-lg w-6 text-center {{ request()->routeIs('support') ? 'text-brand-gold' : '' }}"></i>
+            <span>Help & Support</span>
+        </a>
     </nav>
 
     <!-- Fixed Bottom: Logout -->

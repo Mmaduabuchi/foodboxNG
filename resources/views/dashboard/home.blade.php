@@ -376,9 +376,9 @@
                             <i class="fas fa-truck"></i> Track Latest Delivery
                         </button>
 
-                        <button class="w-full flex items-center justify-center gap-3 bg-brand-blue/10 border border-brand-blue/20 text-brand-blue font-semibold py-3 rounded-xl hover:bg-brand-teal/10 transition-colors">
+                        <a href="{{ route('support') }}" class="w-full flex items-center justify-center gap-3 bg-brand-blue/10 border border-brand-blue/20 text-brand-blue font-semibold py-3 rounded-xl hover:bg-brand-teal/10 transition-colors">
                             <i class="fas fa-headset"></i> Contact Support
-                        </button>
+                        </a>
                     </div>
                 </section>
                 
