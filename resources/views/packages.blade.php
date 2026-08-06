@@ -109,137 +109,90 @@
     <!-- Packages Grid -->
     <section class="py-16 bg-brand-grey">
         <div class="container mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                
+                @foreach($packages as $package)
+                    @if(strtolower($package->category) == 'family')
+                        <!-- Family Standard (Featured) -->
+                        <div class="bg-brand-blue rounded-3xl overflow-hidden shadow-2xl hover:-translate-y-2 transition-all duration-300 transform md:-mt-4 md:mb-4 relative flex flex-col h-full">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-gold to-brand-teal"></div>
+                            <div class="relative h-48 overflow-hidden">
+                                <div class="absolute top-4 left-4 z-10 bg-brand-teal text-white text-xs font-bold px-3 py-1 rounded-full">Most Popular</div>
+                                <img src="{{ asset('assets/images/' . $package->image) }}" alt="{{ $package->name }}" class="w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-500">
+                            </div>
+                            <div class="p-6 flex-1 flex flex-col">
+                                <h3 class="text-xl font-bold text-white">{{ $package->name }}</h3>
+                                <p class="text-gray-300 text-sm mt-2 mb-4">{{ $package->description }}</p>
+                                
+                                <div class="mt-auto pt-4 border-t border-gray-600">
+                                    <a href="{{ route('family_packages') }}">
+                                        <button class="w-full py-3 rounded-xl bg-brand-gold text-brand-blue font-bold hover:bg-white transition-colors shadow-lg">Explore Packages</button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <!-- Other Packages -->
+                        <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-300 group flex flex-col h-full">
+                            <div class="relative h-48 overflow-hidden">
+                                @if(strtolower($package->category) == 'student')
+                                    <div class="absolute top-4 right-4 z-10 bg-brand-gold text-brand-blue text-xs font-bold px-3 py-1 rounded-full">Best Value</div>
+                                @endif
+                                <img src="{{ asset('assets/images/' . $package->image) }}" alt="{{ $package->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            </div>
+                            <div class="p-6 flex-1 flex flex-col">
+                                <h3 class="text-xl font-bold text-brand-blue">{{ $package->name }}</h3>
+                                <p class="text-gray-500 text-sm mt-2 mb-4">{{ $package->description }}</p>
 
-                <!-- Package 1: Student Starter -->
-                <div class="bg-white rounded-3xl overflow-hidden hover:shadow-soft transition-all duration-300 group flex flex-col h-full border border-gray-100">
-                    <div class="relative h-56 overflow-hidden">
-                        <div class="absolute top-4 left-4 bg-brand-gold text-brand-blue text-xs font-bold px-3 py-1 rounded-full z-10">Best Seller</div>
-                        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80" alt="Student Pack" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                <ul class="space-y-2 mb-6 text-sm text-gray-600">
+                                    @foreach($package->subPackages as $subPackage)
+                                        <li class="flex items-center gap-2">
+                                            <i class="fas fa-check text-brand-teal"></i> 
+                                            {{ $subPackage->name }}
+                                        </li>
+                                    @endforeach
+                                </ul>
+                                
+                                <div class="mt-auto pt-4 border-t border-gray-100">
+                                    @php
+                                        $routeName = strtolower($package->category) . '_packages';
+                                    @endphp
+                                    <a href="{{ Route::has($routeName) ? route($routeName) : route('coming_soon') }}">
+                                        <button class="w-full py-3 rounded-xl border-2 border-brand-blue text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition-colors">Explore Packages</button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                @endforeach
+
+                 <!-- Card: Custom Jumbo -->
+                 <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-300 group flex flex-col h-full">
+                    <div class="relative h-48 overflow-hidden bg-brand-grey flex items-center justify-center">
+                        <i class="fas fa-shopping-basket text-6xl text-gray-300 group-hover:text-brand-teal transition-colors"></i>
                     </div>
-                    <div class="p-8 flex-1 flex flex-col">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold text-brand-blue">Student Starter</h3>
-                            <span class="bg-blue-50 text-brand-blue text-xs font-bold px-2 py-1 rounded">1-Person</span>
-                        </div>
-                        <p class="text-gray-500 text-sm mb-6">The ultimate survival kit for students and corps members.</p>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <h3 class="text-xl font-bold text-brand-blue">Build Your Own</h3>
+                        <p class="text-gray-500 text-sm mt-2 mb-4">Select exactly what you need from our inventory.</p>
                         
-                        <div class="space-y-3 mb-8 flex-1">
-                            <div class="flex items-center gap-3 text-sm text-gray-600 border-b border-dashed border-gray-100 pb-2">
-                                <i class="fas fa-check-circle text-brand-teal"></i> <span>1 Carton Noodles (Indomie)</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm text-gray-600 border-b border-dashed border-gray-100 pb-2">
-                                <i class="fas fa-check-circle text-brand-teal"></i> <span>2kg Garri Ijebu</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm text-gray-600 border-b border-dashed border-gray-100 pb-2">
-                                <i class="fas fa-check-circle text-brand-teal"></i> <span>Milk & Sugar (500g each)</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm text-gray-600 border-b border-dashed border-gray-100 pb-2">
-                                <i class="fas fa-check-circle text-brand-teal"></i> <span>1L Groundnut Oil</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm text-gray-600">
-                                <i class="fas fa-plus text-gray-400"></i> <span>Tomato Paste Sachets (1 Roll)</span>
-                            </div>
-                        </div>
+                        <ul class="space-y-2 mb-6 text-sm text-gray-600">
+                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> Full Customization</li>
+                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> Flexible Quantities</li>
+                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> Tubers (Yam, Potato)</li>
+                            <li class="flex items-center gap-2"><i class="fas fa-check text-brand-teal"></i> Proteins (Fish, Meat)</li>
+                        </ul>
 
-                        <div class="flex items-center justify-between mt-auto pt-4">
-                            <div>
-                                <p class="text-xs text-gray-400 font-medium">Price</p>
-                                <p class="text-2xl font-bold text-brand-blue">₦18,500</p>
+                        <div class="mt-auto pt-4 border-t border-gray-100">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-gray-400 text-sm">From</span>
+                                <span class="text-2xl font-bold text-brand-blue">₦10,000</span>
                             </div>
-                            <button class="bg-brand-blue text-white px-6 py-3 rounded-xl font-bold hover:bg-brand-teal transition-colors shadow-lg shadow-brand-blue/20">
-                                Add to Cart
-                            </button>
+                            <a href="{{ route('coming_soon') }}">
+                                <button class="w-full py-3 rounded-xl border-2 border-brand-teal text-brand-teal font-bold hover:bg-brand-teal hover:text-white transition-colors">Customize</button>
+                            </a>
                         </div>
                     </div>
                 </div>
-
-                <!-- Package 2: The Bachelor -->
-                <div class="bg-white rounded-3xl overflow-hidden hover:shadow-soft transition-all duration-300 group flex flex-col h-full border border-gray-100">
-                    <div class="relative h-56 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=600&q=80" alt="Single Pack" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                    </div>
-                    <div class="p-8 flex-1 flex flex-col">
-                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold text-brand-blue">The Bachelor</h3>
-                            <span class="bg-blue-50 text-brand-blue text-xs font-bold px-2 py-1 rounded">1-2 People</span>
-                        </div>
-                        <p class="text-gray-500 text-sm mb-6">Quick-to-cook meals for the busy working professional.</p>
-                        
-                        <div class="space-y-3 mb-8 flex-1">
-                            <div class="flex items-center gap-3 text-sm text-gray-600 border-b border-dashed border-gray-100 pb-2">
-                                <i class="fas fa-check-circle text-brand-teal"></i> <span>5kg Rice (Foreign)</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm text-gray-600 border-b border-dashed border-gray-100 pb-2">
-                                <i class="fas fa-check-circle text-brand-teal"></i> <span>2kg Semovita / Wheat</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm text-gray-600 border-b border-dashed border-gray-100 pb-2">
-                                <i class="fas fa-check-circle text-brand-teal"></i> <span>1 Carton Spaghetti</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm text-gray-600 border-b border-dashed border-gray-100 pb-2">
-                                <i class="fas fa-check-circle text-brand-teal"></i> <span>2L Vegetable Oil</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm text-gray-600">
-                                <i class="fas fa-plus text-gray-400"></i> <span>Cornflakes & Milk</span>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between mt-auto pt-4">
-                            <div>
-                                <p class="text-xs text-gray-400 font-medium">Price</p>
-                                <p class="text-2xl font-bold text-brand-blue">₦32,000</p>
-                            </div>
-                            <button class="bg-brand-blue text-white px-6 py-3 rounded-xl font-bold hover:bg-brand-teal transition-colors shadow-lg shadow-brand-blue/20">
-                                Add to Cart
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Package 3: Family Standard -->
-                <div class="bg-white rounded-3xl overflow-hidden hover:shadow-soft transition-all duration-300 group flex flex-col h-full border-2 border-brand-teal shadow-xl shadow-brand-teal/10 relative">
-                     <div class="absolute top-0 left-0 w-full h-1 bg-brand-teal"></div>
-                    <div class="relative h-56 overflow-hidden">
-                        <div class="absolute top-4 left-4 bg-brand-teal text-white text-xs font-bold px-3 py-1 rounded-full z-10">Most Popular</div>
-                        <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80" alt="Family Pack" class="w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-500">
-                    </div>
-                    <div class="p-8 flex-1 flex flex-col">
-                         <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-xl font-bold text-brand-blue">Family Standard</h3>
-                            <span class="bg-teal-50 text-brand-teal text-xs font-bold px-2 py-1 rounded">3-4 People</span>
-                        </div>
-                        <p class="text-gray-500 text-sm mb-6">The monthly staple box for a standard family home.</p>
-                        
-                        <div class="space-y-3 mb-8 flex-1">
-                            <div class="flex items-center gap-3 text-sm text-gray-600 border-b border-dashed border-gray-100 pb-2">
-                                <i class="fas fa-check-circle text-brand-teal"></i> <span>25kg Rice (Premium)</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm text-gray-600 border-b border-dashed border-gray-100 pb-2">
-                                <i class="fas fa-check-circle text-brand-teal"></i> <span>5kg Beans (Oloyin)</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm text-gray-600 border-b border-dashed border-gray-100 pb-2">
-                                <i class="fas fa-check-circle text-brand-teal"></i> <span>5L Vegetable Oil</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm text-gray-600 border-b border-dashed border-gray-100 pb-2">
-                                <i class="fas fa-check-circle text-brand-teal"></i> <span>1 Crate of Eggs</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-sm text-gray-600">
-                                <i class="fas fa-plus text-gray-400"></i> <span>Spices & Seasoning Box</span>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between mt-auto pt-4">
-                            <div>
-                                <p class="text-xs text-gray-400 font-medium">Price</p>
-                                <p class="text-2xl font-bold text-brand-blue">₦65,000</p>
-                            </div>
-                            <button class="bg-brand-teal text-white px-6 py-3 rounded-xl font-bold hover:bg-brand-blue transition-colors shadow-lg shadow-brand-teal/20">
-                                Subscribe
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
 
             </div>
         </div>

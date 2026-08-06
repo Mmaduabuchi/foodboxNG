@@ -41,6 +41,8 @@ use App\Http\Controllers\superadmin\staffController;
 use App\Http\Controllers\superadmin\PackageItemController;
 use App\Http\Controllers\superadmin\subpackagesController;
 use App\Http\Controllers\home\welcomeController;
+use App\Http\Controllers\home\packagesController;
+use App\Http\Controllers\home\contactusController;
 
 
 Route::get('/', [welcomeController::class, 'index'])->name('home');
@@ -49,9 +51,8 @@ Route::get('/careers', function () {
     return view('careers');
 })->name('careers');
 
-Route::get('/contact_us', function () {
-    return view('contact_us');
-})->name('contact_us');
+Route::get('/contact_us', [contactusController::class, 'index'])->name('contact_us');
+Route::post('/contact_us', [contactusController::class, 'store'])->name('contact_us.store');
 
 Route::get('/about_us', function () {
     return view('about_us');
@@ -77,9 +78,7 @@ Route::get('/terms_of_service', function () {
     return view('terms_of_service');
 })->name('terms_of_service');
 
-Route::get('/packages', function () {
-    return view('packages');
-})->name('packages');
+Route::get('/packages', [packagesController::class, 'index'])->name('packages');
 
 Route::get('/coming-soon', function () {
     return view('comingsoon');

@@ -158,7 +158,8 @@
                         <h3 class="text-2xl font-bold text-brand-blue mb-2">Send us a Message</h3>
                         <p class="text-gray-500 mb-8">Fill out the form below and we'll get back to you within 24 hours.</p>
 
-                        <form action="#" class="space-y-6">
+                        <form id="contactForm" method="POST" class="space-y-6">
+                            @csrf
                             <div class="grid md:grid-cols-2 gap-6">
                                 <!-- Name -->
                                 <div class="space-y-2">
@@ -185,9 +186,15 @@
                                     <label for="subject" class="text-sm font-bold text-gray-700">Subject</label>
                                     <select id="subject" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all bg-gray-50 text-gray-600">
                                         <option>General Inquiry</option>
+                                        <option>Package Recommendation</option>
+                                        <option>Order Placement</option>
                                         <option>Order Issue</option>
+                                        <option>Delivery Inquiry</option>
                                         <option>Subscription Help</option>
-                                        <option>Partnership Proposal</option>
+                                        <option>Payment Issue</option>
+                                        <option>Order Cancellation or Modification</option>
+                                        <option>Complaint or Feedback</option>
+                                        <option>Business & Partnership</option>
                                     </select>
                                 </div>
                             </div>
@@ -198,8 +205,11 @@
                                 <textarea id="message" rows="6" placeholder="How can we help you today?" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none transition-all bg-gray-50 resize-none"></textarea>
                             </div>
 
+                            <!-- Notification Alert Box (Displays response messages) -->
+                            <div id="formAlert" class="hidden rounded-xl p-4 text-sm font-medium transition-all duration-300"></div>
+
                             <!-- Submit Button -->
-                            <button type="button" class="w-full md:w-auto bg-brand-teal text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl shadow-brand-teal/30 hover:bg-brand-blue hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-2">
+                            <button type="submit" class="w-full md:w-auto bg-brand-teal text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl shadow-brand-teal/30 hover:bg-brand-blue hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-2">
                                 <span>Send Message</span>
                                 <i class="fas fa-paper-plane text-sm"></i>
                             </button>
@@ -259,6 +269,7 @@
     @include('layouts.footer')
 
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         // Toggle FAQ Accordion
         function toggleFAQ(button) {
@@ -302,6 +313,89 @@
                 navbar.classList.remove('shadow-md');
                 navbar.classList.replace('py-2', 'py-4');
             }
+        });
+
+
+        // Helper to display inline notification before submit button
+        function displayFormAlert(message, type) {
+            const alertBox = document.getElementById('formAlert');
+            alertBox.className = 'rounded-xl p-4 text-sm font-medium transition-all duration-300 border mb-2';
+
+            if (type === 'success') {
+                alertBox.classList.add('bg-emerald-50', 'text-emerald-800', 'border-emerald-200');
+                alertBox.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
+                            <i class="fas fa-check-circle text-base"></i>
+                        </div>
+                        <div>${message}</div>
+                    </div>`;
+            } else {
+                alertBox.classList.add('bg-rose-50', 'text-rose-800', 'border-rose-200');
+                alertBox.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 shrink-0 mt-0.5">
+                            <i class="fas fa-exclamation-circle text-base"></i>
+                        </div>
+                        <div>${message}</div>
+                    </div>`;
+            }
+
+            alertBox.classList.remove('hidden');
+            alertBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // contact form submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const alertBox = document.getElementById('formAlert');
+            if (alertBox) {
+                alertBox.classList.add('hidden');
+            }
+
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
+            submitBtn.disabled = true;
+
+            axios.post('{{ route("contact_us.store") }}', {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value
+            })
+            .then(response => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                
+                if (response.data.success) {
+                    document.getElementById('contactForm').reset();
+                    displayFormAlert(response.data.message, 'success');
+                } else {
+                    displayFormAlert(response.data.message || 'Failed to send message. Please try again.', 'error');
+                }
+            })
+            .catch(error => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+
+                let errorMsg = 'Something went wrong while sending your message. Please try again.';
+                if (error.response && error.response.data) {
+                    if (error.response.data.message) {
+                        errorMsg = error.response.data.message;
+                    }
+                    if (error.response.data.errors) {
+                        const firstKey = Object.keys(error.response.data.errors)[0];
+                        if (firstKey && error.response.data.errors[firstKey][0]) {
+                            errorMsg = error.response.data.errors[firstKey][0];
+                        }
+                    }
+                }
+                displayFormAlert(errorMsg, 'error');
+            });
         });
     </script>
 </body>
