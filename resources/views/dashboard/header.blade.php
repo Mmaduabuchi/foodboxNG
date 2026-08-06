@@ -121,7 +121,9 @@
         <div class="relative">
             <button id="notificationBellBtn" onclick="toggleNotificationDropdown(event)" type="button" class="p-2 rounded-full text-gray-500 hover:bg-brand-grey hover:text-brand-teal transition-colors relative focus:outline-none">
                 <i class="fas fa-bell text-lg"></i>
-                <span id="notifBadge" class="absolute top-0.5 right-0.5 block h-2.5 w-2.5 rounded-full ring-2 ring-white bg-brand-orange animate-pulse"></span>
+                @if(isset($unreadCount) && $unreadCount > 0)
+                    <span id="notifBadge" class="absolute top-0.5 right-0.5 block h-2.5 w-2.5 rounded-full ring-2 ring-white bg-brand-orange animate-pulse"></span>
+                @endif
             </button>
 
             <!-- Notification Box Dropdown -->
@@ -132,58 +134,46 @@
                     <div class="flex items-center gap-2">
                         <i class="fas fa-bell text-brand-gold text-sm"></i>
                         <h3 class="font-bold text-sm">Notifications</h3>
-                        <span id="notifCount" class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-brand-teal text-white">3 New</span>
+                        <span id="notifCount" class="px-2 py-0.5 rounded-full text-[10px] font-extrabold {{ isset($unreadCount) && $unreadCount > 0 ? 'bg-brand-teal text-white' : 'bg-gray-400/50 text-white' }}">{{ $unreadCount ?? 0 }} New</span>
                     </div>
-                    <button type="button" onclick="markAllNotificationsRead(event)" class="text-xs text-brand-gold hover:underline font-semibold transition-all">
-                        Mark all read
-                    </button>
+                    @if(isset($unreadCount) && $unreadCount > 0)
+                        <button type="button" onclick="markAllNotificationsRead(event)" class="text-xs text-brand-gold hover:underline font-semibold transition-all">
+                            Mark all read
+                        </button>
+                    @endif
                 </div>
 
                 <!-- Notification Items List -->
                 <div class="divide-y divide-gray-100 max-h-80 overflow-y-auto">
-                    
-                    <!-- Notification 1: Active Delivery -->
-                    <a href="{{ route('track_orders') }}" class="p-3.5 flex items-start gap-3 hover:bg-brand-grey transition-colors bg-teal-50/40">
-                        <div class="w-9 h-9 rounded-xl bg-brand-teal/10 text-brand-teal flex items-center justify-center shrink-0 mt-0.5">
-                            <i class="fas fa-truck text-sm"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center justify-between">
-                                <p class="text-xs font-bold text-brand-blue truncate">Package Out for Delivery</p>
-                                <span class="text-[10px] text-gray-400 shrink-0">15m ago</span>
+                    @forelse($notifications ?? [] as $notification)
+                        <a href="{{ $notification->url ?: '#' }}" class="p-3.5 flex items-start gap-3 hover:bg-brand-grey transition-colors {{ !$notification->is_read ? 'bg-teal-50/40' : '' }}">
+                            <div class="w-9 h-9 rounded-xl 
+                                @if(in_array($notification->type, ['delivery', 'order'])) bg-brand-teal/10 text-brand-teal
+                                @elseif($notification->type == 'support') bg-amber-100 text-amber-700
+                                @elseif(in_array($notification->type, ['payment', 'subscription'])) bg-blue-100 text-blue-700
+                                @elseif($notification->type == 'promotion') bg-purple-100 text-purple-700
+                                @else bg-gray-100 text-gray-700
+                                @endif
+                                flex items-center justify-center shrink-0 mt-0.5">
+                                <i class="{{ $notification->icon ?: ($notification->type == 'delivery' ? 'fas fa-truck' : ($notification->type == 'support' ? 'fas fa-headset' : ($notification->type == 'payment' ? 'fas fa-credit-card' : 'fas fa-bell'))) }} text-sm"></i>
                             </div>
-                            <p class="text-xs text-gray-500 line-clamp-2 mt-0.5">Driver Musa Ibrahim is en route with your Family Mega Box dispatch.</p>
-                        </div>
-                    </a>
-
-                    <!-- Notification 2: Support Ticket Reply -->
-                    <a href="{{ route('support') }}" class="p-3.5 flex items-start gap-3 hover:bg-brand-grey transition-colors bg-teal-50/40">
-                        <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 mt-0.5">
-                            <i class="fas fa-headset text-sm"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center justify-between">
-                                <p class="text-xs font-bold text-brand-blue truncate">Support Ticket Updated</p>
-                                <span class="text-[10px] text-gray-400 shrink-0">2h ago</span>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between gap-2">
+                                    <p class="text-xs font-bold text-brand-blue truncate">{{ $notification->title }}</p>
+                                    <span class="text-[10px] text-gray-400 shrink-0">{{ $notification->created_at->diffForHumans() }}</span>
+                                </div>
+                                <p class="text-xs text-gray-500 line-clamp-2 mt-0.5">{{ $notification->message }}</p>
                             </div>
-                            <p class="text-xs text-gray-500 line-clamp-2 mt-0.5">Support staff responded to your ticket regarding subscription billing.</p>
-                        </div>
-                    </a>
-
-                    <!-- Notification 3: Subscription Renewal -->
-                    <a href="{{ route('subscriptions') }}" class="p-3.5 flex items-start gap-3 hover:bg-brand-grey transition-colors">
-                        <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 mt-0.5">
-                            <i class="fas fa-sync-alt text-sm"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center justify-between">
-                                <p class="text-xs font-bold text-brand-blue truncate">Subscription Processed</p>
-                                <span class="text-[10px] text-gray-400 shrink-0">1d ago</span>
+                        </a>
+                    @empty
+                        <div class="p-8 text-center text-gray-400">
+                            <div class="w-12 h-12 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mx-auto mb-2">
+                                <i class="fas fa-bell-slash text-lg"></i>
                             </div>
-                            <p class="text-xs text-gray-500 line-clamp-2 mt-0.5">Your bi-weekly package renewal was processed successfully.</p>
+                            <p class="text-xs font-bold text-gray-500">No notifications yet</p>
+                            <p class="text-[11px] text-gray-400 mt-0.5">Updates on orders & support will appear here</p>
                         </div>
-                    </a>
-
+                    @endforelse
                 </div>
 
                 <!-- Footer Link -->
@@ -238,14 +228,39 @@
 
     function markAllNotificationsRead(event) {
         if (event) event.stopPropagation();
+        
         const badge = document.getElementById('notifBadge');
         const count = document.getElementById('notifCount');
+        
+        // Optimistic UI update
         if (badge) badge.classList.add('hidden');
         if (count) {
             count.innerText = '0 New';
             count.classList.remove('bg-brand-teal');
-            count.classList.add('bg-gray-400');
+            count.classList.add('bg-gray-400/50');
         }
+
+        // Send AJAX POST request to UserNotificationController
+        fetch("{{ route('notifications.mark-all-read') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const unreadItems = document.querySelectorAll('#notificationDropdown .bg-teal-50\\/40');
+                unreadItems.forEach(item => {
+                    item.classList.remove('bg-teal-50/40');
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error marking notifications as read:', error);
+        });
     }
 
     document.addEventListener('click', function(event) {

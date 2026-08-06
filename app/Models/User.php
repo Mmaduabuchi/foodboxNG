@@ -55,6 +55,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(Payment::class);
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(UserNotification::class);
+    }
+
+    //unread notifications
+    public function unreadNotifications()
+    {
+        return $this->hasMany(UserNotification::class)
+            ->where('is_read', false)
+            ->orderBy('created_at', 'desc');
+    }
     
     /**
      * The attributes that should be hidden for serialization.

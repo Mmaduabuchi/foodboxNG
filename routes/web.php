@@ -45,6 +45,7 @@ use App\Http\Controllers\home\packagesController;
 use App\Http\Controllers\home\contactusController;
 use App\Http\Controllers\dashboard\usersupportController;
 use App\Http\Controllers\dashboard\trackordersController;
+use App\Http\Controllers\dashboard\UserNotificationController;
 
 
 Route::get('/', [welcomeController::class, 'index'])->name('home');
@@ -147,6 +148,9 @@ Route::middleware(['auth', 'user'])->group(function () {
 
     //track orders
     Route::get('/track_orders', [trackordersController::class, 'index'])->name('track_orders');
+
+    //user notifications
+    Route::post('/notifications/mark-all-read', [UserNotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
     
     //subscriptions
     Route::get('/subscriptions', [subscriptionController::class, 'index'])->name('subscriptions');

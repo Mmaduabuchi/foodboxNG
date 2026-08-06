@@ -11,14 +11,15 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use Exception;
 
 class usersupportController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
-        $tickets = SupportTicket::where('user_id', auth()->id())->latest()->paginate(10);
+        $user = Auth::user();
+        $tickets = SupportTicket::where('user_id', Auth::id())->latest()->paginate(10);
         
         return view('dashboard.usersupport', compact('user', 'tickets'));
     }
@@ -63,7 +64,7 @@ class usersupportController extends Controller
         DB::beginTransaction();
 
         try {
-            $user = auth()->user();
+            $user = Auth::user();
 
             $attachmentPath = null;
             if ($request->hasFile('attachment')) {
