@@ -542,9 +542,7 @@
 
     </main>
 
-    <!-- ========================================================================= -->
-    <!-- 6. MODAL 1: TICKET DETAILS & ADMIN FEEDBACK DRAWER/MODAL                  -->
-    <!-- ========================================================================= -->
+    <!-- MODAL 1: TICKET DETAILS & ADMIN FEEDBACK DRAWER/MODAL -->
     <div id="ticketDetailsModal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
         <div class="bg-white rounded-2xl sm:rounded-3xl shadow-modal w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden border border-gray-100 animate-in fade-in zoom-in-95 duration-200 my-auto">
             
@@ -653,10 +651,7 @@
                             <label for="adminFeedbackNotes" class="block text-xs font-bold uppercase tracking-wider text-brand-blue">
                                 Admin Internal Notes / Resolution Log
                             </label>
-                            <textarea 
-                                id="adminFeedbackNotes" 
-                                name="admin_feedback"
-                                rows="3" 
+                            <textarea id="adminFeedbackNotes" name="admin_feedback" rows="3" 
                                 placeholder="Write internal staff notes, investigation findings, or courier dispatch updates here..." 
                                 class="w-full p-3 sm:p-4 border border-gray-200 rounded-xl focus:border-brand-teal focus:ring-1 focus:ring-brand-teal/20 outline-none text-xs sm:text-sm text-gray-700 bg-white"
                             ></textarea>
@@ -710,9 +705,7 @@
         </div>
     </div>
 
-    <!-- ========================================================================= -->
-    <!-- 7. MODAL 2: UPDATE STATUS QUICK MODAL                                    -->
-    <!-- ========================================================================= -->
+    <!-- MODAL 2: UPDATE STATUS QUICK MODAL  -->
     <div id="updateStatusModal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-3 sm:p-4">
         <div class="bg-white rounded-2xl sm:rounded-3xl shadow-modal w-full max-w-md p-5 sm:p-6 border border-gray-100 animate-in fade-in zoom-in-95 duration-200 my-auto">
             
@@ -762,9 +755,7 @@
         </div>
     </div>
 
-    <!-- ========================================================================= -->
-    <!-- 8. MODAL 3: REPLY VIA EMAIL COMPOSER MODAL                               -->
-    <!-- ========================================================================= -->
+    <!-- MODAL 3: REPLY VIA EMAIL COMPOSER MODAL -->
     <div id="replyEmailModal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
         <div class="bg-white rounded-2xl sm:rounded-3xl shadow-modal w-full max-w-2xl max-h-[92vh] flex flex-col overflow-hidden border border-gray-100 animate-in fade-in zoom-in-95 duration-200 my-auto">
             
@@ -858,9 +849,7 @@
         </div>
     </div>
 
-    <!-- ========================================================================= -->
-    <!-- 9. MODAL 4: IMAGE ZOOM ATTACHMENT PREVIEW                                 -->
-    <!-- ========================================================================= -->
+    <!-- MODAL 4: IMAGE ZOOM ATTACHMENT PREVIEW -->
     <div id="imageZoomModal" class="fixed inset-0 z-50 hidden modal-backdrop flex items-center justify-center p-3 sm:p-4" onclick="closeZoomModal()">
         <div class="bg-white p-2 rounded-2xl shadow-modal max-w-2xl max-h-[85vh] overflow-hidden my-auto" onclick="event.stopPropagation()">
             <div class="relative">
@@ -881,9 +870,7 @@
         @method('PATCH')
     </form>
 
-    <!-- ========================================================================= -->
-    <!-- 10. JAVASCRIPT LOGIC & DATABASE INTEGRATION                               -->
-    <!-- ========================================================================= -->
+    <!-- JAVASCRIPT LOGIC & DATABASE INTEGRATION -->
     @php
         $ticketDb = [];
         foreach($tickets as $t) {

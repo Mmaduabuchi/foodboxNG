@@ -5,9 +5,11 @@ namespace App\Http\Controllers\superadmin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Models\User;
 use App\Models\SupportTicket;
+use App\Mail\ContactMessageUserMail;
 
 class supportController extends Controller
 {
@@ -79,40 +81,49 @@ class supportController extends Controller
      */
     public function updateStatus(Request $request, $id)
     {
-        $request->validate([
-            'status' => 'required|string',
-            'admin_feedback' => 'nullable|string',
-        ]);
+        try {
+            $request->validate([
+                'status' => 'required|string',
+                'admin_feedback' => 'nullable|string',
+            ]);
 
-        $ticket = SupportTicket::where('id', $id)
-            ->orWhere('ticket_id', $id)
-            ->firstOrFail();
+            $ticket = SupportTicket::where('id', $id)
+                ->orWhere('ticket_id', $id)
+                ->firstOrFail();
 
-        // Map status cleanly
-        $statusMap = [
-            'OPEN' => 'Open',
-            'IN_PROGRESS' => 'In Progress',
-            'RESOLVED' => 'Resolved',
-            'CLOSED' => 'Closed',
-        ];
-        $newStatus = $statusMap[strtoupper($request->status)] ?? $request->status;
+            // Map status cleanly
+            $statusMap = [
+                'OPEN' => 'Open',
+                'IN_PROGRESS' => 'In Progress',
+                'RESOLVED' => 'Resolved',
+                'CLOSED' => 'Closed',
+            ];
+            $newStatus = $statusMap[strtoupper($request->status)] ?? $request->status;
 
-        $ticket->status = $newStatus;
-        if ($request->filled('admin_feedback')) {
-            $ticket->admin_feedback = $request->admin_feedback;
+            $ticket->status = $newStatus;
+            if ($request->filled('admin_feedback')) {
+                $ticket->admin_feedback = $request->admin_feedback;
+            }
+
+            if (in_array($newStatus, ['Resolved', 'Closed'])) {
+                $ticket->resolved_at = now();
+            }
+
+            if (Auth::check()) {
+                $ticket->handled_by = Auth::id();
+            }
+
+            $ticket->save();
+
+            return back()->with('success', "Ticket #{$ticket->ticket_id} status updated to {$ticket->status} successfully.");
+        } catch (\Exception $e) {
+            Log::error("Error updating support ticket status [ID: {$id}]: " . $e->getMessage(), [
+                'id' => $id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', "Unable to update status for ticket #{$id}. Please try again.");
         }
-
-        if (in_array($newStatus, ['Resolved', 'Closed'])) {
-            $ticket->resolved_at = now();
-        }
-
-        if (Auth::check()) {
-            $ticket->handled_by = Auth::id();
-        }
-
-        $ticket->save();
-
-        return back()->with('success', "Ticket #{$ticket->ticket_id} status updated to {$ticket->status} successfully.");
     }
 
     /**
@@ -120,44 +131,53 @@ class supportController extends Controller
      */
     public function updateDetails(Request $request, $id)
     {
-        $request->validate([
-            'status' => 'required|string',
-            'priority' => 'required|string',
-            'admin_feedback' => 'nullable|string',
-        ]);
+        try {
+            $request->validate([
+                'status' => 'required|string',
+                'priority' => 'required|string',
+                'admin_feedback' => 'nullable|string',
+            ]);
 
-        $ticket = SupportTicket::where('id', $id)
-            ->orWhere('ticket_id', $id)
-            ->firstOrFail();
+            $ticket = SupportTicket::where('id', $id)
+                ->orWhere('ticket_id', $id)
+                ->firstOrFail();
 
-        $statusMap = [
-            'OPEN' => 'Open',
-            'IN_PROGRESS' => 'In Progress',
-            'RESOLVED' => 'Resolved',
-            'CLOSED' => 'Closed',
-        ];
-        $priorityMap = [
-            'LOW' => 'Low',
-            'MEDIUM' => 'Medium',
-            'HIGH' => 'High',
-            'URGENT' => 'High', // database enum supports Low, Medium, High
-        ];
+            $statusMap = [
+                'OPEN' => 'Open',
+                'IN_PROGRESS' => 'In Progress',
+                'RESOLVED' => 'Resolved',
+                'CLOSED' => 'Closed',
+            ];
+            $priorityMap = [
+                'LOW' => 'Low',
+                'MEDIUM' => 'Medium',
+                'HIGH' => 'High',
+                'URGENT' => 'High', // database enum supports Low, Medium, High
+            ];
 
-        $ticket->status = $statusMap[strtoupper($request->status)] ?? $request->status;
-        $ticket->priority = $priorityMap[strtoupper($request->priority)] ?? $request->priority;
-        $ticket->admin_feedback = $request->admin_feedback;
+            $ticket->status = $statusMap[strtoupper($request->status)] ?? $request->status;
+            $ticket->priority = $priorityMap[strtoupper($request->priority)] ?? $request->priority;
+            $ticket->admin_feedback = $request->admin_feedback;
 
-        if (in_array($ticket->status, ['Resolved', 'Closed']) && !$ticket->resolved_at) {
-            $ticket->resolved_at = now();
+            if (in_array($ticket->status, ['Resolved', 'Closed']) && !$ticket->resolved_at) {
+                $ticket->resolved_at = now();
+            }
+
+            if (Auth::check()) {
+                $ticket->handled_by = Auth::id();
+            }
+
+            $ticket->save();
+
+            return back()->with('success', "Support ticket #{$ticket->ticket_id} updated successfully.");
+        } catch (\Exception $e) {
+            Log::error("Error updating support ticket details [ID: {$id}]: " . $e->getMessage(), [
+                'id' => $id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', "Unable to save changes for ticket #{$id}. Please try again.");
         }
-
-        if (Auth::check()) {
-            $ticket->handled_by = Auth::id();
-        }
-
-        $ticket->save();
-
-        return back()->with('success', "Support ticket #{$ticket->ticket_id} updated successfully.");
     }
 
     /**
@@ -165,70 +185,126 @@ class supportController extends Controller
      */
     public function reply(Request $request, $id)
     {
-        $request->validate([
-            'subject' => 'required|string|max:255',
-            'message' => 'required|string',
-            'status' => 'nullable|string',
-        ]);
+        try {
+            $request->validate([
+                'subject' => 'required|string|max:255',
+                'message' => 'required|string',
+                'status' => 'nullable|string',
+            ]);
 
-        $ticket = SupportTicket::with('user')
-            ->where('id', $id)
-            ->orWhere('ticket_id', $id)
-            ->firstOrFail();
+            $ticket = SupportTicket::with('user')
+                ->where('id', $id)
+                ->orWhere('ticket_id', $id)
+                ->firstOrFail();
 
-        $ticket->replied_at = now();
+            $ticket->replied_at = now();
 
-        if ($request->filled('status')) {
-            $statusMap = [
-                'OPEN' => 'Open',
-                'IN_PROGRESS' => 'In Progress',
-                'RESOLVED' => 'Resolved',
-                'CLOSED' => 'Closed',
-            ];
-            $ticket->status = $statusMap[strtoupper($request->status)] ?? $request->status;
-            if (in_array($ticket->status, ['Resolved', 'Closed'])) {
-                $ticket->resolved_at = now();
+            if ($request->filled('status')) {
+                $statusMap = [
+                    'OPEN' => 'Open',
+                    'IN_PROGRESS' => 'In Progress',
+                    'RESOLVED' => 'Resolved',
+                    'CLOSED' => 'Closed',
+                ];
+                $ticket->status = $statusMap[strtoupper($request->status)] ?? $request->status;
+                if (in_array($ticket->status, ['Resolved', 'Closed'])) {
+                    $ticket->resolved_at = now();
+                }
             }
-        }
 
-        if (Auth::check()) {
-            $ticket->handled_by = Auth::id();
-        }
-
-        $ticket->save();
-
-        // If email dispatch is supported in environment
-        $customerEmail = $ticket->user->email ?? $request->email;
-        if ($customerEmail) {
-            try {
-                // You can dispatch a notification or mailable here
-            } catch (\Exception $e) {
-                // Silently log or continue
+            if (Auth::check()) {
+                $ticket->handled_by = Auth::id();
             }
-        }
 
-        return back()->with('success', "Email reply dispatched to {$ticket->user->name} ({$customerEmail}) successfully.");
+            $ticket->save();
+
+            // Dispatch notification email to customer
+            $customerEmail = $ticket->user->email ?? $request->email;
+            if (!empty($customerEmail)) {
+                try {
+                    $mailData = [
+                        'name' => $ticket->user->name ?? 'Valued Customer',
+                        'email' => $customerEmail,
+                        'phone' => $ticket->user->phone ?? 'N/A',
+                        'subject' => $request->subject,
+                        'message' => $request->message,
+                        'created_at' => now(),
+                    ];
+
+                    Mail::to($customerEmail)->send(new ContactMessageUserMail($mailData));
+                } catch (\Exception $mailEx) {
+                    Log::error("Failed to send reply email for ticket #{$ticket->ticket_id}: " . $mailEx->getMessage(), [
+                        'ticket_id' => $ticket->ticket_id,
+                        'recipient' => $customerEmail,
+                        'error' => $mailEx->getMessage(),
+                    ]);
+                }
+            }
+
+            return back()->with('success', "Email reply dispatched to " . ($ticket->user->name ?? 'Customer') . " ({$customerEmail}) successfully.");
+        } catch (\Exception $e) {
+            Log::error("Error processing reply for ticket [ID: {$id}]: " . $e->getMessage(), [
+                'id' => $id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', "Unable to send reply for ticket #{$id}. Please try again.");
+        }
     }
 
     /**
-     * Close the ticket directly.
+     * Close the ticket directly with try/catch, error logging, and email notification to the user.
      */
     public function closeTicket($id)
     {
-        $ticket = SupportTicket::where('id', $id)
-            ->orWhere('ticket_id', $id)
-            ->firstOrFail();
+        try {
+            $ticket = SupportTicket::with('user')
+                ->where('id', $id)
+                ->orWhere('ticket_id', $id)
+                ->firstOrFail();
 
-        $ticket->status = 'Closed';
-        $ticket->resolved_at = now();
+            $ticket->status = 'Closed';
+            $ticket->resolved_at = now();
 
-        if (Auth::check()) {
-            $ticket->handled_by = Auth::id();
+            if (Auth::check()) {
+                $ticket->handled_by = Auth::id();
+            }
+
+            $ticket->save();
+
+            // Send ticket closure notification email to the user
+            $customerEmail = $ticket->user->email ?? null;
+            if (!empty($customerEmail)) {
+                try {
+                    $mailData = [
+                        'name' => $ticket->user->name ?? 'Valued Customer',
+                        'email' => $customerEmail,
+                        'phone' => $ticket->user->phone ?? 'N/A',
+                        'subject' => "[{$ticket->ticket_id}] Your Support Ticket has been Closed - FoodBox NG",
+                        'message' => "Hello " . ($ticket->user->name ?? 'Valued Customer') . ",\n\nYour support ticket (#{$ticket->ticket_id}) regarding \"{$ticket->subject}\" has been marked as resolved and closed by our customer care team.\n\n" . (!empty($ticket->admin_feedback) ? "Admin Resolution Notes:\n" . $ticket->admin_feedback . "\n\n" : "") . "If you have any further questions or require additional assistance, please feel free to open a new inquiry.\n\nThank you for choosing FoodBox NG!",
+                        'created_at' => $ticket->created_at ?? now(),
+                    ];
+
+                    Mail::to($customerEmail)->send(new ContactMessageUserMail($mailData));
+                } catch (\Exception $mailEx) {
+                    Log::error("Failed to send ticket closure notification email for ticket #{$ticket->ticket_id}: " . $mailEx->getMessage(), [
+                        'ticket_id' => $ticket->ticket_id,
+                        'recipient' => $customerEmail,
+                        'error' => $mailEx->getMessage(),
+                    ]);
+                }
+            }
+
+            return back()->with('success', "Ticket #{$ticket->ticket_id} has been marked as closed and notification sent to the customer.");
+        } catch (\Exception $e) {
+            Log::error("Error closing support ticket [ID: {$id}]: " . $e->getMessage(), [
+                'id' => $id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()->with('error', "Unable to close ticket #{$id}. Please try again later.");
         }
-
-        $ticket->save();
-
-        return back()->with('success', "Ticket #{$ticket->ticket_id} has been marked as closed.");
     }
 
     /**
@@ -249,7 +325,7 @@ class supportController extends Controller
             $query->where('priority', 'like', $request->priority);
         }
 
-        $tickets = $query->get();
+        $tickets = $query->cursor();
 
         $headers = [
             "Content-type" => "text/csv",
