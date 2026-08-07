@@ -53,11 +53,11 @@
                 <ul class="space-y-4 text-gray-400 text-sm">
                     <li class="flex items-start gap-3">
                         <i class="fas fa-map-marker-alt mt-1 text-brand-teal"></i>
-                        <span>12 Admiralty Way, Lekki Phase 1,<br>Lagos, Nigeria.</span>
+                        <span>12 Guzape hills,<br>Abuja, Nigeria.</span>
                     </li>
                     <li class="flex items-center gap-3">
                         <i class="fas fa-phone text-brand-teal"></i>
-                        <span>+234 800 FOOD BOX</span>
+                        <span>+234 800 366 3269</span>
                     </li>
                     <li class="flex items-center gap-3">
                         <i class="fas fa-envelope text-brand-teal"></i>

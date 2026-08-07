@@ -45,6 +45,7 @@
             ['route' => 'admin.deliveryLogistics',      'icon' => 'fa-truck-fast',     'label' => 'Delivery Logistics'],
             ['route' => 'admin.inventoryManagement',    'icon' => 'fa-warehouse',      'label' => 'Inventory / Stock'],
             ['route' => 'admin.paymentManagement',      'icon' => 'fa-credit-card',    'label' => 'Payments & Transactions'],
+            ['route' => 'admin.support',                'icon' => 'fa-headset',        'label' => 'Support & Tickets'],
             ['route' => 'admin.systemSettings',         'icon' => 'fa-cog',            'label' => 'System Settings'],
             ['route' => 'admin.adminManagement',        'icon' => 'fa-user-shield',    'label' => 'Admin Management'],
         ];

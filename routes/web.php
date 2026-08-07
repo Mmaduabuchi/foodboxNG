@@ -57,6 +57,10 @@ Route::get('/careers', function () {
 Route::get('/contact_us', [contactusController::class, 'index'])->name('contact_us');
 Route::post('/contact_us', [contactusController::class, 'store'])->name('contact_us.store');
 
+Route::get('/how-it-works', function () {
+    return view('how_it_works');
+})->name('how_it_works');
+
 Route::get('/about_us', function () {
     return view('about_us');
 })->name('about_us');
@@ -224,6 +228,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
     
     //support
     Route::get('/admin/support', [supportController::class, 'index'])->name('admin.support');
+    Route::patch('/admin/support/{id}/status', [supportController::class, 'updateStatus'])->name('admin.support.status');
+    Route::put('/admin/support/{id}/details', [supportController::class, 'updateDetails'])->name('admin.support.update');
+    Route::post('/admin/support/{id}/reply', [supportController::class, 'reply'])->name('admin.support.reply');
+    Route::patch('/admin/support/{id}/close', [supportController::class, 'closeTicket'])->name('admin.support.close');
+    Route::get('/admin/support/export', [supportController::class, 'export'])->name('admin.support.export');
 
     //manage packages
     Route::get('/admin/managePackages', [managePackagesController::class, 'index'])->name('admin.managePackages');

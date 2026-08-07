@@ -86,34 +86,35 @@
                     <div class="inline-block px-4 py-1.5 rounded-full bg-brand-teal/10 text-brand-teal font-semibold text-sm mb-6 border border-brand-teal/20">
                         🇳🇬 #1 Food Subscription in Nigeria
                     </div>
-                    <h1 class="text-4xl lg:text-6xl font-bold leading-tight mb-6 text-brand-blue">
-                        Market Runs Made <br>
+                    <h1 class="text-4xl lg:text-5xl font-bold leading-tight mb-6 text-brand-blue">
+                        Your Home Essentials,
+                        <br>
                         <span class="text-brand-teal relative">
-                            Simple & Cheap
+                            Packed & Delivered
                             <svg class="absolute w-full h-3 -bottom-1 left-0 text-brand-gold opacity-60" viewBox="0 0 200 9" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.00025 6.99997C58.5002 2.49997 148.5 -2.5 198 6.99997" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
                         </span>
                     </h1>
                     <p class="text-lg text-gray-600 mb-8 leading-relaxed max-w-lg mx-auto lg:mx-0">
-                        Skip the market stress. Get fresh curated foodstuff packages—rice, beans, oil, and essentials—delivered directly to your doorstep anywhere in Lagos & Abuja.
+                        No more supermarket runs or market stress. Choose a package that fits your lifestyle — Student, Bachelor, or Family — and get your household essentials delivered right to your door in Abuja.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                         <a href="#packages" class="bg-brand-teal text-white px-8 py-4 rounded-full font-bold text-lg shadow-xl shadow-brand-teal/30 hover:bg-brand-blue hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2">
                             Browse Packages <i class="fas fa-arrow-right text-sm"></i>
                         </a>
-                        <a href="#" class="bg-white text-brand-blue border-2 border-brand-blue/10 px-8 py-4 rounded-full font-bold text-lg hover:border-brand-blue hover:bg-brand-grey transition-all duration-300">
+                        <a href="{{ route('how_it_works') }}" class="bg-white text-brand-blue border-2 border-brand-blue/10 px-8 py-4 rounded-full font-bold text-lg hover:border-brand-teal hover:text-brand-teal hover:bg-teal-50/30 transition-all duration-300">
                             How It Works
                         </a>
                     </div>
                     
                     <div class="mt-10 flex items-center justify-center lg:justify-start gap-6 text-gray-500 text-sm font-medium">
                         <div class="flex items-center gap-2">
-                            <i class="fas fa-check-circle text-brand-gold"></i> 24h Delivery
+                            <i class="fas fa-check-circle text-brand-gold"></i> Next Day Delivery
                         </div>
                         <div class="flex items-center gap-2">
-                            <i class="fas fa-check-circle text-brand-gold"></i> Pay on Delivery
+                            <i class="fas fa-check-circle text-brand-gold"></i> Secure Online Payment
                         </div>
                         <div class="flex items-center gap-2">
-                            <i class="fas fa-check-circle text-brand-gold"></i> Verified Fresh
+                            <i class="fas fa-check-circle text-brand-gold"></i> Quality Guaranteed
                         </div>
                     </div>
                 </div>

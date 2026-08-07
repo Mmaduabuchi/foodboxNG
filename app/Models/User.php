@@ -56,6 +56,11 @@ class User extends Authenticatable
         return $this->hasMany(Payment::class);
     }
 
+    public function tickets()
+    {
+        return $this->hasMany(SupportTicket::class);
+    }
+
     public function notifications()
     {
         return $this->hasMany(UserNotification::class);

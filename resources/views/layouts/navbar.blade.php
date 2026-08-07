@@ -16,6 +16,7 @@
             <!-- Desktop Menu -->
             <div class="hidden md:flex items-center gap-8 font-medium text-gray-600">
                 <a href="{{ route('home') }}" class="hover:text-brand-teal transition-colors">Home</a>
+                <a href="{{ route('how_it_works') }}" class="hover:text-brand-teal transition-colors">How It Works</a>
                 <a href="{{ route('packages') }}" class="hover:text-brand-teal transition-colors">Packages</a>
                 <a href="{{ route('home') }}#features" class="hover:text-brand-teal transition-colors">Why Us</a>
                 <a href="{{ route('contact_us') }}" class="hover:text-brand-teal transition-colors">Contact Us</a>
@@ -46,6 +47,7 @@
     <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full">
         <div class="flex flex-col p-6 space-y-4 font-medium">
             <a href="{{ route('home') }}" class="text-gray-600 hover:text-brand-teal" onclick="toggleMenu()">Home</a>
+            <a href="{{ route('how_it_works') }}" class="text-gray-600 hover:text-brand-teal" onclick="toggleMenu()">How It Works</a>
             <a href="{{ route('packages') }}" class="text-gray-600 hover:text-brand-teal" onclick="toggleMenu()">Packages</a>
             <a href="{{ route('home') }}#features" class="text-gray-600 hover:text-brand-teal" onclick="toggleMenu()">Why Us</a>
             <a href="{{ route('contact_us') }}" class="text-gray-600 hover:text-brand-teal" onclick="toggleMenu()">Contact Us</a>

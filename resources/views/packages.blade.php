@@ -80,10 +80,40 @@
                 From student survival kits to jumbo family baskets, we have a curated package for every budget and household size.
             </p>
             
-            <!-- Search/Filter Bar -->
-            <div class="max-w-lg mx-auto relative">
-                <input type="text" placeholder="Search for items (e.g. Rice, Oil)..." class="w-full pl-12 pr-6 py-4 rounded-full border border-gray-200 shadow-lg focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20 outline-none">
-                <i class="fas fa-search absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl mx-auto mt-10">
+
+                <div class="bg-white rounded-2xl shadow-soft p-5 text-center border border-gray-100">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-brand-teal/10 flex items-center justify-center">
+                        <i class="fas fa-box-open text-brand-teal text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-brand-blue">3</h3>
+                    <p class="text-sm text-gray-500">Package Categories</p>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-soft p-5 text-center border border-gray-100">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-brand-gold/20 flex items-center justify-center">
+                        <i class="fas fa-shopping-basket text-brand-gold text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-brand-blue">20+</h3>
+                    <p class="text-sm text-gray-500">Curated Packages</p>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-soft p-5 text-center border border-gray-100">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-brand-orange/20 flex items-center justify-center">
+                        <i class="fas fa-tags text-brand-orange text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-brand-blue">₦10,000</h3>
+                    <p class="text-sm text-gray-500">Starting Price</p>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-soft p-5 text-center border border-gray-100">
+                    <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-brand-blue/10 flex items-center justify-center">
+                        <i class="fas fa-truck text-brand-blue text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-brand-blue">Abuja</h3>
+                    <p class="text-sm text-gray-500">Doorstep Delivery</p>
+                </div>
+
             </div>
         </div>
     </section>
@@ -235,14 +265,14 @@
                         <i class="fas fa-shipping-fast text-lg"></i>
                     </div>
                     <h4 class="font-bold text-brand-blue mb-2">Fast Delivery</h4>
-                    <p class="text-sm text-gray-500">Lagos orders delivered within 24 hours.</p>
+                    <p class="text-sm text-gray-500">Abuja orders delivered within 24 hours.</p>
                 </div>
                 <div class="flex flex-col items-center">
                     <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-brand-teal shadow-sm mb-4">
                         <i class="fas fa-shield-alt text-lg"></i>
                     </div>
                     <h4 class="font-bold text-brand-blue mb-2">Secure Payments</h4>
-                    <p class="text-sm text-gray-500">Pay securely online or Pay on Delivery.</p>
+                    <p class="text-sm text-gray-500">Pay securely online.</p>
                 </div>
                 <div class="flex flex-col items-center">
                     <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-brand-teal shadow-sm mb-4">
