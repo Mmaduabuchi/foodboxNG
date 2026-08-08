@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Mail\ContactMessageAdminMail;
 use App\Mail\ContactMessageUserMail;
 use App\Models\SupportTicket;
+use App\Models\UserNotification;
+use App\Models\AdminNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -104,6 +106,23 @@ class usersupportController extends Controller
             Mail::to($adminEmail)->send(new ContactMessageAdminMail($mailData));
 
             DB::commit();
+
+            UserNotification::notify(
+                $user->id,
+                'Support Ticket Created',
+                "Your support ticket ({$ticketId}) has been received. Our support team will review it shortly.",
+                'support',
+                'fas fa-headset',
+                route('support')
+            );
+
+            AdminNotification::notify(
+                'New Support Ticket',
+                "{$user->name} submitted a support ticket.",
+                'support',
+                'fas fa-headset',
+                route('admin.support')
+            );
 
             return redirect()->back()->with('success', 'Your support ticket (' . $ticketId . ') has been submitted successfully.');
         } catch (Exception $e) {

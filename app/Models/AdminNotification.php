@@ -4,17 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class UserNotification extends Model
+class AdminNotification extends Model
 {
-    protected $table = 'user_notifications';
-    
+    protected $table = 'admin_notifications';
+
     protected $fillable = [
-        'user_id',
         'title',
         'message',
         'type',
         'icon',
         'url',
+        'reference_id',
         'is_read',
         'read_at',
     ];
@@ -24,14 +24,8 @@ class UserNotification extends Model
         'read_at' => 'datetime',
     ];
 
-    //Notification belongs to a user
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
+    // Create a new admin notification.
     public static function notify(
-        int $userId,
         string $title,
         string $message,
         string $type,
@@ -39,7 +33,6 @@ class UserNotification extends Model
         ?string $url = null
     ): self {
         return self::create([
-            'user_id' => $userId,
             'title' => $title,
             'message' => $message,
             'type' => $type,
@@ -47,5 +40,4 @@ class UserNotification extends Model
             'url' => $url,
         ]);
     }
-    
 }

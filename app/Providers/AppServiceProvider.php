@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use App\Models\UserNotification;
+use App\Models\AdminNotification;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -40,6 +41,24 @@ class AppServiceProvider extends ServiceProvider
                     'unreadCount' => $unreadCount,
                 ]);
             }
+
+        });
+
+
+        // Admin notifications
+        View::composer('superAdminDashboard.header', function ($view) {
+
+            $adminNotifications = AdminNotification::latest()
+                ->take(10)
+                ->get();
+
+            $adminUnreadCount = AdminNotification::where('is_read', false)
+                ->count();
+
+            $view->with(compact(
+                'adminNotifications',
+                'adminUnreadCount'
+            ));
 
         });
     }
