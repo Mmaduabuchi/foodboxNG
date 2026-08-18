@@ -46,6 +46,7 @@ use App\Http\Controllers\home\contactusController;
 use App\Http\Controllers\dashboard\usersupportController;
 use App\Http\Controllers\dashboard\trackordersController;
 use App\Http\Controllers\dashboard\UserNotificationController;
+use App\Http\Controllers\superadmin\adminNotificationController;
 
 
 Route::get('/', [welcomeController::class, 'index'])->name('home');
@@ -236,9 +237,14 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     //manage packages
     Route::get('/admin/managePackages', [managePackagesController::class, 'index'])->name('admin.managePackages');
+    Route::post('/admin/managePackages', [managePackagesController::class, 'store'])->name('admin.managePackages.store');
+    Route::put('/admin/managePackages/{id}', [managePackagesController::class, 'update']);
     Route::delete('/admin/managePackages/{id}', [managePackagesController::class, 'destroy'])->name('admin.managePackages.delete');
     Route::patch('/admin/managePackages/{package}/activate', [managePackagesController::class, 'activate'])->name('admin.managePackages.activate');
     Route::patch('/admin/managePackages/{package}/deactivate', [managePackagesController::class, 'deactivate'])->name('admin.managePackages.deactivate');
+
+    //admin notifications
+    Route::post('/admin/notifications/mark-all-read', [adminNotificationController::class, 'markAllAdminRead'])->name('admin.notifications.mark-all-read');
     
     //update password
     Route::post('/admin/password/update', [systemSettingsController::class, 'updatePassword'])->name('admin.password.update');

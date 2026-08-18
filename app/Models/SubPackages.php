@@ -47,6 +47,12 @@ class SubPackages extends Model
         return $this->belongsTo(Package::class);
     }
 
+    // One sub package can have many orders
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
     public function scopeActive($query)
     {
         return $query->where('status', 'active');

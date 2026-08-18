@@ -237,7 +237,6 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Package</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Billing Cycle</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subscribers</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -291,7 +290,6 @@
                                         {{ empty($package->billing_cycle) ? 'N/A' : ucfirst($package->billing_cycle) }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-brand-blue" data-label="Price">₦{{ number_format($package->price) }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" data-label="Subscribers">
                                     <span class="font-bold text-brand-teal">{{ number_format($package->subscriptions_count) }}</span>
                                 </td>
@@ -300,7 +298,19 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="Actions">
                                     <div class="flex items-center gap-3">
-                                        <button onclick="editPackage('{{ $package->id }}', '{{ addslashes($package->name) }}')" class="text-brand-blue hover:text-brand-teal transition-colors" title="Edit Package">
+                                        <!-- <button onclick="editPackage('{{ $package->id }}', '{{ addslashes($package->name) }}')" class="text-brand-blue hover:text-brand-teal transition-colors" title="Edit Package">
+                                            <i class="fas fa-edit"></i>
+                                        </button> -->
+                                        <button type="button" onclick="editPackage(this)"
+                                            data-id="{{ $package->id }}"
+                                            data-name="{{ $package->name }}"
+                                            data-category="{{ $package->category }}"
+                                            data-billing-cycle="{{ $package->billing_cycle }}"
+                                            data-description="{{ $package->description }}"
+                                            data-status="{{ $package->status }}"
+                                            data-image="{{ $package->image }}"
+                                            class="text-brand-blue hover:text-brand-teal transition-colors" title="Edit Package"
+                                        >
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         @if($status === 'active')
@@ -412,24 +422,15 @@
                         <label for="pkgCategory" class="block text-sm font-semibold text-gray-700">Category <span class="text-brand-red">*</span></label>
                         <select id="pkgCategory" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-brand-teal focus:ring-1 focus:ring-brand-teal outline-none transition-all bg-brand-grey/30">
                             <option value="">-- Select Category --</option>
-                            <option value="solo">Solo</option>
-                            <option value="couple">Couple</option>
+                            <option value="bachelor">Bachelor</option>
                             <option value="family">Family</option>
-                            <option value="premium">Premium</option>
-                            <option value="budget">Budget</option>
-                            <option value="weekend">Weekend</option>
+                            <option value="students">Student</option>
                         </select>
                     </div>
-                    <div class="space-y-1.5">
-                        <label for="pkgPrice" class="block text-sm font-semibold text-gray-700">Price (₦) <span class="text-brand-red">*</span></label>
-                        <input type="number" id="pkgPrice" placeholder="e.g., 18500" min="0" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-brand-teal focus:ring-1 focus:ring-brand-teal outline-none transition-all bg-brand-grey/30">
-                    </div>
-                </div>
 
-                <!-- Servings + Delivery Days -->
-                <div class="grid grid-cols-1 gap-4">
+                    <!-- Servings + Delivery Days -->
                     <div class="space-y-1.5">
-                        <label for="pkgDeliveryDays" class="block text-sm font-semibold text-gray-700">Billing Cycle</label>
+                        <label for="pkgDeliveryDays" class="block text-sm font-semibold text-gray-700">Billing Cycle <span class="text-brand-red">*</span> </label>
                         <select id="pkgDeliveryDays" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-brand-teal focus:ring-1 focus:ring-brand-teal outline-none transition-all bg-brand-grey/30">
                             <option value="">-- Select --</option>
                             <option value="weekly">Weekly</option>
@@ -440,15 +441,83 @@
 
                 <!-- Short Description -->
                 <div class="space-y-1.5">
-                    <label for="pkgShortDescription" class="block text-sm font-semibold text-gray-700">Short Description</label>
-                    <textarea id="pkgShortDescription" rows="3" placeholder="Describe what's included in this package, dietary options, etc." class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-brand-teal focus:ring-1 focus:ring-brand-teal outline-none transition-all resize-none bg-brand-grey/30"></textarea>
+                    <label for="pkgShortDescription" class="block text-sm font-semibold text-gray-700">Description <span class="text-brand-red">*</span> </label>
+                    <textarea id="pkgShortDescription" rows="3" placeholder="Describe what's included in this package." class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-brand-teal focus:ring-1 focus:ring-brand-teal outline-none transition-all resize-none bg-brand-grey/30"></textarea>
                 </div>
 
-                <!-- Description -->
-                <div class="space-y-1.5">
-                    <label for="pkgDescription" class="block text-sm font-semibold text-gray-700">Full Description</label>
-                    <textarea id="pkgDescription" rows="3" placeholder="Describe what's included in this package, dietary options, etc." class="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:border-brand-teal focus:ring-1 focus:ring-brand-teal outline-none transition-all resize-none bg-brand-grey/30"></textarea>
-                </div>
+                <!-- package image -->
+                <section class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label for="pkgImageInput" class="block text-sm font-semibold text-gray-700">
+                            Package Image <span class="text-brand-red">*</span>
+                        </label>
+                        <span class="text-[11px] font-medium text-brand-teal bg-brand-teal/10 px-2 py-0.5 rounded-md">
+                            JPG, PNG, WEBP • Max 5MB
+                        </span>
+                    </div>
+
+                    <!-- Hidden File Input -->
+                    <input type="file" id="pkgImageInput" name="image" accept="image/png, image/jpeg, image/webp, image/jpg" class="hidden">
+
+                    <!-- Dropzone State (Default) -->
+                    <div id="pkgImageDropzone" onclick="document.getElementById('pkgImageInput').click()"
+                        class="relative group border-2 border-dashed border-gray-300 hover:border-brand-teal bg-brand-grey/40 hover:bg-brand-teal/[0.03] transition-all duration-300 rounded-2xl p-5 text-center cursor-pointer flex flex-col items-center justify-center">
+                        <div class="w-12 h-12 rounded-xl bg-brand-teal/10 text-brand-teal group-hover:bg-brand-teal group-hover:text-white flex items-center justify-center transition-all duration-300 shadow-sm group-hover:shadow-md group-hover:scale-105 mb-2.5">
+                            <i class="fas fa-cloud-upload-alt text-xl"></i>
+                        </div>
+                        <p class="text-sm font-bold text-brand-blue group-hover:text-brand-teal transition-colors">
+                            Click to upload <span class="font-normal text-gray-500">or drag and drop</span>
+                        </p>
+                        <p class="text-xs text-gray-400 mt-1">High quality image (Recommended 800x600 or 1:1 ratio)</p>
+                    </div>
+
+                    <!-- Preview State (Hidden by default) -->
+                    <div id="pkgImagePreviewContainer" class="hidden relative bg-white border border-gray-200 rounded-2xl p-3.5 shadow-sm transition-all duration-300">
+                        <div class="flex items-center gap-3.5">
+                            <!-- Thumbnail with overlay icon -->
+                            <div class="relative w-16 h-16 rounded-xl overflow-hidden bg-brand-grey shrink-0 border border-gray-100 shadow-inner group">
+                                <img id="pkgImagePreview" src="" alt="Package preview" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs">
+                                    <i class="fas fa-eye"></i>
+                                </div>
+                            </div>
+
+                            <!-- File Details -->
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <h5 id="pkgImageName" class="text-sm font-bold text-brand-blue truncate">image.jpg</h5>
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-green-100 text-green-700 shrink-0">
+                                        <i class="fas fa-check-circle mr-1 text-[9px]"></i> Ready
+                                    </span>
+                                </div>
+                                <p id="pkgImageSize" class="text-xs text-gray-400 mt-0.5">0 KB</p>
+                                <p class="text-[11px] text-brand-teal font-medium mt-1 flex items-center gap-1">
+                                    <i class="fas fa-image text-[10px]"></i> Package display cover
+                                </p>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <button type="button" onclick="document.getElementById('pkgImageInput').click()" 
+                                        class="p-2 text-gray-500 hover:text-brand-teal hover:bg-brand-teal/10 rounded-xl transition-all" 
+                                        title="Change Image">
+                                    <i class="fas fa-sync-alt text-sm"></i>
+                                </button>
+                                <button type="button" onclick="removePackageImage()" 
+                                        class="p-2 text-gray-400 hover:text-brand-red hover:bg-brand-red/10 rounded-xl transition-all" 
+                                        title="Remove Image">
+                                    <i class="fas fa-trash-alt text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Client-side Validation Warning Alert -->
+                    <div id="pkgImageError" class="hidden p-2.5 bg-brand-red/10 border border-brand-red/20 rounded-xl text-brand-red text-xs font-semibold flex items-center gap-2">
+                        <i class="fas fa-exclamation-circle shrink-0"></i>
+                        <span id="pkgImageErrorText">Please select a valid image file under 5MB.</span>
+                    </div>
+                </section>
 
                 <!-- Status -->
                 <div class="space-y-1.5">
@@ -540,22 +609,19 @@
         const packageModal = document.getElementById('packageModal');
         const deleteConfirmModal = document.getElementById('deleteConfirmModal');
         const statusConfirmModal = document.getElementById('statusConfirmModal');
+
         let packageToDeleteId = null;
         let packageToToggleId = null;
         let packageToggleAction = null;
+        let editingPackageId = null;
 
         // Modal Controls
-        function openPackageModal(editMode = false, id = null, name = null) {
-            if (editMode) {
-                document.getElementById('modalTitle').textContent = `Edit: ${name}`;
-                document.getElementById('modalSubmitBtn').innerHTML = '<i class="fas fa-save"></i> <span>Update Package</span>';
-                // For now, simulate by pre-filling the name
-                document.getElementById('pkgName').value = name;
-            } else {
-                document.getElementById('modalTitle').textContent = 'Create New Package';
-                document.getElementById('modalSubmitBtn').innerHTML = '<i class="fas fa-save"></i> <span>Save Package</span>';
-                resetModalForm();
-            }
+        function openPackageModal() {
+            editingPackageId = null;        
+            document.getElementById('modalTitle').textContent = 'Create New Package';
+            document.getElementById('modalSubmitBtn').innerHTML = '<i class="fas fa-save"></i> <span>Save Package</span>';
+            resetModalForm();
+        
             packageModal.classList.remove('hidden');
             document.body.classList.add('overflow-hidden');
         }
@@ -568,9 +634,8 @@
         function resetModalForm() {
             document.getElementById('pkgName').value = '';
             document.getElementById('pkgCategory').value = '';
-            document.getElementById('pkgPrice').value = '';
             document.getElementById('pkgDeliveryDays').value = '';
-            document.getElementById('pkgDescription').value = '';
+            document.getElementById('pkgShortDescription').value = '';
             document.getElementById('pkgStatus').value = 'draft';
         }
 
@@ -579,22 +644,244 @@
             if (e.target === packageModal) closePackageModal();
         });
 
+        //package image function
+        (function() {
+            const input = document.getElementById('pkgImageInput');
+            const dropzone = document.getElementById('pkgImageDropzone');
+            const previewContainer = document.getElementById('pkgImagePreviewContainer');
+            const previewImg = document.getElementById('pkgImagePreview');
+            const nameElem = document.getElementById('pkgImageName');
+            const sizeElem = document.getElementById('pkgImageSize');
+            const errorDiv = document.getElementById('pkgImageError');
+            const errorText = document.getElementById('pkgImageErrorText');
+
+            if (!input || !dropzone) return;
+
+            function showImageError(msg) {
+                errorText.textContent = msg;
+                errorDiv.classList.remove('hidden');
+            }
+
+            function clearImageError() {
+                errorDiv.classList.add('hidden');
+            }
+
+            function formatBytes(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            function handleFile(file) {
+                clearImageError();
+                if (!file) return;
+
+                if (!file.type.startsWith('image/')) {
+                    showImageError('Only image files (PNG, JPG, JPEG, WEBP) are allowed.');
+                    return;
+                }
+
+                if (file.size > 5 * 1024 * 1024) {
+                    showImageError('Image size exceeds 5MB limit.');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    nameElem.textContent = file.name;
+                    sizeElem.textContent = formatBytes(file.size);
+
+                    dropzone.classList.add('hidden');
+                    previewContainer.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+
+            input.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) handleFile(file);
+            });
+
+            window.removePackageImage = function() {
+                input.value = '';
+                previewImg.src = '';
+                nameElem.textContent = '';
+                sizeElem.textContent = '';
+                clearImageError();
+                previewContainer.classList.add('hidden');
+                dropzone.classList.remove('hidden');
+            };
+
+            // Drag and Drop support
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropzone.addEventListener(eventName, function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropzone.classList.add('border-brand-teal', 'bg-brand-teal/10');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropzone.addEventListener(eventName, function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropzone.classList.remove('border-brand-teal', 'bg-brand-teal/10');
+                }, false);
+            });
+
+            dropzone.addEventListener('drop', function(e) {
+                const dt = e.dataTransfer;
+                const file = dt.files[0];
+                if (file) {
+                    input.files = dt.files;
+                    handleFile(file);
+                }
+            }, false);
+        })();
+
+
         // Package Action Functions
         function savePackage() {
             const name = document.getElementById('pkgName').value.trim();
             const category = document.getElementById('pkgCategory').value;
-            const price = document.getElementById('pkgPrice').value;
+            const billingCycle = document.getElementById('pkgDeliveryDays').value;
+            const shortDescription = document.getElementById('pkgShortDescription').value.trim();
+            const status = document.getElementById('pkgStatus').value;
+            const imageInput = document.getElementById('pkgImageInput');
+            const imageFile = imageInput.files[0];
 
-            if (!name || !category || !price) {
-                alertMessage('warning', 'Please fill in all required fields (Name, Category, Price).');
+            // Determine whether we're creating or editing
+            const isEditing = editingPackageId !== null;
+
+            if (!name || !category || !billingCycle || !shortDescription || !status) {
+                alertMessage('warning', 'Please fill in all required fields (Name, Category, Billing Cycle, Description).');
                 return;
             }
-            alertMessage('success', `Package "${name}" saved successfully!`);
-            closePackageModal();
+
+            if (!isEditing && !imageFile) {
+                alertMessage('warning', 'Please select a package image.');
+                return;
+            }
+
+            // Disable save button while submitting
+            const saveButton = document.getElementById('modalSubmitBtn');
+
+            saveButton.disabled = true;
+
+            saveButton.innerHTML = isEditing
+                ? '<i class="fas fa-spinner fa-spin"></i> <span>Updating...</span>'
+                : '<i class="fas fa-spinner fa-spin"></i> <span>Saving...</span>';
+
+            const formData = new FormData();
+
+            formData.append('name', name);
+            formData.append('category', category);
+            formData.append('billing_cycle', billingCycle);
+            formData.append('description', shortDescription);
+            formData.append('status', status);
+
+            // Only append image if one was selected
+            if (imageFile) {
+                formData.append('image', imageFile);
+            }
+
+            let url;
+
+            if(isEditing){
+                //update
+                url = `/admin/managePackages/${editingPackageId}`;
+                formData.append('_method', 'PUT');
+            }else{
+                //create
+                url = "{{ route('admin.managePackages.store') }}";
+            }
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: formData
+            })
+            .then(async response => {
+                const data = await response.json();
+                if (!response.ok) {
+                    throw {
+                        status: response.status,
+                        data: data
+                    };
+                }
+                return data;
+            })
+            .then(data => {
+                if (data.success) {
+                    alertMessage(
+                        'success',
+                        data.message || `Package "${name}" created successfully!`
+                    );
+                    closePackageModal();
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+
+                } else {
+                    alertMessage(
+                        'error',
+                        data.message || 'Unable to create package.'
+                    );
+                }
+            })
+            .catch(error => {
+                console.error('Package creation error:', error);
+                // Laravel validation errors
+                if (error.status === 422 && error.data?.errors) {
+                    const firstError = Object.values(error.data.errors)[0][0];
+                    alertMessage('warning', firstError);
+                } else {
+                    alertMessage(
+                        'error',
+                        error.data?.message || 'Something went wrong. Please try again.'
+                    );
+                }
+            })
+            .finally(() => {
+                saveButton.disabled = false;
+
+                saveButton.innerHTML = isEditing
+                    ? '<i class="fas fa-save"></i> <span>Update Package</span>'
+                    : '<i class="fas fa-save"></i> <span>Save Package</span>';
+            });
         }
 
-        function editPackage(id, name) {
-            openPackageModal(true, id, name);
+        function editPackage(button) {
+            const id = button.dataset.id;
+            const name = button.dataset.name;
+            const category = button.dataset.category;
+            const billingCycle = button.dataset.billingCycle;
+            const description = button.dataset.description;
+            const status = button.dataset.status;
+            const image = button.dataset.image;
+
+            // Store package ID
+            editingPackageId = id;
+
+            // Change modal to edit mode
+            document.getElementById('modalTitle').textContent = `Edit: ${name}`;
+            document.getElementById('modalSubmitBtn').innerHTML = '<i class="fas fa-save"></i> <span>Update Package</span>';
+
+            // Populate fields
+            document.getElementById('pkgName').value = name || '';
+            document.getElementById('pkgCategory').value = category || '';
+            document.getElementById('pkgDeliveryDays').value = billingCycle || '';
+            document.getElementById('pkgShortDescription').value = description || '';
+            document.getElementById('pkgStatus').value = status || 'draft';
+
+            packageModal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
         }
 
         function togglePackageStatus(id, name, currentStatus) {

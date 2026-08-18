@@ -753,7 +753,15 @@
         // --- Add Item Modal Functions ---
         function addItemToPackage() {
             if (!currentSubPackageId) {
-                alert('Please select a sub package first.');
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Please select a sub package first.',
+                    showConfirmButton: false,
+                    timer: 2500,
+                    timerProgressBar: true
+                });
                 return;
             }
             document.getElementById('modal_sub_package_id').value = currentSubPackageId;
@@ -841,7 +849,15 @@
             const packageName = document.getElementById('active-package-name').textContent.trim();
 
             if (!packageId || isNaN(packageId)) {
-                alert('Please select a package first.');
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Please select a package first.',
+                    showConfirmButton: false,
+                    timer: 2500,
+                    timerProgressBar: true
+                });
                 return;
             }
 

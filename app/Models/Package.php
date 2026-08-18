@@ -17,31 +17,17 @@ class Package extends Model
     
     protected $fillable = [
         'name',
-        'price',
         'image',
         'category',
         'billing_cycle',
-        'short_description',
         'description',
-        'status',
-        'is_available'
-    ];
-
-    protected $casts = [
-        'price' => 'decimal:2',
-        'is_available' => 'boolean',
+        'status'
     ];
 
     // One package can have many subscriptions
     public function subscriptions()
     {
         return $this->hasMany(Subscription::class);
-    }
-
-    // One package can have many orders
-    public function orders()
-    {
-        return $this->hasMany(Order::class);
     }
 
     // One package can have many sub packages

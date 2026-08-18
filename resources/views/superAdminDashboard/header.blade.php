@@ -154,6 +154,8 @@
     </div>
 </header>
 
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     function toggleAdminNotifications(event) {
         event.stopPropagation();
@@ -191,16 +193,49 @@
         unreadItems.forEach(item => item.classList.remove('bg-teal-50/30'));
 
         // AJAX POST request to mark all read in database
-        fetch("{{ route('notifications.mark-all-read') }}", {
+        fetch("{{ route('admin.notifications.mark-all-read') }}", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
                 'Accept': 'application/json'
             }
-        }).then(response => response.json())
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: data.message,
+                    showConfirmButton: false,
+                    timer: 2500,
+                    timerProgressBar: true
+                });
+            } else {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: data.message || 'Unable to mark notifications as read.',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+            }
+        })
         .catch(err => {
             console.error('Failed to sync notification read state:', err);
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'error',
+                title: 'Failed to sync notification read state',
+                showConfirmButton: false,
+                timer: 2500,
+                timerProgressBar: true
+            });
         });
     }
 

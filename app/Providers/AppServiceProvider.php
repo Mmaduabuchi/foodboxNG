@@ -28,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
             if (Auth::check()) {
 
                 $notifications = UserNotification::where('user_id', Auth::id())
+                    ->where('is_read', false)
                     ->latest()
                     ->take(10)
                     ->get();
@@ -48,7 +49,7 @@ class AppServiceProvider extends ServiceProvider
         // Admin notifications
         View::composer('superAdminDashboard.header', function ($view) {
 
-            $adminNotifications = AdminNotification::latest()
+            $adminNotifications = AdminNotification::where('is_read', false)->latest()
                 ->take(10)
                 ->get();
 
