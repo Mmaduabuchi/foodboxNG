@@ -199,7 +199,7 @@ Route::middleware(['auth', 'user', 'single.device', 'inactive.session'])->group(
 
 
 
-Route::middleware(['auth', 'admin'])->group(function () {
+Route::middleware(['auth', 'admin', 'admin.inactive'])->group(function () {
     
     //admin logout
     Route::post('/secure/logout', [adminHomeController::class, 'logout'])->name('secure.logout');
