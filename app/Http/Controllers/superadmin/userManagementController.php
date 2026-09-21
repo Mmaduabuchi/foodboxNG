@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class userManagementController extends Controller
 {
@@ -101,21 +102,67 @@ class userManagementController extends Controller
     // Toggle user suspension
     public function toggleSuspend(Request $request)
     {
+        // $request->validate([
+        //     'id' => 'required|integer|exists:users,id',
+        // ]);
+
         $user = User::find($request->id);
 
         if (!$user) {
+
+            Log::warning('Admin attempted to suspend/activate nonexistent user', [
+                'target_user_id' => $request->id,
+                'admin_user_id' => Auth::id(),
+                'ip' => $request->ip(),
+            ]);
+            
             return response()->json([
                 'success' => false,
                 'message' => 'User not found'
             ], 404);
         }
 
+        // Prevent an admin from accidentally suspending another admin
+        if ($user->role === 'admin') {
+            Log::warning('Admin attempted to modify another admin account status', [
+                'target_user_id' => $user->id,
+                'target_email' => $user->email,
+                'admin_user_id' => Auth::id(),
+                'ip' => $request->ip(),
+            ]);
+
+            return back()->with(
+                'error',
+                'Admin accounts cannot be suspended from this section.'
+            );
+        }
+        
+        // Capture current status
+        $oldSuspendStatus = (bool) $user->is_suspended;
+        // Toggle status
         $newSuspendStatus = !$user->is_suspended;
 
+        // Update account status
         $user->update([
             'is_suspended' => $newSuspendStatus,
             'is_active' => !$newSuspendStatus,
         ]);
+
+        // Log the status change
+        Log::info(
+            $newSuspendStatus
+                ? 'User account suspended by admin'
+                : 'User account activated by admin',
+            [
+                'admin_user_id' => Auth::id(),
+                'target_user_id' => $user->id,
+                'target_email' => $user->email,
+                'previous_suspended_status' => $oldSuspendStatus,
+                'new_suspended_status' => $newSuspendStatus,
+                'new_active_status' => !$newSuspendStatus,
+                'ip' => $request->ip(),
+            ]
+        );
 
         return back()->with(
             'success',
@@ -125,68 +172,158 @@ class userManagementController extends Controller
         );
     }
 
-    public function export(Request $request)
-    {
-        $query = User::where('role', 'user');
+    public function export(Request $request) {
 
-        // Search Filter
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'LIKE', "%{$search}%")
-                  ->orWhere('email', 'LIKE', "%{$search}%")
-                  ->orWhere('phone', 'LIKE', "%{$search}%");
-            });
-        }
+        //Validate Export Filters
+        $validated = $request->validate([
+            'search' => [
+                'nullable',
+                'string',
+                'max:100',
+            ],
 
-        // Role Filter
-        if ($request->filled('role') && $request->role !== 'All Roles') {
-            $roleValue = strtolower(str_replace(' ', '_', $request->role));
-            if ($roleValue === 'customer') $roleValue = 'user';
-            $query->where('role', $roleValue);
-        }
+            'role' => [
+                'nullable',
+                'string',
+                'max:50',
+            ],
 
-        // Status Filter
-        if ($request->filled('status') && $request->status !== 'All Statuses') {
-            if ($request->status === 'Active') {
-                $query->where('is_suspended', false);
-            } elseif ($request->status === 'Inactive' || $request->status === 'Banned') {
-                $query->where('is_suspended', true);
-            }
-        }
+            'status' => [
+                'nullable',
+                'string',
+                'max:50',
+            ],
+        ]);
 
-        $users = $query->latest()->get();
+        try {
+            
+            //Build Query
+            $query = User::where('role', 'user');
 
-        $headers = [
-            'Content-type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename=users_export_' . now()->format('Y-m-d_H-i-s') . '.csv',
-            'Pragma' => 'no-cache',
-            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
-            'Expires' => '0'
-        ];
-
-        $columns = ['User ID', 'Name', 'Email', 'Phone', 'Role', 'Status', 'Registered Date', 'Last Updated'];
-
-        $callback = function() use ($users, $columns) {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, $columns);
-
-            foreach ($users as $user) {
-                $row['User ID'] = 'UID-' . str_pad($user->id, 4, '0', STR_PAD_LEFT);
-                $row['Name'] = $user->name;
-                $row['Email'] = $user->email;
-                $row['Phone'] = $user->phone ?? '—';
-                $row['Role'] = ucfirst(str_replace('_', ' ', $user->role));
-                $row['Status'] = $user->is_suspended ? 'Suspended' : 'Active';
-                $row['Registered Date'] = $user->created_at ? $user->created_at->format('Y-m-d H:i:s') : '—';
-                $row['Last Updated'] = $user->updated_at ? $user->updated_at->format('Y-m-d H:i:s') : '—';
-
-                fputcsv($file, array_values($row));
+            // Search Filter
+            if (!empty($validated['search'])) {
+                $search = trim($validated['search']);
+                $query->where(function($q) use ($search) {
+                    $q->where('name', 'LIKE', "%{$search}%")
+                    ->orWhere('email', 'LIKE', "%{$search}%")
+                    ->orWhere('phone', 'LIKE', "%{$search}%");
+                });
             }
 
-            fclose($file);
-        };
+            // Role Filter
+            if (!empty($validated['role']) && $validated['role'] !== 'All Roles') {
+                $roleValue = strtolower(str_replace(' ', '_', $validated['role']));
+                if ($roleValue === 'customer') $roleValue = 'user';
 
-        return response()->stream($callback, 200, $headers);
+                // Since this export is specifically for users,
+                // don't allow another role to be exported.
+                if ($roleValue !== 'user') {
+
+                    Log::warning('Admin attempted invalid role filter during user export', [
+                        'admin_user_id' => Auth::id(),
+                        'requested_role' => $validated['role'],
+                        'ip' => $request->ip(),
+                    ]);
+
+                    return back()->withErrors([
+                        'role' => 'Invalid role filter.',
+                    ]);
+                }
+                
+                $query->where('role', $roleValue);
+            }
+
+            // Status Filter
+            if (!empty($validated['status']) && $validated['status'] !== 'All Statuses') {
+                if ($validated['status'] === 'Active') {
+                    $query->where('is_suspended', false);
+                } elseif ($validated['status'] === 'Inactive' || $validated['status'] === 'Banned') {
+                    $query->where('is_suspended', true);
+                } else {
+
+                    Log::warning('Admin attempted invalid status filter during user export', [
+                        'admin_user_id' => Auth::id(),
+                        'requested_status' => $validated['status'],
+                        'ip' => $request->ip(),
+                    ]);
+
+                    return back()->withErrors([
+                        'status' => 'Invalid status filter.',
+                    ]);
+                }
+            }
+
+            //Retrieve Users
+            $users = $query->latest()->get();
+
+            //Audit Log
+            Log::info('Admin exported users CSV', [
+                'admin_user_id' => Auth::id(),
+                'ip' => $request->ip(),
+                'user_count' => $users->count(),
+                'filters' => [
+                    'search' => !empty($validated['search'])
+                        ? '[FILTERED]'
+                        : null,
+                    'role' => $validated['role'] ?? null,
+                    'status' => $validated['status'] ?? null,
+                ],
+            ]);
+
+
+            //CSV Response
+            $filename = 'users_export_' . now()->format('Y-m-d_H-i-s') . '.csv';
+            $headers = [
+                'Content-type' => 'text/csv',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+                'Pragma' => 'no-cache',
+                'Cache-Control' => 'no-store, no-cache, must-revalidate',
+                'Expires' => '0'
+            ];
+
+            $columns = ['User ID', 'Name', 'Email', 'Phone', 'Role', 'Status', 'Registered Date', 'Last Updated'];
+
+            $callback = function() use ($users, $columns) {
+                $file = fopen('php://output', 'w');
+
+                if ($file === false) {
+                    throw new \RuntimeException(
+                        'Unable to open output stream for CSV export.'
+                    );
+                }
+
+                fputcsv($file, $columns);
+
+                foreach ($users as $user) {
+                    $row['User ID'] = 'UID-' . str_pad($user->id, 4, '0', STR_PAD_LEFT);
+                    $row['Name'] = $user->name;
+                    $row['Email'] = $user->email;
+                    $row['Phone'] = $user->phone ?? '—';
+                    $row['Role'] = ucfirst(str_replace('_', ' ', $user->role));
+                    $row['Status'] = $user->is_suspended ? 'Suspended' : 'Active';
+                    $row['Registered Date'] = $user->created_at ? $user->created_at->format('Y-m-d H:i:s') : '—';
+                    $row['Last Updated'] = $user->updated_at ? $user->updated_at->format('Y-m-d H:i:s') : '—';
+
+                    fputcsv($file, array_values($row));
+                }
+
+                fclose($file);
+            };
+
+            return response()->stream($callback, 200, $headers);
+
+
+        } catch (\Throwable $e) {
+
+            Log::error('Admin user CSV export failed', [
+                'admin_user_id' => Auth::id(),
+                'ip' => $request->ip(),
+                'exception' => $e->getMessage(),
+            ]);
+
+            return back()->withErrors([
+                'error' => 'Unable to export users at this time. Please try again.',
+            ]);
+        }
     }
 }
