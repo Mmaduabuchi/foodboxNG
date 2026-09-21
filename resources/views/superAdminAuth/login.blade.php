@@ -86,7 +86,27 @@
             <p class="text-gray-500 text-sm">Please enter your credentials to access the console.</p>
         </div>
 
-        <!-- Session Alerts -->
+
+        <!-- Validation / Rate Limit Alerts -->
+        @if ($errors->any())
+            <div class="mb-6 p-4 rounded-2xl bg-red-50 border border-red-100 flex items-center gap-4 text-red-700 shadow-sm">
+                <div class="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0 text-red-600">
+                    <i class="fas fa-circle-exclamation text-lg"></i>
+                </div>
+
+                <div class="flex-1">
+                    <p class="text-xs uppercase tracking-wider font-bold opacity-60 mb-0.5">
+                        Error
+                    </p>
+
+                    <p class="text-sm font-semibold">
+                        {{ $errors->first() }}
+                    </p>
+                </div>
+            </div>
+        @endif
+
+        <!-- Session Error -->
         @if(session('error'))
             <div class="mb-6 p-4 rounded-2xl bg-red-50 border border-red-100 flex items-center gap-4 text-red-700 shadow-sm">
                 <div class="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0 text-red-600">
@@ -99,6 +119,8 @@
             </div>
         @endif
 
+
+        <!-- Session Success -->
         @if(session('success'))
             <div class="mb-6 p-4 rounded-2xl bg-brand-teal/5 border border-brand-teal/10 flex items-center gap-4 text-brand-teal shadow-sm">
                 <div class="w-10 h-10 rounded-xl bg-brand-teal/10 flex items-center justify-center flex-shrink-0">
