@@ -22,6 +22,7 @@ class User extends Authenticatable
         'active_session_id',
         'name',
         'email',
+        'email_verified_at',
         'email_verification_token_hash',
         'email_verification_expires_at',
         'password',

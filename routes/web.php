@@ -132,7 +132,7 @@ Route::get('/verify-email/{token}', [registerController::class, 'verifyEmail'])-
 
 
 
-Route::middleware(['auth', 'user', 'single.device'])->group(function () {
+Route::middleware(['auth', 'user', 'single.device', 'inactive.session'])->group(function () {
     //logout
     Route::post('/logout', [loginController::class, 'destroy'])->name("logout");
     

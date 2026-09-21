@@ -71,7 +71,11 @@ class registerController extends Controller
 
         $request->validate([
             'fullname' => 'required|string|max:50',
-            'phone' => 'required|string|max:11|unique:users,phone',
+            'phone' => [
+                'required',
+                'regex:/^0[7-9][0-9]{9}$/',
+                'unique:users,phone',
+            ],
             'email' => 'required|email|unique:users,email',
             'password' => ['required', 'confirmed', Password::min(8)->letters()->numbers()->symbols()]
         ]);

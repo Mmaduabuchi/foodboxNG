@@ -5,6 +5,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\SingleDeviceSession;
 use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\InactiveSession;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -24,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'user' => \App\Http\Middleware\UserMiddleware::class,
             'single.device' => SingleDeviceSession::class,
+            'inactive.session' => InactiveSession::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
