@@ -42,7 +42,7 @@ class AdminInactiveSession
             $request->session()->regenerateToken();
 
             return redirect()
-                ->route('admin.login')
+                ->route('secure')
                 ->with(
                     'error',
                     'Your admin session expired due to inactivity. Please login again.'
