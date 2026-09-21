@@ -18,10 +18,12 @@ class VerifyEmailMail extends Mailable
      */
 
     public $user;
+    public $verificationToken;
 
-    public function __construct($user)
+    public function __construct($user, string $verificationToken)
     {
         $this->user = $user;
+        $this->verificationToken = $verificationToken;
     }
 
     /**
@@ -30,7 +32,7 @@ class VerifyEmailMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Verify Email Mail',
+            subject: 'Verify Your FOODBOXNG Email Address',
         );
     }
 

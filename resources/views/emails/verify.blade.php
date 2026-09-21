@@ -39,12 +39,14 @@
 
     @php
         $userName = 'Valued Customer';
-        $userToken = '';
+
         if (isset($user)) {
-            $userName = is_array($user) ? ($user['name'] ?? 'Valued Customer') : ($user->name ?? 'Valued Customer');
-            $userToken = is_array($user) ? ($user['token'] ?? '') : ($user->token ?? '');
+            $userName = is_array($user)
+                ? ($user['name'] ?? 'Valued Customer')
+                : ($user->name ?? 'Valued Customer');
         }
-        $verifyUrl = url('/verify-email/' . $userToken);
+        
+        $verifyUrl = url('/verify-email/' . $verificationToken);
     @endphp
 
     <!-- Outer Wrapper -->

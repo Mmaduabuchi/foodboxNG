@@ -9,6 +9,8 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OtpMail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Log;
 
 class loginOtpController extends Controller
 {
@@ -21,37 +23,107 @@ class loginOtpController extends Controller
             'otp' => 'required',
         ]);
 
-        session([
-            '2fa_attempts' => session('2fa_attempts', 0) + 1
-        ]);
+        //Check 2FA Session
+        if (!$request->session()->has('2fa_user_id')) {
 
-        // Block if too many attempts
-        if (session('2fa_attempts') > 5) {
-            session()->forget(['2fa_user_id', '2fa_otp', '2fa_expires_at', '2fa_attempts']);
+            Log::warning('2FA verification attempted without active 2FA session', [
+                'ip' => $request->ip(),
+            ]);
+
+            return redirect()
+                ->route('login')
+                ->with('error', 'Session expired. Please login again.');
+        }
+
+
+        $userId = $request->session()->get('2fa_user_id');
+
+        // Limit attempts for this specific 2FA session
+        $sessionRateLimitKey = '2fa-verify|' . $userId . '|' . $request->ip();
+
+        if (RateLimiter::tooManyAttempts($sessionRateLimitKey, 5)) {
+
+            $seconds = RateLimiter::availableIn($sessionRateLimitKey);
+
+            Log::warning('2FA verification rate limit exceeded', [
+                'user_id' => $userId,
+                'ip' => $request->ip(),
+                'retry_after' => $seconds,
+            ]);
+
+            // Destroy the 2FA session
+            $request->session()->forget([
+                '2fa_user_id',
+                '2fa_otp',
+                '2fa_expires_at',
+                '2fa_attempts',
+            ]);
+
+            return redirect()->route('login')->with('error', 'Too many OTP attempts. Please login again.');
+        }
+
+        RateLimiter::hit($sessionRateLimitKey, 300);
+
+
+        //Legacy Session Attempt Counter
+        $request->session()->put(
+            '2fa_attempts',
+            $request->session()->get('2fa_attempts', 0) + 1
+        );
+
+        if ($request->session()->get('2fa_attempts') > 5) {
+
+            Log::warning('2FA session attempt limit exceeded', [
+                'user_id' => $userId,
+                'ip' => $request->ip(),
+            ]);
+
+            $request->session()->forget([
+                '2fa_user_id',
+                '2fa_otp',
+                '2fa_expires_at',
+                '2fa_attempts',
+            ]);
+
             return redirect()->route('login')->with('error', 'Too many attempts. Please login again.');
         }
 
-        if (!session()->has('2fa_user_id')) {
-            return redirect()->route('login')->with('error', 'Session expired. Please login again.');
-        }
+        $expiresAt = $request->session()->get('2fa_expires_at');
 
         // Check expiry
-        if (now()->greaterThan(session('2fa_expires_at'))) {
-            session()->forget(['2fa_user_id', '2fa_otp', '2fa_expires_at', '2fa_attempts']);
-            return back()->with('error', 'OTP has expired. Please login again.');
+        if (!$expiresAt || now()->greaterThan($expiresAt)) {
+            Log::warning('Expired 2FA OTP submitted', [
+                'user_id' => $userId,
+                'ip' => $request->ip(),
+            ]);
+            $request->session()->forget(['2fa_user_id', '2fa_otp', '2fa_expires_at', '2fa_attempts']);
+            return redirect()->route('login')->with('error', 'OTP has expired. Please login again.');
         }
 
         $otp = $request->otp;
 
-        if ((string)$otp == (string) session('2fa_otp')) {
+        if (hash_equals((string) $request->session()->get('2fa_otp'), (string) $otp)) {
 
-            $user = User::find($request->session()->get('2fa_user_id'));
+            $user = User::find($userId);
             
             if (!$user) {
+                Log::warning('2FA verification user not found', [
+                    'user_id' => $userId,
+                    'ip' => $request->ip(),
+                ]);
+
+                $request->session()->forget([
+                    '2fa_user_id',
+                    '2fa_otp',
+                    '2fa_expires_at',
+                    '2fa_attempts',
+                ]);
+
                 return redirect()->route('login')
                     ->with('error', 'User not found. Please login again.');
             }
 
+            //Login User
             Auth::login($user);
 
             // Regenerate the Laravel session ID
@@ -76,34 +148,100 @@ class loginOtpController extends Controller
                 '2fa_attempts'
             ]);
 
+            // Clear rate limiter after successful verification
+            RateLimiter::clear($sessionRateLimitKey);
+
+            //Log Successful Login
+            Log::info('User completed 2FA login successfully', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'ip' => $request->ip(),
+            ]);
+
             return redirect()->route('dashboard')->with('success', 'Welcome back, ' . $user->name . '!');
         }
 
+
+        //Invalid OTP
+        Log::warning('Invalid 2FA OTP submitted', [
+            'user_id' => $userId,
+            'ip' => $request->ip(),
+            'attempt' => $request->session()->get('2fa_attempts'),
+        ]);
+
         return back()->withErrors(['otp' => 'Invalid OTP']);
     }
+
+
+
+
 
     public function resend(Request $request){
         $userId = $request->session()->get('2fa_user_id');
 
         if (!$userId) {
+            Log::warning('2FA resend attempted without active session', [
+                'ip' => $request->ip(),
+            ]);
+
             return redirect()->route('login')->with('error', 'Session expired. Please login again.');
         }
 
+
+        //Rate Limit OTP Resend
+        $resendRateLimitKey = '2fa-resend|' . $userId . '|' . $request->ip();
+
+        if (RateLimiter::tooManyAttempts($resendRateLimitKey, 3)) {
+
+            $seconds = RateLimiter::availableIn($resendRateLimitKey);
+
+            Log::warning('2FA OTP resend rate limit exceeded', [
+                'user_id' => $userId,
+                'ip' => $request->ip(),
+                'retry_after' => $seconds,
+            ]);
+
+            return back()
+                ->with(
+                    'error',
+                    "Too many OTP requests. Please try again in {$seconds} seconds."
+                );
+        }
+
+        RateLimiter::hit($resendRateLimitKey, 600);
+
+
+        //Find User
         $user = User::find($userId);
 
         if (!$user) {
+
+            Log::warning('2FA OTP resend user not found', [
+                'user_id' => $userId,
+                'ip' => $request->ip(),
+            ]);
+
             return redirect()->route('login')->with('error', 'User not found.');
         }
-        $otp = rand(100000, 999999);
+
+        //Generate New OTP
+        $otp = random_int(100000, 999999);
+
         $request->session()->put('2fa_otp', $otp);
 
         $request->session()->put('2fa_expires_at', now()->addMinutes(5));
 
-        //reset attempts
+        // Reset attempts after a new OTP is generated
         session()->forget('2fa_attempts');
         
-        //send mail
+        //send OTP
         Mail::to($user->email)->send(new OtpMail($otp, $user));
+
+        Log::info('2FA OTP resent successfully', [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'ip' => $request->ip(),
+        ]);
         
         return back()->with('success', 'OTP resent successfully');
     }

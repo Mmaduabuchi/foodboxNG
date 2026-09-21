@@ -22,6 +22,8 @@ class User extends Authenticatable
         'active_session_id',
         'name',
         'email',
+        'email_verification_token_hash',
+        'email_verification_expires_at',
         'password',
         'token',
         'phone',
@@ -94,6 +96,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'email_verification_expires_at' => 'datetime',
             'password' => 'hashed',
             'active_session_id' => 'string',
         ];
