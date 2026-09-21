@@ -5,6 +5,7 @@ namespace App\Http\Controllers\auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OtpMail;
 use Illuminate\Support\Facades\Auth;
@@ -45,10 +46,35 @@ class loginOtpController extends Controller
         if ((string)$otp == (string) session('2fa_otp')) {
 
             $user = User::find($request->session()->get('2fa_user_id'));
+            
+            if (!$user) {
+                return redirect()->route('login')
+                    ->with('error', 'User not found. Please login again.');
+            }
+
             Auth::login($user);
 
-            session()->forget(['2fa_user_id', '2fa_otp', '2fa_expires_at', '2fa_attempts']);
+            // Regenerate the Laravel session ID
             $request->session()->regenerate();
+
+            // Create a new active session ID
+            $sessionId = (string) Str::uuid();
+
+            // Make this the user's only active session
+            $user->update([
+                'active_session_id' => $sessionId,
+            ]);
+
+            // Store the same ID in the current browser session
+            $request->session()->put('active_session_id', $sessionId);
+
+            // Clear 2FA temporary data
+            $request->session()->forget([
+                '2fa_user_id',
+                '2fa_otp',  
+                '2fa_expires_at',
+                '2fa_attempts'
+            ]);
 
             return redirect()->route('dashboard')->with('success', 'Welcome back, ' . $user->name . '!');
         }

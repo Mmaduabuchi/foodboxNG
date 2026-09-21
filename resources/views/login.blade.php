@@ -118,6 +118,25 @@
             </div>
         @endif
 
+
+        @if(session('error')) 
+            <div class="mb-6 p-4 rounded-2xl bg-red-50 border border-red-100 flex items-center gap-4 text-red-700 shadow-sm animate-in fade-in slide-in-from-top-4 duration-300"> 
+                <div class="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0 text-red-600"> 
+                    <i class="fas fa-circle-exclamation text-lg"></i> 
+                </div>        
+                <div class="flex-1">
+                    <p class="text-xs uppercase tracking-wider font-bold opacity-60 mb-0.5">
+                        Error
+                    </p>
+
+                    <p class="text-sm font-semibold">
+                        {{ session('error') }}
+                    </p>
+                </div>
+            </div>
+        @endif
+
+
         @if(session('success'))
             <div class="mb-6 p-4 rounded-2xl bg-green-50 border border-green-100 flex items-center gap-4 text-green-700 shadow-sm animate-in fade-in slide-in-from-top-4 duration-300">
                 <div class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0 text-green-600">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -72,6 +73,17 @@ class loginController extends Controller
 
             //normal login
             $request->session()->regenerate();
+
+            // Create a new active session ID
+            $sessionId = (string) Str::uuid();
+
+            // Make this the user's only active session
+            $user->update([
+                'active_session_id' => $sessionId,
+            ]);
+
+            // Store the session ID in the current browser session
+            $request->session()->put('active_session_id', $sessionId);
 
             return redirect()->route('dashboard')->with('success', 'Welcome back, ' . $user->name . '!');
         }
