@@ -152,13 +152,84 @@ class staffController extends Controller
         }
     }
 
-    public function edit($id)
+    // public function edit($id)
+    // {
+    //     $staff = Staff::findOrFail($id);
+    //     return response()->json([
+    //         'status' => 'success',
+    //         'data' => $staff
+    //     ]);
+    // }
+
+
+    public function edit(Request $request, $id)
     {
-        $staff = Staff::findOrFail($id);
+
+        //Rate Limiting
+        $rateLimitKey = 'staff-edit:' . (
+            Auth::id() ?? $request->ip()
+        );
+
+        if (RateLimiter::tooManyAttempts($rateLimitKey, 30)) {
+
+            $seconds = RateLimiter::availableIn($rateLimitKey);
+
+            Log::warning('Staff edit rate limit exceeded.', [
+                'admin_id' => Auth::id(),
+                'staff_id' => $id,
+                'ip' => $request->ip(),
+                'seconds_remaining' => $seconds,
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => "Too many requests. Please try again in {$seconds} seconds.",
+            ], 429);
+        }
+
+        RateLimiter::hit($rateLimitKey, 60);
+
+
+        //Find Staff
+        $staff = Staff::find($id);
+
+        if (!$staff) {
+
+            Log::warning('Attempt to retrieve non-existent staff for editing.', [
+                'admin_id' => Auth::id(),
+                'staff_id' => $id,
+                'ip' => $request->ip(),
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Staff member not found.',
+            ], 404);
+        }
+
+        //Success Log
+        Log::info('Staff record retrieved for editing.', [
+            'staff_id' => $staff->id,
+            'admin_id' => Auth::id(),
+            'ip' => $request->ip(),
+        ]);
+
+
+        //Response
         return response()->json([
             'status' => 'success',
-            'data' => $staff
-        ]);
+            'data' => [
+                'id' => $staff->id,
+                'fullname' => $staff->fullname,
+                'email' => $staff->email,
+                'phone' => $staff->phone,
+                'role' => $staff->role,
+                'NIN' => $staff->NIN,
+                'address' => $staff->address,
+                'state' => $staff->state,
+                'status' => $staff->status,
+            ],
+        ], 200);
     }
 
     // public function update(Request $request, $id)
