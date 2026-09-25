@@ -649,4 +649,110 @@ class staffController extends Controller
             ], 500);
         }
     }
+
+
+
+    public function destroy(Request $request, $id) {
+
+        //Rate Limiting
+        $rateLimitKey = 'staff-delete:' . (
+            Auth::id() ?? $request->ip()
+        );
+
+        if (RateLimiter::tooManyAttempts($rateLimitKey, 5)) {
+
+            $seconds = RateLimiter::availableIn($rateLimitKey);
+
+            Log::warning('Staff deletion rate limit exceeded.', [
+                'admin_id' => Auth::id(),
+                'staff_id' => $id,
+                'ip' => $request->ip(),
+                'seconds_remaining' => $seconds,
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => "Too many deletion attempts. Please try again in {$seconds} seconds.",
+            ], 429);
+        }
+
+
+        //Find Staff
+        $staff = Staff::find($id);
+
+        if (!$staff) {
+
+            Log::warning('Attempt to delete non-existent staff.', [
+                'admin_id' => Auth::id(),
+                'staff_id' => $id,
+                'ip' => $request->ip(),
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Staff member not found.',
+            ], 404);
+        }
+
+
+        //Prevent Deleting Current Staff/Admin
+        if ($staff->id === Auth::id()) {
+
+            Log::warning('Admin attempted to delete their own staff account.', [
+                'admin_id' => Auth::id(),
+                'staff_id' => $staff->id,
+                'ip' => $request->ip(),
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You cannot delete your own account.',
+            ], 403);
+        }
+
+
+        //Count Actual Delete Attempt
+        RateLimiter::hit($rateLimitKey, 60);
+
+
+        //Delete Staff
+        try {
+
+            DB::transaction(function () use ($staff) {
+                $staff->delete();
+            });
+
+
+
+            // Activity Log
+            Log::info('Staff member deleted successfully.', [
+                'staff_id' => $staff->id,
+                'staff_email' => $staff->email,
+                'staff_role' => $staff->role,
+                'deleted_by' => Auth::id(),
+                'ip' => $request->ip(),
+            ]);
+
+
+            return response()->json([
+                'status' => 'success',
+                'message' => "{$staff->fullname} has been deleted successfully.",
+            ], 200);
+
+        } catch (Throwable $e) {
+
+            Log::error('Failed to delete staff member.', [
+                'staff_id' => $staff->id,
+                'admin_id' => Auth::id(),
+                'ip' => $request->ip(),
+                'error' => $e->getMessage(),
+                'exception' => get_class($e),
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unable to delete staff member at the moment. Please try again later.',
+            ], 500);
+        }
+    }
 }

@@ -255,6 +255,7 @@ Route::middleware(['auth', 'admin', 'admin.inactive'])->group(function () {
     Route::put('/admin/staff/{id}', [staffController::class, 'update'])->name('admin.staff.update');
     Route::post('/admin/staff/{id}/suspend', [staffController::class, 'suspend'])->name('admin.staff.suspend');
     Route::post('/admin/staff/{id}/activate', [staffController::class, 'activate'])->name('admin.staff.activate');
+    Route::delete('/admin/staff/{id}/delete', [staffController::class, 'destroy'])->name('admin.staff.destroy');
 
     //system settings
     Route::post('/admin/updateCustomerSupport', [systemSettingsController::class, 'updateCustomerSupport'])->name('admin.updateCustomerSupport');

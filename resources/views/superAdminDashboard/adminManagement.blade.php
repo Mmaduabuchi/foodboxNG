@@ -364,7 +364,7 @@
 
         <div class="bg-white p-6 rounded-2xl shadow-soft overflow-x-auto">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-semibold text-brand-blue">Active Staff Directory</h3>
+                <h3 class="text-xl font-semibold text-brand-blue">Staff Directory</h3>
                 <form action="{{ route('admin.adminManagement') }}" method="GET" class="relative group">
                     <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm group-focus-within:text-brand-teal transition-colors"></i>
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Quick staff search..." 
@@ -448,6 +448,12 @@
                                         <i class="fas fa-user-slash text-xs"></i>
                                     </button>
                                 @endif
+
+                                {{-- Delete --}}
+                                <button onclick="deleteStaff('{{ $staff->id }}', '{{ $staff->fullname }}')"
+                                    class="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all" title="Delete Staff">
+                                    <i class="fas fa-trash text-xs"></i>
+                                </button>
                             </td>
                         </tr>
                     @empty
@@ -765,6 +771,96 @@
                 modal.classList.remove('flex');
                 modal.classList.add('hidden');
             }, 300); // Improved transition speed
+        }
+
+
+
+
+        async function deleteStaff(id, name) {
+
+            Swal.fire({
+                title: 'Delete Staff Member?',
+                html: `
+                    <p class="text-gray-600">
+                        Are you sure you want to delete
+                        <strong>${name}</strong>?
+                    </p>
+                    <p class="text-red-500 text-sm mt-2">
+                        This action will remove their access and delete their staff record.
+                    </p>
+                `,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#264653',
+                confirmButtonText: 'Yes, delete staff',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true
+            }).then(async (result) => {
+
+                if (!result.isConfirmed) {
+                    return;
+                }
+
+                try {
+
+                    Swal.fire({
+                        title: 'Deleting...',
+                        text: 'Please wait while the staff account is deleted.',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+
+                    const response = await fetch(`/admin/staff/${id}/delete`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        }
+                    });
+
+
+                    const data = await response.json();
+
+
+                    if (response.ok && data.status === 'success') {
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Deleted!',
+                            text: data.message,
+                            confirmButtonColor: '#2A9D8F'
+                        }).then(() => {
+                            window.location.reload();
+                        });
+
+                    } else {
+
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Unable to Delete',
+                            text: data.message || 'Failed to delete staff member.',
+                            confirmButtonColor: '#E76F51'
+                        });
+                    }
+
+                } catch (error) {
+
+                    console.error('Staff deletion error:', error);
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Request Failed',
+                        text: 'Network error. Please try again.',
+                        confirmButtonColor: '#E76F51'
+                    });
+                }
+            });
         }
     </script>
 </body>
