@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\OtpMail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\RateLimiter;
+use App\Services\CartMergeService;
 
 class loginController extends Controller
 {
@@ -168,6 +169,9 @@ class loginController extends Controller
 
             // Store the session ID in the current browser session
             $request->session()->put('active_session_id', $sessionId);
+
+            // Merge the guest cart into the user's account cart
+            app(CartMergeService::class)->merge($user);
 
             Log::info('User logged in successfully', [
                 'user_id' => $user->id,

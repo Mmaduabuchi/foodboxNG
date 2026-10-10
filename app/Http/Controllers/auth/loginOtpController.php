@@ -11,6 +11,7 @@ use App\Mail\OtpMail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Log;
+use App\Services\CartMergeService;
 
 class loginOtpController extends Controller
 {
@@ -139,6 +140,9 @@ class loginOtpController extends Controller
 
             // Store the same ID in the current browser session
             $request->session()->put('active_session_id', $sessionId);
+
+            // Merge the guest cart into the user's account cart
+            app(CartMergeService::class)->merge($user);
 
             // Clear 2FA temporary data
             $request->session()->forget([
