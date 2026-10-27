@@ -181,15 +181,17 @@
                         @foreach($package->subPackages as $index => $subPackage)
                             @if($index == 1)
                                 <!-- Featured Card (Most Popular) -->
-                                <div class="bg-brand-blue rounded-3xl overflow-hidden shadow-2xl hover:-translate-y-2 transition-all duration-300 transform md:-mt-4 md:mb-4 relative flex flex-col h-full">
+                                <div class="bg-brand-blue rounded-3xl overflow-hidden shadow-2xl hover:-translate-y-2 transition-all duration-300 transform md:-mt-4 md:mb-4 relative flex flex-col h-full group">
                                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-gold to-brand-teal"></div>
-                                    <div class="relative h-48 overflow-hidden">
+                                    <a href="{{ route('subpackage.detail', $subPackage->id) }}" class="block relative h-48 overflow-hidden">
                                         <div class="absolute top-4 left-4 z-10 bg-brand-teal text-white text-xs font-bold px-3 py-1 rounded-full">Most Popular</div>
-                                        <img src="{{ $subPackage->image ? asset('assets/images/' . $subPackage->image) : 'https://images.unsplash.com/photo-1586201375761-83865001e31c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' }}" alt="{{ $subPackage->name }}" class="w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-500">
-                                    </div>
+                                        <img src="{{ $subPackage->image ? asset('storage/' . $subPackage->image) : 'https://images.unsplash.com/photo-1586201375761-83865001e31c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' }}" alt="{{ $subPackage->name }}" class="w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-500">
+                                    </a>
                                     <div class="p-6 flex-1 flex flex-col">
-                                        <h3 class="text-xl font-bold text-white">{{ $subPackage->name }}</h3>
-                                        <p class="text-gray-300 text-sm mt-2 mb-4">{{ $subPackage->description }}</p>
+                                        <a href="{{ route('subpackage.detail', $subPackage->id) }}" class="group-hover:text-brand-gold transition-colors">
+                                            <h3 class="text-xl font-bold text-white hover:text-brand-gold transition-colors">{{ $subPackage->name }}</h3>
+                                        </a>
+                                        <p class="text-gray-300 text-sm mt-2 mb-4">{{ $subPackage->display_description }}</p>
                                         
                                         <ul class="space-y-2 mb-6 text-sm text-gray-300">
                                             @foreach($subPackage->items as $item)
@@ -205,22 +207,38 @@
                                                 <span class="text-gray-300 text-sm capitalize">{{ $subPackage->billing_cycle }}</span>
                                                 <span class="text-2xl font-bold text-brand-gold">₦{{ number_format($subPackage->price, 0) }}</span>
                                             </div>
-                                            <button class="w-full py-3 rounded-xl bg-brand-gold text-brand-blue font-bold hover:bg-white transition-colors shadow-lg">Subscribe Now</button>
+                                            <div class="grid grid-cols-2 gap-2">
+                                                <a href="{{ route('subpackage.detail', $subPackage->id) }}" class="py-3 text-center rounded-xl border border-brand-gold text-brand-gold font-bold hover:bg-brand-gold hover:text-brand-blue transition-colors text-sm flex items-center justify-center">View Items</a>
+                                                <form action="{{ route('cart.add') }}" method="POST" class="cart-form">
+                                                    @csrf
+                                                    <input type="hidden" name="sub_package_id" value="{{ $subPackage->id }}">
+                                                    <input type="hidden" name="quantity" value="1">
+                                                    <button type="submit" class="cart-submit-btn w-full py-3 rounded-xl bg-brand-gold text-brand-blue font-bold hover:bg-white transition-colors shadow-lg text-sm flex items-center justify-center gap-1">
+                                                        <svg class="cart-spinner hidden animate-spin h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                                        </svg>
+                                                        <span class="cart-btn-text">Add to Cart</span>
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             @else
                                 <!-- Standard Card -->
                                 <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-300 group flex flex-col h-full">
-                                    <div class="relative h-48 overflow-hidden">
+                                    <a href="{{ route('subpackage.detail', $subPackage->id) }}" class="block relative h-48 overflow-hidden">
                                         @if($index == 0)
                                             <div class="absolute top-4 right-4 z-10 bg-brand-gold text-brand-blue text-xs font-bold px-3 py-1 rounded-full">Best Value</div>
                                         @endif
-                                        <img src="{{ $subPackage->image ? asset('assets/images/' . $subPackage->image) : 'https://images.unsplash.com/photo-1612929633738-8fe01f7c2725?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' }}" alt="{{ $subPackage->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                    </div>
+                                        <img src="{{ $subPackage->image ? asset('storage/' . $subPackage->image) : 'https://images.unsplash.com/photo-1612929633738-8fe01f7c2725?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' }}" alt="{{ $subPackage->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                    </a>
                                     <div class="p-6 flex-1 flex flex-col">
-                                        <h3 class="text-xl font-bold text-brand-blue">{{ $subPackage->name }}</h3>
-                                        <p class="text-gray-500 text-sm mt-2 mb-4">{{ $subPackage->description }}</p>
+                                        <a href="{{ route('subpackage.detail', $subPackage->id) }}">
+                                            <h3 class="text-xl font-bold text-brand-blue hover:text-brand-teal transition-colors">{{ $subPackage->name }}</h3>
+                                        </a>
+                                        <p class="text-gray-500 text-sm mt-2 mb-4">{{ $subPackage->display_description }}</p>
                                         
                                         <ul class="space-y-2 mb-6 text-sm text-gray-600">
                                             @foreach($subPackage->items as $item)
@@ -236,7 +254,21 @@
                                                 <span class="text-gray-400 text-sm capitalize">{{ $subPackage->billing_cycle }}</span>
                                                 <span class="text-2xl font-bold text-brand-blue">₦{{ number_format($subPackage->price, 0) }}</span>
                                             </div>
-                                            <button class="w-full py-3 rounded-xl border-2 border-brand-blue text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition-colors">Add to Cart</button>
+                                            <div class="grid grid-cols-2 gap-2">
+                                                <a href="{{ route('subpackage.detail', $subPackage->id) }}" class="py-3 text-center rounded-xl border border-brand-blue/30 text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition-colors text-sm flex items-center justify-center">View Items</a>
+                                                <form action="{{ route('cart.add') }}" method="POST" class="cart-form">
+                                                    @csrf
+                                                    <input type="hidden" name="sub_package_id" value="{{ $subPackage->id }}">
+                                                    <input type="hidden" name="quantity" value="1">
+                                                    <button type="submit" class="cart-submit-btn w-full py-3 rounded-xl border-2 border-brand-blue text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition-colors flex items-center justify-center gap-1 text-sm">
+                                                        <svg class="cart-spinner hidden animate-spin h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                                        </svg>
+                                                        <span class="cart-btn-text">Add to Cart</span>
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -282,6 +314,20 @@
                 navbar.classList.remove('shadow-md');
                 navbar.classList.replace('py-2', 'py-4');
             }
+        });
+
+        // Add to Cart — spinner on submit
+        document.querySelectorAll('.cart-form').forEach(function(form) {
+            form.addEventListener('submit', function() {
+                const btn     = form.querySelector('.cart-submit-btn');
+                const spinner = form.querySelector('.cart-spinner');
+                const label   = form.querySelector('.cart-btn-text');
+
+                btn.disabled = true;
+                spinner.classList.remove('hidden');
+                label.textContent = 'Adding...';
+                btn.classList.add('opacity-75', 'cursor-not-allowed');
+            });
         });
     </script>
 </body>

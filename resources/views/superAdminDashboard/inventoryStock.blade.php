@@ -522,7 +522,7 @@
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Short Description <span class="text-brand-red">*</span></label>
                         <div class="relative">
                             <i class="fas fa-align-left absolute left-3.5 top-3.5 text-gray-400 text-sm"></i>
-                            <input type="text" name="short_description" id="subpkg_short_desc" required placeholder="Brief tagline for this sub package" maxlength="150"
+                            <input type="text" name="short_description" id="subpkg_short_desc" required placeholder="Brief tagline for this sub package" maxlength="250"
                                 class="w-full pl-10 pr-4 py-3 bg-brand-grey/50 border-2 border-transparent rounded-xl text-sm font-semibold text-brand-blue placeholder-gray-400 focus:border-brand-teal focus:bg-white focus:outline-none transition-all">
                         </div>
                     </div>

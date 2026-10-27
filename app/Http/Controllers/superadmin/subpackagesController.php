@@ -17,7 +17,7 @@ class subpackagesController extends Controller
             'package_id' => 'required|exists:packages,id',
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5048',
             'short_description' => 'required|string|max:255',
             'description' => 'required|string',
             'billing_cycle' => 'required|in:daily,weekly,monthly',

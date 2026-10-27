@@ -43,6 +43,7 @@ use App\Http\Controllers\superadmin\subpackagesController;
 use App\Http\Controllers\home\welcomeController;
 use App\Http\Controllers\home\packagesController;
 use App\Http\Controllers\home\contactusController;
+use App\Http\Controllers\home\subPackageDetailController;
 use App\Http\Controllers\dashboard\usersupportController;
 use App\Http\Controllers\dashboard\trackordersController;
 use App\Http\Controllers\dashboard\UserNotificationController;
@@ -98,6 +99,11 @@ Route::get('/student_packages', [studentpackagesController::class, 'index'])->na
 Route::get('/family_packages', [familypackagesController::class, 'index'])->name('family_packages');
 Route::get('/bachelor_packages', [bachelorpackagesController::class, 'index'])->name('bachelor_packages');
 Route::get('/carts', [cartsController::class, 'index'])->name('carts');
+Route::post('/cart/add', [cartsController::class, 'store'])->name('cart.add');
+Route::patch('/cart/item/{id}', [cartsController::class, 'update'])->name('cart.update');
+Route::delete('/cart/item/{id}', [cartsController::class, 'destroy'])->name('cart.remove');
+Route::post('/cart/clear', [cartsController::class, 'clear'])->name('cart.clear');
+Route::get('/subpackage/{id}', [subPackageDetailController::class, 'show'])->name('subpackage.detail');
 
 
 Route::middleware('guest')->group(function () {

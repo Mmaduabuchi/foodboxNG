@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
 
 class SubPackages extends Model
 {
@@ -29,6 +30,16 @@ class SubPackages extends Model
         'is_available' => 'boolean',
     ];
 
+    public function getDisplayDescriptionAttribute(): string
+    {
+        $description = trim($this->short_description ?? '');
+
+        if ($description === '') {
+            $description = $this->description ?? '';
+        }
+
+        return Str::limit($description, 100);
+    }
 
     // One package can have many subscriptions
     public function subscriptions()
