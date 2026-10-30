@@ -255,7 +255,7 @@
                                                 <span class="text-2xl font-bold text-brand-blue">₦{{ number_format($subPackage->price, 0) }}</span>
                                             </div>
                                             <div class="grid grid-cols-2 gap-2">
-                                                <a href="{{ route('subpackage.detail', $subPackage->id) }}" class="py-3 text-center rounded-xl border border-brand-blue/30 text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition-colors text-sm flex items-center justify-center">View Items</a>
+                                                <a href="{{ route('subpackage.detail', $subPackage->slug) }}" class="py-3 text-center rounded-xl border border-brand-blue/30 text-brand-blue font-bold hover:bg-brand-blue hover:text-white transition-colors text-sm flex items-center justify-center">View Items</a>
                                                 <form action="{{ route('cart.add') }}" method="POST" class="cart-form">
                                                     @csrf
                                                     <input type="hidden" name="sub_package_id" value="{{ $subPackage->id }}">

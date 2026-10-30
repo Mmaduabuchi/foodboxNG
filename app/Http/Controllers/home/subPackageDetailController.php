@@ -7,12 +7,13 @@ use App\Models\SubPackages;
 
 class subPackageDetailController extends Controller
 {
-    public function show($id)
+    public function show($slug)
     {
         $subPackage = SubPackages::with(['items', 'package'])
             ->where('status', 'active')
             ->where('is_available', 1)
-            ->findOrFail($id);
+            ->where('slug', $slug)
+            ->firstOrFail();
 
         return view('subpackage_detail', compact('subPackage'));
     }

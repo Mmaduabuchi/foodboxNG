@@ -16,6 +16,7 @@ class SubPackages extends Model
     protected $fillable = [
         'package_id',
         'name',
+        'slug',
         'price',
         'image',
         'short_description',
@@ -30,6 +31,20 @@ class SubPackages extends Model
         'is_available' => 'boolean',
     ];
 
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function ($subPackage) {
+            if (empty($subPackage->slug)) {
+                $subPackage->slug = Str::slug($subPackage->name);
+            }
+        });
+    }
+    
     public function getDisplayDescriptionAttribute(): string
     {
         $description = trim($this->short_description ?? '');

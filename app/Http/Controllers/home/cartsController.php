@@ -51,8 +51,7 @@ class cartsController extends Controller
         ]);
 
         $subtotal = $cart->items->sum(
-            fn ($item) =>
-                (float) $item->unit_price * $item->quantity
+            fn ($item) => (float) $item->unit_price * $item->quantity
         );
 
         $itemCount = $cart->items->sum('quantity');

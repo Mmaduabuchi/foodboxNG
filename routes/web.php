@@ -103,7 +103,8 @@ Route::post('/cart/add', [cartsController::class, 'store'])->name('cart.add');
 Route::patch('/cart/item/{id}', [cartsController::class, 'update'])->name('cart.update');
 Route::delete('/cart/item/{id}', [cartsController::class, 'destroy'])->name('cart.remove');
 Route::post('/cart/clear', [cartsController::class, 'clear'])->name('cart.clear');
-Route::get('/subpackage/{id}', [subPackageDetailController::class, 'show'])->name('subpackage.detail');
+// Route::get('/subpackage/{id}', [subPackageDetailController::class, 'show'])->name('subpackage.detail');
+Route::get('/subpackage/{slug}', [subPackageDetailController::class, 'show'])->name('subpackage.detail');
 
 
 Route::middleware('guest')->group(function () {

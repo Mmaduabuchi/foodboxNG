@@ -155,7 +155,7 @@
                              data-id="{{ $item->id }}" 
                              data-price="{{ (float) $item->unit_price }}">
                             
-                            <a href="{{ route('subpackage.detail', $item->sub_package_id) }}" class="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 border-2 border-gray-100 group block">
+                            <a href="{{ route('subpackage.detail', $item->subPackage->slug) }}" class="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 border-2 border-gray-100 group block">
                                 <img src="{{ $item->subPackage && $item->subPackage->image ? asset('storage/' . $item->subPackage->image) : 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=200&q=80' }}"
                                      alt="{{ $item->subPackage->name ?? 'Package Item' }}" 
                                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
@@ -169,7 +169,7 @@
                                                 📦 {{ $item->subPackage->package->name }}
                                             </span>
                                         @endif
-                                        <a href="{{ route('subpackage.detail', $item->sub_package_id) }}" class="hover:text-brand-teal transition-colors block">
+                                        <a href="{{ route('subpackage.detail', $item->subPackage->slug) }}" class="hover:text-brand-teal transition-colors block">
                                             <h3 class="font-bold text-brand-blue text-lg leading-tight">{{ $item->subPackage->name ?? 'Package Item' }}</h3>
                                         </a>
                                         <p class="text-sm text-gray-400 mt-0.5">
@@ -329,7 +329,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                 @forelse($relatedSubPackages as $related)
                     <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group flex flex-col">
-                        <a href="{{ route('subpackage.detail', $related->id) }}" class="relative h-44 overflow-hidden block">
+                        <a href="{{ route('subpackage.detail', $related->slug) }}" class="relative h-44 overflow-hidden block">
                             <img src="{{ $related->image ? asset('storage/' . $related->image) : 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&q=80' }}"
                                  alt="{{ $related->name }}" 
                                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
@@ -340,7 +340,7 @@
                             @endif
                         </a>
                         <div class="p-5 flex-1 flex flex-col">
-                            <a href="{{ route('subpackage.detail', $related->id) }}">
+                            <a href="{{ route('subpackage.detail', $related->slug) }}">
                                 <h3 class="font-bold text-brand-blue text-base hover:text-brand-teal transition-colors line-clamp-1">
                                     {{ $related->name }}
                                 </h3>
@@ -356,7 +356,7 @@
                                     @endif
                                 </div>
                                 <div class="flex items-center gap-1.5">
-                                    <a href="{{ route('subpackage.detail', $related->id) }}" class="p-2 rounded-xl border border-gray-200 text-gray-500 hover:text-brand-teal hover:border-brand-teal text-xs transition-colors" title="View Details">
+                                    <a href="{{ route('subpackage.detail', $related->slug) }}" class="p-2 rounded-xl border border-gray-200 text-gray-500 hover:text-brand-teal hover:border-brand-teal text-xs transition-colors" title="View Details">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     <form action="{{ route('cart.add') }}" method="POST" class="cart-form inline">
