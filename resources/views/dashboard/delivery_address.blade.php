@@ -205,7 +205,7 @@
                             <button onclick="showModal('edit', JSON.parse(this.dataset.address))" data-address="{{ json_encode($address) }}" class="text-sm text-brand-teal font-medium hover:text-brand-blue transition-colors">
                                 <i class="fas fa-edit mr-1"></i> Edit
                             </button>
-                            <form action="{{ route('addresses.destroy', $address->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this address?')">
+                            <form action="{{ route('addresses.destroy', $address->id) }}" method="POST" class="delete-address-form">
                                 @csrf
                                 @method('DELETE')
 
@@ -330,6 +330,7 @@
     </div>
 
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- JavaScript for Mobile Sidebar Toggle & Modal -->
     <script>
         const sidebar = document.getElementById('sidebar');
@@ -414,6 +415,27 @@
             }
         });
 
+
+        document.querySelectorAll('.delete-address-form').forEach(form => {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                Swal.fire({
+                    title: 'Delete this address?',
+                    text: "This action cannot be undone.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#E76F51',
+                    cancelButtonColor: '#264653',
+                    confirmButtonText: 'Yes, delete it',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
 
 
         document.getElementById('address-form').addEventListener('submit', function () {
