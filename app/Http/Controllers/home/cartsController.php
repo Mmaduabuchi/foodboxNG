@@ -90,11 +90,12 @@ class cartsController extends Controller
 
     public function delivery_cart() {
         if (!Auth::check()) {
-            return redirect()->route('login')->with('message', 'Please log in to continue checkout.');
+            return redirect()
+                ->route('login')
+                ->with('message', 'Please log in to continue checkout.');
         }
 
         $user = Auth::user();
-        $addresses = Address::where('user_id', Auth::id())->get();
 
         $cart = Cart::query()
             ->where('user_id', $user->id)
@@ -111,16 +112,38 @@ class cartsController extends Controller
                 ->with('error', 'Your cart is empty.');
         }
 
+
+        foreach ($cart->items as $item) {
+            $subPackage = $item->subPackage;
+
+            if (!$subPackage || $subPackage->status !== 'active' || !$subPackage->is_available) {
+                return redirect()
+                    ->route('carts')
+                    ->with('error', 'One or more packages in your cart are no longer available.');
+            }
+
+            if ((float) $item->unit_price !== (float) $subPackage->price) {
+                return redirect()
+                    ->route('carts')
+                    ->with('error', 'The price of one or more packages has changed. Please review your cart.');
+            }
+        }
+
+        //get addresses of the user
+        $addresses = Address::where('user_id', $user->id)->get();
+
         $subtotal = $cart->items->sum(
-            fn ($item) =>
-                (float) $item->unit_price * $item->quantity
+            fn($item) => (float) $item->unit_price * $item->quantity
         );
+
+        $itemCount = $cart->items->sum('quantity');
 
         return view('cart_delivery', compact(
             'user',
             'addresses',
             'cart',
-            'subtotal'
+            'subtotal',
+            'itemCount'
         ));
     }
 

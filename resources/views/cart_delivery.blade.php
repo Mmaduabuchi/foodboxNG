@@ -99,6 +99,57 @@
             50% { transform: scale(1.02); }
         }
         .btn-pulse { animation: pulse-soft 0.5s ease infinite; }
+
+        .custom-toast {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            z-index: 99999;
+            padding: 14px 22px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(-15px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            max-width: 350px;
+        }
+
+        .custom-toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast-success {
+            background: #2A9D8F;
+        }
+
+        .toast-warning {
+            background: #E9A23B;
+        }
+
+        .toast-error {
+            background: #E76F51;
+        }
+
+        .method-card {
+            background-color: white;
+            border-color: #f3f4f6;
+            transition: all 0.25s ease;
+        }
+
+        .method-card.active {
+            background-color: #264653;
+            border-color: #264653;
+        }
+
+        .method-card.active .method-title,
+        .method-card.active .method-price,
+        .method-card.active .method-description {
+            color: white !important;
+        }
     </style>
 </head>
 <body class="bg-brand-grey font-sans text-brand-blue antialiased selection:bg-brand-gold selection:text-brand-blue">
@@ -245,10 +296,10 @@
                                 </div>
                                 <div class="flex-1">
                                     <div class="flex items-center justify-between">
-                                        <h4 class="font-bold text-brand-blue text-base">Standard Shipping</h4>
-                                        <span class="text-brand-teal font-bold text-sm">FREE</span>
+                                        <h4 class="font-bold text-brand-blue text-base method-title">Standard Shipping</h4>
+                                        <span class="text-brand-teal font-bold text-sm method-price">FREE</span>
                                     </div>
-                                    <p class="text-xs text-gray-500 mt-1">Delivery in 3 - 5 business days. Safe, secure, and reliable.</p>
+                                    <p class="text-xs text-gray-500 mt-1 method-description">Delivery in 3 - 5 business days. Safe, secure, and reliable.</p>
                                 </div>
                             </div>
 
@@ -259,10 +310,10 @@
                                 </div>
                                 <div class="flex-1">
                                     <div class="flex items-center justify-between">
-                                        <h4 class="font-bold text-brand-blue text-base">Express Delivery</h4>
-                                        <span class="text-brand-blue font-bold text-sm">+₦2,000</span>
+                                        <h4 class="font-bold text-brand-blue text-base method-title">Express Delivery</h4>
+                                        <span class="text-brand-blue font-bold text-sm method-price">+₦2,000</span>
                                     </div>
-                                    <p class="text-xs text-gray-500 mt-1">Delivery tomorrow. Best for urgent supplies or cravings.</p>
+                                    <p class="text-xs text-gray-500 mt-1 method-description">Delivery tomorrow. Best for urgent supplies or cravings.</p>
                                 </div>
                             </div>
                         </div>
@@ -274,12 +325,6 @@
                             <i class="fas fa-calendar-alt text-brand-teal"></i> Delivery Schedule
                         </h2>
                         <p class="text-sm text-gray-400 mb-6">Select a delivery date and time slot that works best for you.</p>
-
-                        <!-- Horizontal Scrollable Dates -->
-                        <!-- <h4 class="font-semibold text-brand-blue text-sm uppercase tracking-wider mb-3">1. Select Date</h4> -->
-                        <!-- <div class="flex items-center gap-3 overflow-x-auto pb-4" id="dateList"> -->
-                            <!-- JS will inject dynamic dates (Tomorrow + next 4 days) -->
-                        <!-- </div> -->
 
                         <!-- Time Slots Grid -->
                         <h4 class="font-semibold text-brand-blue text-sm uppercase tracking-wider mt-4 mb-3">Select Preferred Time Slot</h4>
@@ -317,8 +362,8 @@
                         <div class="space-y-4">
                             <!-- Items Count -->
                             <div class="flex justify-between items-center text-sm">
-                                <span class="text-gray-500 font-medium">Subtotal (<span id="itemCount">3</span> items)</span>
-                                <span id="summarySubtotal" class="font-bold text-brand-blue">₦134,000</span>
+                                <span class="text-gray-500 font-medium">Subtotal (<span id="itemCount">{{ $itemCount }}</span> items)</span>
+                                <span id="summarySubtotal" class="font-bold text-brand-blue">₦{{ number_format($subtotal, 2) }}</span>
                             </div>
                             <!-- Shipping Fee -->
                             <div class="flex justify-between items-center text-sm">
@@ -336,7 +381,7 @@
                             <!-- Divider -->
                             <div class="border-t-2 border-dashed border-gray-100 pt-4 flex justify-between items-center">
                                 <span class="font-bold text-brand-blue text-base">Total</span>
-                                <span id="summaryTotal" class="font-bold text-brand-blue text-2xl">₦134,000</span>
+                                <span id="summaryTotal" class="font-bold text-brand-blue text-2xl">₦{{ number_format($subtotal, 2) }}</span>
                             </div>
                         </div>
 
@@ -435,15 +480,17 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label for="city" class="block text-sm font-semibold text-gray-700 mb-1">City</label>
-                        <input type="text" id="city" class="w-full border-2 border-gray-100 rounded-xl px-4 py-3 text-sm font-medium text-brand-blue focus:outline-none focus:border-brand-teal transition-all" placeholder="e.g. Lekki" required>
+                        <input type="text" id="city" class="w-full border-2 border-gray-100 rounded-xl px-4 py-3 text-sm font-medium text-brand-blue focus:outline-none focus:border-brand-teal transition-all" placeholder="e.g. Uyo" required>
                     </div>
                     <div>
                         <label for="state" class="block text-sm font-semibold text-gray-700 mb-1">State</label>
                         <select id="state" class="w-full border-2 border-gray-100 rounded-xl px-4 py-3 text-sm font-medium text-brand-blue focus:outline-none focus:border-brand-teal transition-all" required>
+                            <option value="Akwa-Ibom">Akwa-Ibom</option>
+                            <option value="Anambra">Anambra</option>
+                            <option value="Enugu">Enugu</option>
                             <option value="Lagos">Lagos</option>
                             <option value="Abuja">Abuja FCT</option>
                             <option value="Rivers">Rivers</option>
-                            <option value="Oyo">Oyo</option>
                         </select>
                     </div>
                 </div>
@@ -488,7 +535,7 @@
                 <!-- Total display -->
                 <div class="bg-brand-grey rounded-2xl p-4 mb-6 text-center">
                     <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Amount Due</span>
-                    <h2 class="text-2xl font-extrabold text-brand-blue mt-1" id="paymentModalTotal">₦134,000</h2>
+                    <h2 class="text-2xl font-extrabold text-brand-blue mt-1" id="paymentModalTotal">₦{{ number_format($subtotal, 2) }}</h2>
                 </div>
 
                 <!-- Payment Methods options -->
@@ -542,7 +589,7 @@
                             <p class="text-xs font-bold text-brand-blue">Wema Bank (FoodBox NG)</p>
                             <p class="text-sm font-extrabold text-brand-teal tracking-wide">0123456789</p>
                         </div>
-                        <button onclick="alert('Account copied!')" class="text-xs font-bold text-brand-blue hover:text-brand-teal transition-colors">
+                        <button onclick="showToast('Account copied.', 'success');" class="text-xs font-bold text-brand-blue hover:text-brand-teal transition-colors">
                             Copy
                         </button>
                     </div>
@@ -564,7 +611,7 @@
                 <h3 class="text-2xl font-bold text-brand-blue mt-1">Order Placed Successfully</h3>
                 
                 <p class="text-sm text-gray-500 mt-3 max-w-xs mx-auto">
-                    Your payment of <strong id="successTotal">₦134,000</strong> has been confirmed. Order number: <span class="font-mono font-bold text-brand-blue">#FBNG-782910</span>.
+                    Your payment of <strong id="successTotal">₦{{ number_format($subtotal, 2) }}</strong> has been confirmed. Order number: <span class="font-mono font-bold text-brand-blue">#FBNG-782910</span>.
                 </p>
 
                 <div class="bg-brand-grey rounded-2xl p-4 my-6 text-left max-w-sm mx-auto">
@@ -629,8 +676,8 @@
                 : "Please select or add an address";
         @endphp
         let cartState = {
-            itemCount: 3,
-            subtotal: 134000,
+            itemCount: @json($itemCount),
+            subtotal: @json((float) $subtotal),
             shippingFee: 0,
             discount: 0,
             promoActive: false,
@@ -643,21 +690,7 @@
 
         /* ON LOAD */
         document.addEventListener('DOMContentLoaded', () => {
-            // Read from local storage if available from step 1
-            if (localStorage.getItem('fb_cart_subtotal')) {
-                cartState.subtotal = parseInt(localStorage.getItem('fb_cart_subtotal'));
-            }
-            if (localStorage.getItem('fb_cart_itemCount')) {
-                cartState.itemCount = parseInt(localStorage.getItem('fb_cart_itemCount'));
-            }
-            if (localStorage.getItem('fb_cart_discount')) {
-                cartState.discount = parseInt(localStorage.getItem('fb_cart_discount'));
-                if (cartState.discount > 0) {
-                    cartState.promoActive = true;
-                }
-            }
-
-            renderDates();
+            // renderDates();
             recalcSummary();
         });
 
@@ -920,7 +953,7 @@
         /* MODAL: PAYMENT */
         function handlePaymentProceed() {
             if (!cartState.selectedAddressId) {
-                alert('Please select or add a delivery address first.');
+                showToast('Please select or add a delivery address first.', 'warning');
                 return;
             }
             const btn = document.getElementById('paymentBtn');
@@ -993,6 +1026,26 @@
                 document.getElementById('successScreen').classList.remove('hidden');
                 document.getElementById('successDate').textContent = `${cartState.deliveryDate} during ${cartState.deliveryTimeSlot.split(' ')[0]} slot`;
             }, 2500);
+        }
+
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+
+            toast.className = `custom-toast toast-${type}`;
+            toast.textContent = message;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
         }
     </script>
 </body>

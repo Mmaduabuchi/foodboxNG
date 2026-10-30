@@ -259,8 +259,7 @@
                         </div>
 
                         <!-- CTA -->
-                        <button onclick="proceedCheckout()" id="checkoutBtn"
-                            class="w-full mt-6 py-4 rounded-2xl bg-brand-teal text-white font-bold text-lg shadow-xl shadow-brand-teal/30 hover:bg-brand-blue hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3">
+                        <button onclick="proceedCheckout()" id="checkoutBtn" class="w-full mt-6 py-4 rounded-2xl bg-brand-teal text-white font-bold text-lg shadow-xl shadow-brand-teal/30 hover:bg-brand-blue hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3">
                             <i class="fas fa-lock text-sm"></i>
                             Proceed to Checkout
                         </button>
@@ -392,7 +391,7 @@
             <i class="fas fa-check text-white"></i>
         </div>
         <div>
-            <p class="font-bold text-sm">Item Removed</p>
+            <p class="font-bold text-sm" id="toastHeaderMsg">Cart</p>
             <p id="toastMsg" class="text-xs text-gray-300">Done!</p>
         </div>
         <button onclick="hideToast()" class="ml-2 text-gray-400 hover:text-white">
@@ -609,12 +608,28 @@
         }
 
         /* CHECKOUT */
+        // function proceedCheckout() {
+        //     const btn = document.getElementById('checkoutBtn');
+        //     btn.classList.add('opacity-70', 'cursor-not-allowed');
+        //     btn.innerHTML = '<i class="fas fa-spinner fa-spin text-sm"></i> Processing...';
+        //     // Redirect after brief delay (replace with actual route)
+        //     setTimeout(() => { window.location.href = '/delivery_cart'; }, 1500);
+        // }
+
         function proceedCheckout() {
             const btn = document.getElementById('checkoutBtn');
+
+            if (!btn) return;
+
+            btn.disabled = true;
             btn.classList.add('opacity-70', 'cursor-not-allowed');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin text-sm"></i> Processing...';
-            // Redirect after brief delay (replace with actual route)
-            setTimeout(() => { window.location.href = '/delivery_cart'; }, 1500);
+
+            btn.innerHTML = `
+                <i class="fas fa-spinner fa-spin text-sm"></i>
+                Processing...
+            `;
+
+            window.location.href = "{{ route('delivery_cart') }}";
         }
 
         /* QUICK ADD (suggestions) */
