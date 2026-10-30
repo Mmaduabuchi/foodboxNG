@@ -58,6 +58,11 @@ class Order extends Model
         return $this->belongsTo(Package::class);
     }
 
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
     public function subscription()
     {
         return $this->belongsTo(Subscription::class);
