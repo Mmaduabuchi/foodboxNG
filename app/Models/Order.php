@@ -23,11 +23,20 @@ class Order extends Model
         'user_id',
         'package_id',
         'subscription_id',
+        'transaction_id',
+        'address_id',
 
         'amount',
         'status',
-        'transaction_id',
         'payment_method',
+
+        'package_name',
+        'order_reference',
+        'subtotal',
+        'shipping_fee',
+        'discount',
+        'delivery_method',
+        'delivery_instructions',
 
         // subscription context
         'delivery_frequency',
@@ -44,13 +53,22 @@ class Order extends Model
 
     protected $casts = [
         'amount' => 'decimal:2',
-        'cancelled_at' => 'datetime',
+        'subtotal' => 'decimal:2',
+        'shipping_fee' => 'decimal:2',
+        'discount' => 'decimal:2',
+        'scheduled_date' => 'date',
+        'cancelled_at' => 'date',
     ];
 
     //Relationships
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function address()
+    {
+        return $this->belongsTo(Address::class);
     }
 
     public function package()

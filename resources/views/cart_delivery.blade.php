@@ -325,19 +325,28 @@
                             <i class="fas fa-calendar-alt text-brand-teal"></i> Delivery Schedule
                         </h2>
                         <p class="text-sm text-gray-400 mb-6">Select a delivery date and time slot that works best for you.</p>
+                        
+                        <!-- Delivery Date -->
+                        <div class="mb-6">
+                            <label for="deliveryDate" class="block font-semibold text-brand-blue text-sm mb-3">
+                                SELECT PREFERRED DELIVERY DATE
+                            </label>
+
+                            <input type="date" id="deliveryDate" min="{{ now()->addDay()->toDateString() }}" value="{{ now()->addDay()->toDateString() }}" class="w-full md:w-1/2 border-2 border-gray-100 rounded-xl px-4 py-3 text-sm font-medium text-brand-blue focus:outline-none focus:border-brand-teal transition-all">
+                        </div>
 
                         <!-- Time Slots Grid -->
                         <h4 class="font-semibold text-brand-blue text-sm uppercase tracking-wider mt-4 mb-3">Select Preferred Time Slot</h4>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div onclick="selectTimeSlot(this, 'Morning (8:00 AM - 12:00 PM)')" class="slot-card active p-4 rounded-xl border-2 border-brand-teal bg-brand-teal/5 text-center" id="slot-morning">
+                            <div onclick="selectTimeSlot(this, 'Morning')" class="slot-card active p-4 rounded-xl border-2 border-brand-teal bg-brand-teal/5 text-center" id="slot-morning">
                                 <p class="font-bold text-sm">Morning</p>
                                 <p class="text-xs text-gray-500 mt-0.5">8:00 AM - 12:00 PM</p>
                             </div>
-                            <div onclick="selectTimeSlot(this, 'Afternoon (12:00 PM - 4:00 PM)')" class="slot-card p-4 rounded-xl border-2 border-gray-100 text-center" id="slot-afternoon">
+                            <div onclick="selectTimeSlot(this, 'Afternoon')" class="slot-card p-4 rounded-xl border-2 border-gray-100 text-center" id="slot-afternoon">
                                 <p class="font-bold text-sm">Afternoon</p>
                                 <p class="text-xs text-gray-500 mt-0.5">12:00 PM - 4:00 PM</p>
                             </div>
-                            <div onclick="selectTimeSlot(this, 'Evening (4:00 PM - 8:00 PM)')" class="slot-card p-4 rounded-xl border-2 border-gray-100 text-center" id="slot-evening">
+                            <div onclick="selectTimeSlot(this, 'Evening')" class="slot-card p-4 rounded-xl border-2 border-gray-100 text-center" id="slot-evening">
                                 <p class="font-bold text-sm">Evening</p>
                                 <p class="text-xs text-gray-500 mt-0.5">4:00 PM - 8:00 PM</p>
                             </div>
@@ -683,9 +692,10 @@
             promoActive: false,
             selectedAddressId: @json($defaultAddressId),
             selectedAddressStr: @json($defaultAddressStr),
-            deliveryDate: "",
-            deliveryTimeSlot: "Morning (8:00 AM - 12:00 PM)",
-            paymentMethod: "card"
+            deliveryDate: document.getElementById('deliveryDate').value,
+            deliveryTimeSlot: "morning",
+            deliveryMethod: 'standard',
+            paymentMethod: 'flutterwave'
         };
 
         /* ON LOAD */
@@ -787,6 +797,7 @@
             element.classList.add('active', 'border-brand-teal', 'bg-brand-teal/5');
             element.classList.remove('border-gray-100');
 
+            cartState.deliveryMethod = method;
             cartState.shippingFee = fee;
             recalcSummary();
         }
@@ -951,28 +962,28 @@
         }
 
         /* MODAL: PAYMENT */
-        function handlePaymentProceed() {
-            if (!cartState.selectedAddressId) {
-                showToast('Please select or add a delivery address first.', 'warning');
-                return;
-            }
-            const btn = document.getElementById('paymentBtn');
-            btn.disabled = true;
-            btn.classList.add('opacity-70', 'cursor-not-allowed', 'btn-pulse');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin text-sm"></i> Preparing Payment...';
+        // function handlePaymentProceed() {
+        //     if (!cartState.selectedAddressId) {
+        //         showToast('Please select or add a delivery address first.', 'warning');
+        //         return;
+        //     }
+        //     const btn = document.getElementById('paymentBtn');
+        //     btn.disabled = true;
+        //     btn.classList.add('opacity-70', 'cursor-not-allowed', 'btn-pulse');
+        //     btn.innerHTML = '<i class="fas fa-spinner fa-spin text-sm"></i> Preparing Payment...';
             
-            setTimeout(() => {
-                btn.disabled = false;
-                btn.classList.remove('opacity-70', 'cursor-not-allowed', 'btn-pulse');
-                btn.innerHTML = '<i class="fas fa-lock text-sm"></i> Proceed to Payment';
+        //     setTimeout(() => {
+        //         btn.disabled = false;
+        //         btn.classList.remove('opacity-70', 'cursor-not-allowed', 'btn-pulse');
+        //         btn.innerHTML = '<i class="fas fa-lock text-sm"></i> Proceed to Payment';
                 
-                // Show modal
-                const modal = document.getElementById('paymentModal');
-                modal.classList.remove('hidden');
-                setTimeout(() => modal.classList.add('visible'), 50);
-                document.body.style.overflow = 'hidden';
-            }, 1200);
-        }
+        //         // Show modal
+        //         const modal = document.getElementById('paymentModal');
+        //         modal.classList.remove('hidden');
+        //         setTimeout(() => modal.classList.add('visible'), 50);
+        //         document.body.style.overflow = 'hidden';
+        //     }, 1200);
+        // }
 
         function closePaymentModal() {
             const modal = document.getElementById('paymentModal');
@@ -1046,6 +1057,81 @@
 
                 setTimeout(() => toast.remove(), 300);
             }, 3500);
+        }
+
+
+
+        async function handlePaymentProceed() {
+            const button = document.getElementById('paymentBtn');
+
+            const deliveryDate = document.getElementById('deliveryDate').value;
+            const deliveryNote = document.getElementById('deliveryNote').value;
+
+            if (!cartState.selectedAddressId) {
+                showToast('Please select a delivery address.');
+                return;
+            }
+
+            if (!deliveryDate) {
+                showToast('Please select a delivery date.');
+                return;
+            }
+
+            const originalButtonContent = button.innerHTML;
+
+            button.disabled = true;
+            button.innerHTML = 'Connecting to payment...';
+
+            const payload = {
+                address_id: cartState.selectedAddressId,
+                delivery_method: cartState.deliveryMethod,
+                delivery_date: deliveryDate,
+                delivery_time_slot: cartState.deliveryTimeSlot,
+                delivery_instructions: deliveryNote
+            };
+
+            try {
+                const response = await fetch('{{ route("checkout.initialize") }}',
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify(payload)
+                    }
+                );
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    let message = data.message || 'Unable to initialize payment.';
+
+                    if (data.errors) {
+                        message = Object.values(data.errors)
+                            .flat()
+                            .join('\n');
+                    }
+
+                    throw new Error(message);
+                }
+
+                if (!data.payment_link) {
+                    throw new Error('Payment link was not returned.');
+                }
+
+                // Redirect to Flutterwave hosted checkout.
+                window.location.href = data.payment_link;
+
+            } catch (error) {
+                console.error('Checkout error:', error);
+
+                showToast(error.message || 'Something went wrong. Please try again.');
+
+                button.disabled = false;
+                button.innerHTML = originalButtonContent;
+            }
         }
     </script>
 </body>

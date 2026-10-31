@@ -44,6 +44,7 @@ use App\Http\Controllers\home\welcomeController;
 use App\Http\Controllers\home\packagesController;
 use App\Http\Controllers\home\contactusController;
 use App\Http\Controllers\home\subPackageDetailController;
+use App\Http\Controllers\home\checkoutController;
 use App\Http\Controllers\dashboard\usersupportController;
 use App\Http\Controllers\dashboard\trackordersController;
 use App\Http\Controllers\dashboard\UserNotificationController;
@@ -105,7 +106,7 @@ Route::delete('/cart/item/{id}', [cartsController::class, 'destroy'])->name('car
 Route::post('/cart/clear', [cartsController::class, 'clear'])->name('cart.clear');
 // Route::get('/subpackage/{id}', [subPackageDetailController::class, 'show'])->name('subpackage.detail');
 Route::get('/subpackage/{slug}', [subPackageDetailController::class, 'show'])->name('subpackage.detail');
-
+Route::get('/checkout/callback', [checkoutController::class, 'callback'])->name('checkout.callback');
 
 Route::middleware('guest')->group(function () {
     //login
@@ -198,6 +199,9 @@ Route::middleware(['auth', 'user', 'single.device', 'inactive.session'])->group(
     // cart delivery
     Route::get('/delivery_cart', [cartsController::class, 'delivery_cart'])->name('delivery_cart');
 
+    //checkout
+    Route::post('/checkout/initialize-payment', [checkoutController::class, 'initializePayment'])->name('checkout.initialize');
+    // Route::get('/checkout/callback', [checkoutController::class, 'callback'])->name('checkout.callback');
 });
 
 

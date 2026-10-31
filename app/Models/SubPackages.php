@@ -74,9 +74,14 @@ class SubPackages extends Model
     }
 
     // One sub package can have many orders
-    public function orders()
+    // public function orders()
+    // {
+    //     return $this->hasMany(Order::class);
+    // }
+
+    public function orderItems()
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(OrderItem::class, 'sub_package_id');
     }
 
     public function scopeActive($query)
