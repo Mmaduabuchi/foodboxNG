@@ -7,6 +7,7 @@ use App\Models\Address;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Payment;
 use App\Services\FlutterwaveService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -148,6 +149,20 @@ class checkoutController extends Controller
                 ]);
             }
 
+            Payment::create([
+                'user_id' => $user->id,
+                'order_id' => $order->id,
+                'amount' => $total,
+                'currency' => 'NGN',
+                'transaction_reference' => $reference,
+                'payment_method' => 'flutterwave',
+                'status' => Payment::STATUS_PENDING,
+                'gateway' => 'flutterwave',
+                'meta' => [
+                    'order_reference' => $reference,
+                ],
+            ]);
+
             return $order;
         });
 
@@ -187,6 +202,12 @@ class checkoutController extends Controller
             $order->update([
                 'status' => Order::STATUS_FAILED,
             ]);
+
+            Payment::where('order_id', $order->id)
+                ->where('status', Payment::STATUS_PENDING)
+                ->update([
+                    'status' => Payment::STATUS_FAILED,
+                ]);
 
             return response()->json([
                 'success' => false,
@@ -232,6 +253,13 @@ class checkoutController extends Controller
                 'status' => Order::STATUS_FAILED,
             ]);
 
+            Payment::where('order_id', $order->id)
+                ->where('status', Payment::STATUS_PENDING)
+                ->update([
+                    'status' => Payment::STATUS_FAILED,
+                    'gateway_reference' => $transactionId,
+                ]);
+
             \Log::info('FoodBox Flutterwave Callback', [
                 'transaction_id' => $transactionId,
                 'status' => $transactionStatus,
@@ -255,12 +283,20 @@ class checkoutController extends Controller
                 (string) ($payment['id'] ?? '') === (string) $transactionId &&
                 ($payment['tx_ref'] ?? null) === $order->order_reference &&
                 ($payment['currency'] ?? null) === 'NGN' &&
-                (float) ($payment['amount'] ?? 0) >= (float) $order->amount;
+                // (float) ($payment['amount'] ?? 0) >= (float) $order->amount;
+                round((float) ($payment['amount'] ?? 0), 2) === round((float) $order->amount, 2);
 
             if (!$isValid) {
                 $order->update([
                     'status' => Order::STATUS_FAILED,
                 ]);
+
+                Payment::where('order_id', $order->id)
+                    ->where('status', Payment::STATUS_PENDING)
+                    ->update([
+                        'status' => Payment::STATUS_FAILED,
+                        'gateway_reference' => $transactionId,
+                    ]);
 
                 return redirect()->route('carts')
                     ->with('error', 'Payment verification failed.');
@@ -278,6 +314,16 @@ class checkoutController extends Controller
                 $lockedOrder->update([
                     'status' => Order::STATUS_COMPLETED,
                     'transaction_id' => $transactionId,
+                ]);
+
+                $lockedPayment = Payment::where('order_id', $lockedOrder->id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                $lockedPayment->update([
+                    'status' => Payment::STATUS_SUCCESS,
+                    'gateway_reference' => $transactionId,
+                    'paid_at' => now(),
                 ]);
 
                 // Clear the customer's cart only after verified payment.

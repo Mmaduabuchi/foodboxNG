@@ -138,4 +138,9 @@ class Order extends Model
     {
         return $query->where('delivery_status', self::DELIVERY_DELIVERED);
     }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
 }
