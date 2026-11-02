@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use App\Models\UserNotification;
 use App\Models\AdminNotification;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -62,5 +65,19 @@ class AppServiceProvider extends ServiceProvider
             ));
 
         });
+
+
+        RateLimiter::for('checkout', function (Request $request) {
+            return Limit::perMinute(5)
+                ->by($request->user()?->id ?: $request->ip())
+                ->response(function (Request $request, array $headers) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Too many checkout attempts. Please wait a minute and try again.',
+                    ], 429, $headers);
+                });
+        });
+
+        
     }
 }

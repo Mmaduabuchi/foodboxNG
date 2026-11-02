@@ -21,6 +21,7 @@ class Order extends Model
     
     protected $fillable = [
         'user_id',
+        'cart_id',
         'package_id',
         'subscription_id',
         'transaction_id',
@@ -74,6 +75,11 @@ class Order extends Model
     public function package()
     {
         return $this->belongsTo(Package::class);
+    }
+
+    public function cart()
+    {
+        return $this->belongsTo(Cart::class);
     }
 
     public function items()

@@ -200,7 +200,7 @@ Route::middleware(['auth', 'user', 'single.device', 'inactive.session'])->group(
     Route::get('/delivery_cart', [cartsController::class, 'delivery_cart'])->name('delivery_cart');
 
     //checkout
-    Route::post('/checkout/initialize-payment', [checkoutController::class, 'initializePayment'])->name('checkout.initialize');
+    Route::post('/checkout/initialize-payment', [checkoutController::class, 'initializePayment'])->middleware('throttle:checkout')->name('checkout.initialize');
     // Route::get('/checkout/callback', [checkoutController::class, 'callback'])->name('checkout.callback');
 });
 

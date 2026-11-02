@@ -23,13 +23,6 @@ return new class extends Migration
             $table->string('delivery_method')->nullable();
             $table->text('delivery_instructions')->nullable();
 
-            // Delivery scheduling
-            $table->date('scheduled_date')->nullable();
-            $table->time('delivery_start_time')->nullable();
-            $table->time('delivery_end_time')->nullable();
-
-            // Delivery tracking
-            $table->string('delivery_status')->default('pending');
         });
     }
 

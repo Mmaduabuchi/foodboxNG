@@ -108,6 +108,7 @@ class checkoutController extends Controller
 
             $order = Order::create([
                 'user_id' => $user->id,
+                'cart_id' => $cart->id,
                 'package_id' => null,
                 'subscription_id' => null,
                 'address_id' => $address->id,
@@ -202,6 +203,12 @@ class checkoutController extends Controller
         $transactionStatus = $request->query('status');
         $txRef = $request->query('tx_ref');
 
+        \Log::info('FoodBox Flutterwave Callback', [
+            'transaction_id' => $transactionId,
+            'status' => $transactionStatus,
+            'tx_ref' => $txRef,
+        ]);
+
         if (!$transactionId || !$txRef) {
             return redirect()->route('carts')
                 ->with('error', 'Invalid payment response.');
@@ -220,7 +227,7 @@ class checkoutController extends Controller
                 ->with('success', 'Your payment has already been confirmed.');
         }
 
-        if ($transactionStatus !== 'successful') {
+        if ($transactionStatus !== 'completed') {
             $order->update([
                 'status' => Order::STATUS_FAILED,
             ]);
@@ -239,8 +246,13 @@ class checkoutController extends Controller
         try {
             $payment = $flutterwave->verifyPayment($transactionId);
 
+            \Log::info('FoodBox Flutterwave Verification', [
+                'verification_response' => $payment,
+            ]);
+
             $isValid =
                 ($payment['status'] ?? null) === 'successful' &&
+                (string) ($payment['id'] ?? '') === (string) $transactionId &&
                 ($payment['tx_ref'] ?? null) === $order->order_reference &&
                 ($payment['currency'] ?? null) === 'NGN' &&
                 (float) ($payment['amount'] ?? 0) >= (float) $order->amount;
@@ -269,11 +281,14 @@ class checkoutController extends Controller
                 ]);
 
                 // Clear the customer's cart only after verified payment.
-                Cart::where('user_id', $lockedOrder->user_id)
-                    ->where('status', 'active')
-                    ->first()
-                    ?->items()
-                    ->delete();
+                if ($lockedOrder->cart_id) {
+                    $cart = Cart::where('id', $lockedOrder->cart_id)
+                        ->where('user_id', $lockedOrder->user_id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    $cart?->items()->delete();
+                }
             });
 
             return redirect()->route('carts')
